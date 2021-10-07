@@ -1,0 +1,26 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --exec ts-node src/index.ts --ext ts"
+  },
+  "devDependencies": {
+    "@types/node": "^16.10.3",
+    "nodemon": "^2.0.13",
+    "ts-node": "^10.2.1"
+  },
+  "dependencies": {
+    "class-validator": "^0.13.1",
+    "dotenv": "^8.6.0",
+    "graphql": "^15.6.1",
+    "pg": "^8.7.1",
+    "reflect-metadata": "^0.1.13",
+    "type-graphql": "^1.1.1",
+    "typeorm": "^0.2.38"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
