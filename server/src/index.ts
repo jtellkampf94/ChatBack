@@ -66,6 +66,7 @@ const main = async () => {
   apolloServer.applyMiddleware({
     app,
     path: "/",
+    cors: false,
   });
 
   app.listen(4000, () => {
