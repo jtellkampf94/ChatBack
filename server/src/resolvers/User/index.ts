@@ -1,4 +1,5 @@
-import { Query, Resolver, Mutation, Arg } from "type-graphql";
+import { MyContext } from "./../../types";
+import { Query, Resolver, Mutation, Arg, Ctx } from "type-graphql";
 import argon2 from "argon2";
 
 import { RegisterInput } from "./RegisterInput";
@@ -13,9 +14,18 @@ export class UserResolver {
 
   @Mutation(() => User)
   async register(
-    @Arg("options", { validate: true }) options: RegisterInput
+    @Arg("options", { validate: true }) options: RegisterInput,
+    @Ctx() { req }: MyContext
   ): Promise<User> {
     const hashedPassword = await argon2.hash(options.password);
-    return User.create({ ...options, password: hashedPassword }).save();
+
+    const user = await User.create({
+      ...options,
+      password: hashedPassword,
+    }).save();
+
+    req.session.userId = user.id;
+
+    return user;
   }
 }
