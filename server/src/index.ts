@@ -21,7 +21,7 @@ const main = async () => {
     database: process.env.PG_DATABASE_NAME,
     username: process.env.PG_USERNAME,
     password: process.env.PG_PASSWORD,
-    logging: true,
+    // logging: true,
     synchronize: true,
     entities: [User],
   });
@@ -30,7 +30,7 @@ const main = async () => {
 
   app.use(
     cors({
-      origin: "http://localhost:3000",
+      origin: "https://studio.apollographql.com",
       credentials: true,
     })
   );
@@ -49,8 +49,9 @@ const main = async () => {
       saveUninitialized: false,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
-        httpOnly: true,
-        sameSite: "lax",
+        httpOnly: false,
+        sameSite: "none",
+        secure: true,
       },
     })
   );

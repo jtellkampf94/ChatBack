@@ -1,1 +1,1 @@
-export const COOKIE_NAME = "qid";
+export const COOKIE_NAME = "whatsapp-clone";

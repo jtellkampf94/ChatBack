@@ -1,14 +1,24 @@
-import { MyContext } from "./../../types";
-import { Query, Resolver, Mutation, Arg, Ctx } from "type-graphql";
+import {
+  Query,
+  Resolver,
+  Mutation,
+  Arg,
+  Ctx,
+  UseMiddleware,
+} from "type-graphql";
 import argon2 from "argon2";
 
+import { MyContext } from "../../types";
+import { COOKIE_NAME } from "../../constants";
 import { RegisterInput } from "./RegisterInput";
 import { LoginInput } from "./LoginInput";
 import { User } from "../../entities/User";
+import { isAuth } from "../../middleware/isAuth";
 
 @Resolver()
 export class UserResolver {
   @Query(() => [User])
+  @UseMiddleware(isAuth)
   users(): Promise<User[]> {
     return User.find();
   }
@@ -51,5 +61,21 @@ export class UserResolver {
     req.session.userId = user.id;
 
     return user;
+  }
+
+  @Mutation(() => Boolean)
+  logout(@Ctx() { req, res }: MyContext): Promise<Boolean> {
+    return new Promise((resolve) =>
+      req.session.destroy((err) => {
+        res.clearCookie(COOKIE_NAME);
+        if (err) {
+          console.log(err);
+          resolve(false);
+          return;
+        }
+
+        resolve(true);
+      })
+    );
   }
 }
