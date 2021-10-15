@@ -52,6 +52,8 @@ const SidebarButton = styled(Button)`
 `;
 
 const Sidebar: React.FC = () => {
+  const createChat = () => {};
+
   return (
     <Container>
       <Header>
@@ -72,7 +74,7 @@ const Sidebar: React.FC = () => {
         <SearchInput placeholder="Search in chats" />
       </Search>
 
-      <SidebarButton>Start a new chat</SidebarButton>
+      <SidebarButton onClick={createChat}>Start a new chat</SidebarButton>
     </Container>
   );
 };
