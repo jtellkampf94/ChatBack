@@ -1,8 +1,11 @@
+import { useState } from "react";
 import styled from "styled-components";
 import { Avatar, Button, IconButton } from "@material-ui/core";
 import ChatIcon from "@material-ui/icons/Chat";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import SearchIcon from "@material-ui/icons/Search";
+
+import Modal from "./Modal";
 
 const Container = styled.div``;
 
@@ -52,7 +55,7 @@ const SidebarButton = styled(Button)`
 `;
 
 const Sidebar: React.FC = () => {
-  const createChat = () => {};
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <Container>
@@ -74,7 +77,12 @@ const Sidebar: React.FC = () => {
         <SearchInput placeholder="Search in chats" />
       </Search>
 
-      <SidebarButton onClick={createChat}>Start a new chat</SidebarButton>
+      <SidebarButton onClick={() => setIsOpen(true)}>
+        Start a new chat
+      </SidebarButton>
+      <Modal open={isOpen} onClose={() => setIsOpen(false)}>
+        Modal fancy
+      </Modal>
     </Container>
   );
 };

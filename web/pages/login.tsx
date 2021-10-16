@@ -1,6 +1,10 @@
+import { useState, Fragment } from "react";
 import { Button } from "@material-ui/core";
 import styled from "styled-components";
 import Head from "next/head";
+
+import Loading from "../components/Loading";
+import { useGetUsersQuery, useLoginMutation } from "../generated/graphql";
 
 const Container = styled.div`
   display: grid;
@@ -26,7 +30,19 @@ const Logo = styled.img`
 `;
 
 const Login: React.FC = () => {
+  const [emailOrUsername, setEmailOrUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [login, { data, loading, error }] = useLoginMutation();
+  const { data: uData } = useGetUsersQuery();
+
   const handleClick = () => {};
+
+  const handleSubmit = async () => {
+    await login({ variables: { options: { emailOrUsername, password } } });
+  };
+
+  console.log(data);
+  console.log(error);
 
   return (
     <Container>
@@ -34,11 +50,40 @@ const Login: React.FC = () => {
         <title>Login</title>
       </Head>
 
+      {uData?.users.map((u) => (
+        <div key={u.id}>{u.username}</div>
+      ))}
+
       <LoginContainer>
         <Logo src="http://assets.stickpng.com/images/580b57fcd9996e24bc43c543.png" />
-        <Button variant="outlined" onClick={handleClick}>
-          Sign in with Google
-        </Button>
+        {loading ? (
+          <Loading />
+        ) : (
+          <Fragment>
+            <form onSubmit={handleSubmit}>
+              <input
+                type="text"
+                name="emailOrUsername"
+                placeholder="Email Or Username"
+                value={emailOrUsername}
+                onChange={(e) => setEmailOrUsername(e.target.value)}
+              />
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <Button variant="outlined" type="submit" onClick={handleClick}>
+                Sign in
+              </Button>
+            </form>
+            <Button variant="outlined" onClick={handleClick}>
+              Sign in with Google
+            </Button>
+          </Fragment>
+        )}
       </LoginContainer>
     </Container>
   );

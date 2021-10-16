@@ -4,13 +4,17 @@ import {
   ApolloClient,
   InMemoryCache,
   ApolloProvider,
-  useQuery,
-  gql,
+  createHttpLink,
 } from "@apollo/client";
 
+const link = createHttpLink({
+  uri: "http://localhost:4000/",
+  credentials: "include",
+});
+
 const client = new ApolloClient({
-  uri: "http://localhost:4000",
   cache: new InMemoryCache(),
+  link,
 });
 
 function MyApp({ Component, pageProps }: AppProps) {

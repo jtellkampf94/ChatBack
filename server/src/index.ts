@@ -28,30 +28,28 @@ const main = async () => {
 
   const app = express();
 
+  const RedisStore = connectRedis(session);
+  const redis = new Redis();
   app.use(
     cors({
-      origin: "*",
+      origin: "http://localhost:3000",
       credentials: true,
     })
   );
 
-  const RedisStore = connectRedis(session);
-  const redis = new Redis();
-  const store = new RedisStore({
-    client: redis,
-  });
   app.use(
     session({
-      store,
+      store: new RedisStore({
+        client: redis,
+      }),
       name: COOKIE_NAME,
       secret: String(process.env.REDIS_SECRET),
       resave: false,
       saveUninitialized: false,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
-        httpOnly: false,
+        httpOnly: true,
         sameSite: "none",
-        secure: true,
       },
     })
   );

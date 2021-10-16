@@ -18,7 +18,7 @@ import { isAuth } from "../../middleware/isAuth";
 @Resolver()
 export class UserResolver {
   @Query(() => [User])
-  // @UseMiddleware(isAuth)
+  @UseMiddleware(isAuth)
   users(): Promise<User[]> {
     return User.find();
   }
