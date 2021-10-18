@@ -23,6 +23,21 @@ export class UserResolver {
     return User.find();
   }
 
+  @Query(() => User, { nullable: true })
+  async currentUser(@Ctx() { req }: MyContext): Promise<User | null> {
+    if (!req.session.userId) {
+      return null;
+    }
+
+    const user = await User.findOne({ id: Number(req.session.userId) });
+
+    if (!user) {
+      return null;
+    }
+
+    return user;
+  }
+
   @Mutation(() => User)
   async register(
     @Arg("options", { validate: true }) options: RegisterInput,
