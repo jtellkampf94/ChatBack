@@ -1,13 +1,9 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+
 import Sidebar from "../components/Sidebar";
-import { useGetUsersQuery, useLoginMutation } from "../generated/graphql";
 
 const Home: NextPage = () => {
-  // const { loading, data, error } = useGetUsersQuery();
-
-  // const [login, {data, loading, error}] = useLoginMutation()
-
   return (
     <div>
       <Head>
