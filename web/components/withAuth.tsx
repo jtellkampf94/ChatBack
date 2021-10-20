@@ -1,10 +1,10 @@
 import * as React from "react";
-import { NextPageContext } from "next";
+import { NextPage, NextPageContext } from "next";
 
 import redirect from "../lib/redirect";
-import { useCurrentUserQuery } from "../generated/graphql";
+import { useCurrentUserQuery, CurrentUserQuery } from "../generated/graphql";
 
-export const withAuth = <T extends object>(C: React.ComponentClass<T>) => {
+const withAuth = <T extends object>(C: NextPage) => {
   return class AuthComponent extends React.Component<T> {
     static async getInitialProps(ctx: NextPageContext) {
       const { data, error, loading } = useCurrentUserQuery();
@@ -25,3 +25,5 @@ export const withAuth = <T extends object>(C: React.ComponentClass<T>) => {
     }
   };
 };
+
+export default withAuth;

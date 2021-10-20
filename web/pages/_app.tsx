@@ -7,19 +7,21 @@ import {
   createHttpLink,
 } from "@apollo/client";
 
-const link = createHttpLink({
-  uri: "http://localhost:4000/",
-  credentials: "include",
-});
+const createApolloClient = () => {
+  const link = createHttpLink({
+    uri: "http://localhost:4000/",
+    credentials: "include",
+  });
 
-const client = new ApolloClient({
-  cache: new InMemoryCache(),
-  link,
-});
+  return new ApolloClient({
+    cache: new InMemoryCache(),
+    link,
+  });
+};
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <ApolloProvider client={client}>
+    <ApolloProvider client={createApolloClient()}>
       <Component {...pageProps} />
     </ApolloProvider>
   );
