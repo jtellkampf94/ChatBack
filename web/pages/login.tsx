@@ -1,10 +1,11 @@
-import { useState, Fragment } from "react";
+import { useState, Fragment, FormEvent } from "react";
 import { Button } from "@material-ui/core";
 import styled from "styled-components";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 import Loading from "../components/Loading";
-import { useGetUsersQuery, useLoginMutation } from "../generated/graphql";
+import { useLoginMutation } from "../generated/graphql";
 
 const Container = styled.div`
   display: grid;
@@ -32,27 +33,25 @@ const Logo = styled.img`
 const Login: React.FC = () => {
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [login, { data, loading, error }] = useLoginMutation();
-  const { data: uData } = useGetUsersQuery();
+
+  const [login, { loading, data, error }] = useLoginMutation();
+  const router = useRouter();
 
   const handleClick = () => {};
 
-  const handleSubmit = async () => {
-    await login({ variables: { options: { emailOrUsername, password } } });
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await login({
+      variables: { options: { emailOrUsername, password } },
+    });
+    router.push("/");
   };
-
-  console.log(data);
-  console.log(error);
 
   return (
     <Container>
       <Head>
         <title>Login</title>
       </Head>
-
-      {uData?.users.map((u) => (
-        <div key={u.id}>{u.username}</div>
-      ))}
 
       <LoginContainer>
         <Logo src="http://assets.stickpng.com/images/580b57fcd9996e24bc43c543.png" />

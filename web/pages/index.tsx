@@ -1,8 +1,13 @@
-import type { NextPage } from "next";
+import type {
+  NextPage,
+  GetServerSideProps,
+  GetServerSidePropsContext,
+} from "next";
 import Head from "next/head";
+import { gql } from "@apollo/client";
 
+import { createApolloClient } from "./_app";
 import Sidebar from "../components/Sidebar";
-import withAuth from "../components/withAuth";
 
 const Home: NextPage = () => {
   return (
@@ -17,4 +22,45 @@ const Home: NextPage = () => {
   );
 };
 
-export default withAuth(Home);
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  res,
+}: GetServerSidePropsContext) => {
+  const cookies = req.cookies;
+
+  const cookieName = Object.keys(cookies);
+
+  let cookie = "";
+
+  cookieName.forEach((c) => {
+    const newCookie = ` ${c}=${cookies[c]};`;
+    cookie = cookie + newCookie;
+  });
+
+  const CURRENT_USER_QUERY = gql`
+    query GetCurrentUser {
+      currentUser {
+        id
+        email
+        username
+        updatedAt
+        createdAt
+      }
+    }
+  `;
+
+  const result = await createApolloClient({ cookie }).query({
+    query: CURRENT_USER_QUERY,
+  });
+
+  if (!result.data.currentUser) {
+    res.writeHead(301, { Location: "/login" });
+    res.end();
+  }
+
+  return {
+    props: {},
+  };
+};
+
+export default Home;

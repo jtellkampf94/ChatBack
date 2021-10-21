@@ -7,10 +7,11 @@ import {
   createHttpLink,
 } from "@apollo/client";
 
-const createApolloClient = () => {
+export const createApolloClient = (headers?: Record<string, string>) => {
   const link = createHttpLink({
     uri: "http://localhost:4000/",
     credentials: "include",
+    headers: headers || {},
   });
 
   return new ApolloClient({
