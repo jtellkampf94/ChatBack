@@ -6,27 +6,26 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
+  ManyToOne,
 } from "typeorm";
-import { Message } from "./Message";
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
-export class User extends BaseEntity {
+export class Message extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Field()
-  @Column({ unique: true })
-  username!: string;
-
-  @Field()
-  @Column({ unique: true })
-  email!: string;
-
   @Column()
-  password!: string;
+  text!: string;
+
+  @ManyToOne(() => User, (user) => user.messages)
+  from!: User;
+
+  @ManyToOne(() => User, (user) => user.messages)
+  to!: User;
 
   @Field(() => Date)
   @CreateDateColumn()
@@ -35,7 +34,4 @@ export class User extends BaseEntity {
   @Field(() => Date)
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @OneToMany(() => Message, (message) => message.from)
-  messages: Message[];
 }
