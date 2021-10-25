@@ -33,7 +33,7 @@ export class Message extends BaseEntity {
   @Column()
   conversationId!: number;
 
-  @ManyToOne(() => Conversation, (conversation) => conversation)
+  @ManyToOne(() => Conversation, (conversation) => conversation.messages)
   conversation!: Conversation;
 
   @Field(() => Date)

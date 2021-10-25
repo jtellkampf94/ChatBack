@@ -30,7 +30,7 @@ export class User extends BaseEntity {
   @Column()
   password!: string;
 
-  @ManyToMany(() => Conversation)
+  @ManyToMany(() => Conversation, (conversation) => conversation.users)
   @JoinTable()
   conversations: Conversation[];
 
