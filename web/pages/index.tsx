@@ -8,6 +8,7 @@ import { gql } from "@apollo/client";
 
 import { createApolloClient } from "./_app";
 import Sidebar from "../components/Sidebar";
+import Conversations from "../components/Conversations";
 
 const Home: NextPage = () => {
   return (
@@ -18,6 +19,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Sidebar />
+      <Conversations />
     </div>
   );
 };

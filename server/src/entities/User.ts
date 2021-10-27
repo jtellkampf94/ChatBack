@@ -1,4 +1,3 @@
-import { Conversation } from "./Conversation";
 import { ObjectType, Field, ID } from "type-graphql";
 import {
   BaseEntity,
@@ -7,10 +6,9 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToMany,
-  JoinTable,
+  OneToMany,
 } from "typeorm";
-import { Message } from "./Message";
+import { UserConversation } from "./UserConversation";
 
 @ObjectType()
 @Entity()
@@ -30,9 +28,8 @@ export class User extends BaseEntity {
   @Column()
   password!: string;
 
-  @ManyToMany(() => Conversation, (conversation) => conversation.users)
-  @JoinTable()
-  conversations: Conversation[];
+  @OneToMany(() => UserConversation, (uc) => uc.user)
+  conversationConnection: Promise<UserConversation[]>;
 
   @Field(() => Date)
   @CreateDateColumn()
