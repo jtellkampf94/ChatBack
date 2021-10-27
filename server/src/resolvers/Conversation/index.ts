@@ -7,12 +7,9 @@ import {
   Int,
   UseMiddleware,
 } from "type-graphql";
-import { getConnection } from "typeorm";
+import { getConnection, getRepository } from "typeorm";
 
 import { MyContext } from "../../types";
-import { COOKIE_NAME } from "../../constants";
-import { User } from "../../entities/User";
-import { Message } from "../../entities/Message";
 import { Conversation } from "../../entities/Conversation";
 
 import { isAuth } from "../../middleware/isAuth";
@@ -40,5 +37,35 @@ export class ConversationResolver {
       .execute();
 
     return conversation;
+  }
+
+  @Query(() => Conversation)
+  @UseMiddleware(isAuth)
+  async getConversation(
+    @Arg("conversationId") conversationId: number
+  ): Promise<Conversation> {
+    const conversation = await Conversation.findOne(conversationId);
+
+    if (!conversation) throw new Error("conversation not found");
+
+    return conversation;
+  }
+
+  @Query(() => [Conversation])
+  @UseMiddleware(isAuth)
+  async getConversations(@Ctx() { req }: MyContext): Promise<Conversation[]> {
+    const userConversation = await UserConversation.find({
+      where: { userId: Number(req.session.userId) },
+    });
+
+    const conversationIds = userConversation.map((cid) => cid.conversationId);
+
+    const conversations = await getRepository(Conversation)
+      .createQueryBuilder("conversation")
+      .where("conversation.id IN (:...ids)", { ids: conversationIds })
+      .orderBy("conversation.createdAt", "DESC")
+      .getMany();
+
+    return conversations;
   }
 }

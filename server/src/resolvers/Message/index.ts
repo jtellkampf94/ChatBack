@@ -31,4 +31,15 @@ export class MessageResolver {
       conversationId,
     }).save();
   }
+
+  @Query(() => [Message])
+  @UseMiddleware(isAuth)
+  getMessages(
+    @Arg("conversationId") conversationId: number
+  ): Promise<Message[]> {
+    return Message.find({
+      where: { conversationId },
+      order: { createdAt: "DESC" },
+    });
+  }
 }
