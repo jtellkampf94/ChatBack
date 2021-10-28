@@ -11,7 +11,6 @@ import { getConnection, getRepository } from "typeorm";
 
 import { MyContext } from "../../types";
 import { Conversation } from "../../entities/Conversation";
-
 import { isAuth } from "../../middleware/isAuth";
 import { UserConversation } from "../../entities/UserConversation";
 
@@ -57,6 +56,8 @@ export class ConversationResolver {
     const userConversation = await UserConversation.find({
       where: { userId: Number(req.session.userId) },
     });
+
+    if (userConversation.length === 0) throw new Error("no conversation");
 
     const conversationIds = userConversation.map((cid) => cid.conversationId);
 

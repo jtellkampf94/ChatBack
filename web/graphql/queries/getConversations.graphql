@@ -1,0 +1,7 @@
+query GetConversations {
+  getConversations {
+    id
+    createdAt
+    updatedAt
+  }
+}

@@ -10,7 +10,13 @@ import Redis from "ioredis";
 import cors from "cors";
 
 import { User } from "./entities/User";
+import { Message } from "./entities/Message";
+import { Conversation } from "./entities/Conversation";
+import { UserConversation } from "./entities/UserConversation";
 import { UserResolver } from "./resolvers/User";
+import { MessageResolver } from "./resolvers/Message";
+import { ConversationResolver } from "./resolvers/Conversation";
+
 import { COOKIE_NAME } from "./constants";
 
 dotenv.config();
@@ -23,7 +29,7 @@ const main = async () => {
     password: process.env.PG_PASSWORD,
     // logging: true,
     synchronize: true,
-    entities: [User],
+    entities: [User, Conversation, Message, UserConversation],
   });
 
   const app = express();
@@ -56,7 +62,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver],
+      resolvers: [UserResolver, MessageResolver, ConversationResolver],
       validate: false,
     }),
     context: ({ req, res }) => ({ req, res, redis }),
