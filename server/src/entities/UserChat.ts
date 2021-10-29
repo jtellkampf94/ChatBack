@@ -9,12 +9,12 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import { Conversation } from "./Conversation";
+import { Chat } from "./Chat";
 import { User } from "./User";
 
 @ObjectType()
 @Entity()
-export class UserConversation extends BaseEntity {
+export class UserChat extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
   id!: number;
@@ -23,15 +23,15 @@ export class UserConversation extends BaseEntity {
   userId: number;
 
   @PrimaryColumn()
-  conversationId: number;
+  chatId: number;
 
-  @ManyToOne(() => User, (u) => u.conversationConnection, { primary: true })
+  @ManyToOne(() => User, (u) => u.chatConnection, { primary: true })
   @JoinColumn({ name: "userId" })
   user: Promise<User>;
 
-  @ManyToOne(() => Conversation, (c) => c.userConnection, { primary: true })
-  @JoinColumn({ name: "conversationId" })
-  conversation: Promise<Conversation>;
+  @ManyToOne(() => Chat, (c) => c.userConnection, { primary: true })
+  @JoinColumn({ name: "chatId" })
+  chat: Promise<Chat>;
 
   @Field(() => Date)
   @CreateDateColumn()

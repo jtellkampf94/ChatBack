@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
   ManyToOne,
 } from "typeorm";
-import { Conversation } from "./Conversation";
+import { Chat } from "./Chat";
 import { User } from "./User";
 
 @ObjectType()
@@ -31,10 +31,10 @@ export class Message extends BaseEntity {
 
   @Field()
   @Column()
-  conversationId!: number;
+  chatId!: number;
 
-  @ManyToOne(() => Conversation, (conversation) => conversation.messages)
-  conversation!: Conversation;
+  @ManyToOne(() => Chat, (chat) => chat.messages)
+  chat!: Chat;
 
   @Field(() => Date)
   @CreateDateColumn()

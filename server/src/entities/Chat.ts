@@ -3,37 +3,29 @@ import {
   BaseEntity,
   Entity,
   PrimaryGeneratedColumn,
-  Column,
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
 } from "typeorm";
-import { Contact } from "./Contact";
+
+import { Message } from "./Message";
 import { UserChat } from "./UserChat";
 
 @ObjectType()
 @Entity()
-export class User extends BaseEntity {
+export class Chat extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Field()
-  @Column({ unique: true })
-  username!: string;
+  @OneToMany(() => UserChat, (uc) => uc.chat)
+  userConnection: Promise<UserChat[]>;
 
-  @Field()
-  @Column({ unique: true })
-  email!: string;
+  @OneToMany(() => Message, (message) => message.chat)
+  messages: Message[];
 
-  @Column()
-  password!: string;
-
-  @OneToMany(() => UserChat, (uc) => uc.user)
-  chatConnection: Promise<UserChat[]>;
-
-  @OneToMany(() => Contact, (contact) => contact.user)
-  contacts: Contact[];
+  @Field(() => Message)
+  latestMessage: Message;
 
   @Field(() => Date)
   @CreateDateColumn()

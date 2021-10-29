@@ -11,11 +11,12 @@ import cors from "cors";
 
 import { User } from "./entities/User";
 import { Message } from "./entities/Message";
-import { Conversation } from "./entities/Conversation";
-import { UserConversation } from "./entities/UserConversation";
+import { Chat } from "./entities/Chat";
+import { UserChat } from "./entities/UserChat";
+import { Contact } from "./entities/Contact";
 import { UserResolver } from "./resolvers/User";
 import { MessageResolver } from "./resolvers/Message";
-import { ConversationResolver } from "./resolvers/Conversation";
+import { ChatResolver } from "./resolvers/Chat";
 
 import { COOKIE_NAME } from "./constants";
 
@@ -27,9 +28,9 @@ const main = async () => {
     database: process.env.PG_DATABASE_NAME,
     username: process.env.PG_USERNAME,
     password: process.env.PG_PASSWORD,
-    // logging: true,
+    logging: true,
     synchronize: true,
-    entities: [User, Conversation, Message, UserConversation],
+    entities: [User, Chat, Message, UserChat, Contact],
   });
 
   const app = express();
@@ -62,7 +63,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver, MessageResolver, ConversationResolver],
+      resolvers: [UserResolver, MessageResolver, ChatResolver],
       validate: false,
     }),
     context: ({ req, res }) => ({ req, res, redis }),

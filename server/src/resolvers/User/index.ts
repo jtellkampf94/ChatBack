@@ -6,7 +6,7 @@ import {
   Ctx,
   UseMiddleware,
 } from "type-graphql";
-import argon2 from "argon2";
+import bcrypt from "bcryptjs";
 
 import { MyContext } from "../../types";
 import { COOKIE_NAME } from "../../constants";
@@ -43,7 +43,7 @@ export class UserResolver {
     @Arg("options", { validate: true }) options: RegisterInput,
     @Ctx() { req }: MyContext
   ): Promise<User> {
-    const hashedPassword = await argon2.hash(options.password);
+    const hashedPassword = await bcrypt.hash(options.password, 10);
 
     const user = await User.create({
       ...options,
@@ -69,7 +69,7 @@ export class UserResolver {
 
     if (!user) throw new Error("user doesn't exist");
 
-    const isPasswordCorrect = await argon2.verify(user.password, password);
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
     if (!isPasswordCorrect) throw new Error("password incorrect");
 

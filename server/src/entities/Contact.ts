@@ -3,26 +3,31 @@ import {
   BaseEntity,
   Entity,
   PrimaryGeneratedColumn,
+  Column,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
+  ManyToOne,
+  OneToOne,
+  JoinColumn,
 } from "typeorm";
-
-import { Message } from "./Message";
-import { UserConversation } from "./UserConversation";
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
-export class Conversation extends BaseEntity {
+export class Contact extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @OneToMany(() => UserConversation, (uc) => uc.conversation)
-  userConnection: Promise<UserConversation[]>;
+  @Column()
+  userId: number;
 
-  @OneToMany(() => Message, (message) => message.conversation)
-  messages: Message[];
+  @ManyToOne(() => User, (user) => user.contacts)
+  user: User;
+
+  @OneToOne(() => User)
+  @JoinColumn()
+  contact: User;
 
   @Field(() => Date)
   @CreateDateColumn()

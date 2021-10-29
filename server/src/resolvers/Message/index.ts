@@ -12,7 +12,7 @@ import { MyContext } from "../../types";
 import { COOKIE_NAME } from "../../constants";
 import { User } from "../../entities/User";
 import { Message } from "../../entities/Message";
-import { Conversation } from "../../entities/Conversation";
+import { Chat } from "../../entities/Chat";
 
 import { isAuth } from "../../middleware/isAuth";
 
@@ -22,23 +22,21 @@ export class MessageResolver {
   @UseMiddleware(isAuth)
   createMessage(
     @Arg("text") text: string,
-    @Arg("conversationId", () => Int) conversationId: number,
+    @Arg("chatId", () => Int) chatId: number,
     @Ctx() { req }: MyContext
   ): Promise<Message> {
     return Message.create({
       text,
       userId: Number(req.session.userId),
-      conversationId,
+      chatId,
     }).save();
   }
 
   @Query(() => [Message])
   @UseMiddleware(isAuth)
-  getMessages(
-    @Arg("conversationId") conversationId: number
-  ): Promise<Message[]> {
+  getMessages(@Arg("chatId") chatId: number): Promise<Message[]> {
     return Message.find({
-      where: { conversationId },
+      where: { chatId },
       order: { createdAt: "DESC" },
     });
   }
