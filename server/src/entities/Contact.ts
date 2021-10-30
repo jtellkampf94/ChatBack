@@ -20,10 +20,13 @@ export class Contact extends BaseEntity {
   id!: number;
 
   @Column()
-  userId: number;
+  userId!: number;
 
   @ManyToOne(() => User, (user) => user.contacts)
   user: User;
+
+  @Column()
+  contactId!: number;
 
   @OneToOne(() => User)
   @JoinColumn()
