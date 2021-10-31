@@ -7,6 +7,8 @@ import {
   createHttpLink,
 } from "@apollo/client";
 
+import { Theme } from "../themes";
+
 export const createApolloClient = (headers?: Record<string, string>) => {
   const link = createHttpLink({
     uri: "http://localhost:4000/",
@@ -23,7 +25,9 @@ export const createApolloClient = (headers?: Record<string, string>) => {
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ApolloProvider client={createApolloClient()}>
-      <Component {...pageProps} />
+      <Theme>
+        <Component {...pageProps} />
+      </Theme>
     </ApolloProvider>
   );
 }

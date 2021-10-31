@@ -7,12 +7,9 @@ import {
   Int,
   UseMiddleware,
 } from "type-graphql";
-import { getConnection, getRepository } from "typeorm";
 
 import { MyContext } from "../../types";
-import { Chat } from "../../entities/Chat";
 import { isAuth } from "../../middleware/isAuth";
-import { UserChat } from "../../entities/UserChat";
 import { Contact } from "../../entities/Contact";
 
 @Resolver()
