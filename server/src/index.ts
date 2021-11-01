@@ -28,7 +28,7 @@ const main = async () => {
     database: process.env.PG_DATABASE_NAME,
     username: process.env.PG_USERNAME,
     password: process.env.PG_PASSWORD,
-    logging: true,
+    // logging: true,
     synchronize: true,
     entities: [User, Chat, Message, UserChat, Contact],
   });

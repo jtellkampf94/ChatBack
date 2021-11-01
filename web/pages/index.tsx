@@ -7,32 +7,26 @@ import { isUserLoggedIn } from "../utils/isUserLoggedIn";
 
 const Container = styled.div`
   display: flex;
+  height: 100vh;
 `;
 
 const SidebarContainer = styled.div`
-  ${({ theme }) => theme.homePageTheme.largeScreen`
-    flex: 30%;
-  `}
-
+  width: 100%;
+  height: 100%;
+  flex: 40%;
+  min-width: 330px;
+  border-right: 1px solid ${({ theme }) => theme.globalTheme.greyLineColor};
   ${({ theme }) => theme.homePageTheme.mediumScreen`
     flex: 35%;
-  `}
-
-${({ theme }) => theme.homePageTheme.smallScreen`
-    min-width: 300px;
-  `}
+  `};
 `;
 
 const ChatContainer = styled.div`
-  ${({ theme }) => theme.homePageTheme.largeScreen` flex:70%; `}
-
+  width: 100%;
+  flex: 60%;
   ${({ theme }) => theme.homePageTheme.mediumScreen`
     flex: 65%;
-  `}
-
-  ${({ theme }) => theme.homePageTheme.smallScreen`
-    min-width: 60%;
-  `}
+  `};
 `;
 
 const Home: NextPage = () => {

@@ -7,7 +7,7 @@ export const homePageTheme = {
     }
   `,
   mediumScreen: (args: TemplateStringsArray) => css`
-    @media screen and (min-width: 1025px) and (max-width: 1300px) {
+    @media screen and (min-width: 990px) {
       ${css(args)}
     }
   `,
