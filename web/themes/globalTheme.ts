@@ -6,4 +6,6 @@ export const globalTheme = {
   greyLineColor: "#e4e4e4",
   greyMessageColor: "rgba(0,0,0,0.6)",
   selectGrey: "#ebebeb",
+  chatScreenBackground: "#e5ddd5",
+  chatBoxBackground: "#f0f0f0",
 };

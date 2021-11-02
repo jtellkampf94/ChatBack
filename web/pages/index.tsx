@@ -2,12 +2,14 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import styled from "styled-components";
 
+import ChatScreen from "../components/ChatScreen";
 import Sidebar from "../components/Sidebar";
 import { isUserLoggedIn } from "../utils/isUserLoggedIn";
 
 const Container = styled.div`
   display: flex;
   height: 100vh;
+  width: 100vw;
 `;
 
 const SidebarContainer = styled.div`
@@ -21,8 +23,9 @@ const SidebarContainer = styled.div`
   `};
 `;
 
-const ChatContainer = styled.div`
+const ChatScreenContainer = styled.div`
   width: 100%;
+  height: 100%;
   flex: 60%;
   ${({ theme }) => theme.homePageTheme.mediumScreen`
     flex: 65%;
@@ -41,9 +44,9 @@ const Home: NextPage = () => {
         <SidebarContainer>
           <Sidebar />
         </SidebarContainer>
-        <ChatContainer>
-          <div>hi</div>
-        </ChatContainer>
+        <ChatScreenContainer>
+          <ChatScreen />
+        </ChatScreenContainer>
       </Container>
     </div>
   );

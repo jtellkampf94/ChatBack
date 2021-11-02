@@ -32,7 +32,10 @@ const UserAvatar = styled(Avatar)`
   }
 `;
 
-const IconsContainer = styled.div``;
+const IconsContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
 
 const Search = styled.div`
   display: flex;
