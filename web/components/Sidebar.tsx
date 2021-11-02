@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import { Avatar, IconButton, makeStyles } from "@material-ui/core";
+import { Avatar, IconButton } from "@material-ui/core";
 import ChatIcon from "@material-ui/icons/Chat";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import SearchIcon from "@material-ui/icons/Search";
 
-import Contact from "./Contact";
+import Chat from "./Chat";
 import { globalTheme } from "../themes/globalTheme";
 
 const Container = styled.div`
@@ -67,18 +67,26 @@ const SearchInput = styled.input`
   }
 `;
 
-const ContactContainer = styled.div`
+const ChatContainer = styled.div`
   width: 100%;
-  height: 100%;
+  height: calc(100vh - 120px);
   overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    width: 6px !important;
+    height: 6px !important;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+
+  &::-webkit-scrollbar-track {
+    background: hsla(0, 0%, 100%, 0.1);
+  }
 `;
 
-const useStyles = makeStyles({
-  root: { "&:hover": { backgroundColor: "transparent" } },
-});
-
 const Sidebar: React.FC = () => {
-  const iconButtonClass = useStyles();
   return (
     <Container>
       <Header>
@@ -90,10 +98,10 @@ const Sidebar: React.FC = () => {
         />
 
         <IconsContainer>
-          <IconButton className={iconButtonClass.root}>
+          <IconButton>
             <ChatIcon style={{ fill: globalTheme.iconColor }} />
           </IconButton>
-          <IconButton className={iconButtonClass.root}>
+          <IconButton>
             <MoreVertIcon style={{ fill: globalTheme.iconColor }} />
           </IconButton>
         </IconsContainer>
@@ -108,18 +116,18 @@ const Sidebar: React.FC = () => {
           <SearchInput placeholder="Search in chats" />
         </SearchBar>
       </Search>
-      <ContactContainer>
-        <Contact />
-        <Contact />
-        <Contact />
-        <Contact />
-        <Contact />
-        <Contact />
-        <Contact />
-        <Contact />
-        <Contact />
-        <Contact />
-      </ContactContainer>
+      <ChatContainer>
+        <Chat />
+        <Chat />
+        <Chat />
+        <Chat />
+        <Chat />
+        <Chat />
+        <Chat />
+        <Chat />
+        <Chat />
+        <Chat />
+      </ChatContainer>
     </Container>
   );
 };
