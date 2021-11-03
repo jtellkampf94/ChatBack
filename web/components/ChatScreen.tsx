@@ -6,6 +6,7 @@ import AddAPhotoOutlinedIcon from "@material-ui/icons/AddAPhotoOutlined";
 import SendIcon from "@material-ui/icons/Send";
 
 import { globalTheme } from "../themes/globalTheme";
+import Message from "./Message";
 
 const Container = styled.div`
   width: 100%;
@@ -107,7 +108,9 @@ const ChatScreen: React.FC = () => {
         </IconsContainer>
       </Header>
 
-      <MessagesContainer></MessagesContainer>
+      <MessagesContainer>
+        <Message read />
+      </MessagesContainer>
 
       <ChatBox>
         <AddAPhotoOutlinedIcon

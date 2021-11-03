@@ -8,4 +8,7 @@ export const globalTheme = {
   selectGrey: "#ebebeb",
   chatScreenBackground: "#e5ddd5",
   chatBoxBackground: "#f0f0f0",
+  readBlueCheck: "#4fc3f7",
+  greyCheck: "#a4a4a4",
+  messageGreen: "#dcf8c6",
 };
