@@ -12,14 +12,14 @@ const Container = styled.div`
   padding: 8px 9px;
 `;
 
-const MessageFooter = styled.span`
+const MessageFooter = styled.div`
   width: 100%;
   display: flex;
 `;
 
-const Text = styled.span``;
+const Text = styled.p``;
 
-const DateSent = styled.span`
+const DateSent = styled.p`
   font-size: 11px;
   margin-right: 5px;
   color: ${({ theme }) => theme.globalTheme.greyMessageColor};

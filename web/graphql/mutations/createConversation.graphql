@@ -1,7 +1,0 @@
-mutation CreateConversation($userIds: [Int!]!) {
-  createConversation(userIds: $userIds) {
-    id
-    createdAt
-    updatedAt
-  }
-}

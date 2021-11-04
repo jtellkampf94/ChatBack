@@ -1,0 +1,7 @@
+mutation CreateChat($userIds: [Int!]!) {
+  createChat(userIds: $userIds) {
+    id
+    createdAt
+    updatedAt
+  }
+}

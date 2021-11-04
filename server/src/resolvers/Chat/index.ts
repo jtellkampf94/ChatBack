@@ -40,7 +40,7 @@ export class ChatResolver {
 
   @Query(() => Chat)
   @UseMiddleware(isAuth)
-  async getChat(@Arg("chatId") chatId: number): Promise<Chat> {
+  async getChat(@Arg("chatId", () => Int!) chatId: number): Promise<Chat> {
     const chat = await Chat.findOne(chatId);
 
     if (!chat) throw new Error("chat not found");

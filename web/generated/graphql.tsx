@@ -16,10 +16,11 @@ export type Scalars = {
   DateTime: any;
 };
 
-export type Conversation = {
-  __typename?: 'Conversation';
+export type Chat = {
+  __typename?: 'Chat';
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
+  latestMessage: Message;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -30,7 +31,7 @@ export type LoginInput = {
 
 export type Message = {
   __typename?: 'Message';
-  conversationId: Scalars['Float'];
+  chatId: Scalars['Float'];
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   text: Scalars['String'];
@@ -40,7 +41,7 @@ export type Message = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createConversation: Conversation;
+  createChat: Chat;
   createMessage: Message;
   login: User;
   logout: Scalars['Boolean'];
@@ -48,13 +49,13 @@ export type Mutation = {
 };
 
 
-export type MutationCreateConversationArgs = {
+export type MutationCreateChatArgs = {
   userIds: Array<Scalars['Int']>;
 };
 
 
 export type MutationCreateMessageArgs = {
-  conversationId: Scalars['Int'];
+  chatId: Scalars['Int'];
   text: Scalars['String'];
 };
 
@@ -71,20 +72,20 @@ export type MutationRegisterArgs = {
 export type Query = {
   __typename?: 'Query';
   currentUser?: Maybe<User>;
-  getConversation: Conversation;
-  getConversations: Array<Conversation>;
+  getChat: Chat;
+  getChats: Array<Chat>;
   getMessages: Array<Message>;
   users: Array<User>;
 };
 
 
-export type QueryGetConversationArgs = {
-  conversationId: Scalars['Float'];
+export type QueryGetChatArgs = {
+  chatId: Scalars['Int'];
 };
 
 
 export type QueryGetMessagesArgs = {
-  conversationId: Scalars['Float'];
+  chatId: Scalars['Float'];
 };
 
 export type RegisterInput = {
@@ -102,12 +103,12 @@ export type User = {
   username: Scalars['String'];
 };
 
-export type CreateConversationMutationVariables = Exact<{
+export type CreateChatMutationVariables = Exact<{
   userIds: Array<Scalars['Int']> | Scalars['Int'];
 }>;
 
 
-export type CreateConversationMutation = { __typename?: 'Mutation', createConversation: { __typename?: 'Conversation', id: string, createdAt: any, updatedAt: any } };
+export type CreateChatMutation = { __typename?: 'Mutation', createChat: { __typename?: 'Chat', id: string, createdAt: any, updatedAt: any } };
 
 export type LoginMutationVariables = Exact<{
   options: LoginInput;
@@ -121,10 +122,12 @@ export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', id: string, email: string, username: string, updatedAt: any, createdAt: any } | null | undefined };
 
-export type GetConversationsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetChatQueryVariables = Exact<{
+  chatId: Scalars['Int'];
+}>;
 
 
-export type GetConversationsQuery = { __typename?: 'Query', getConversations: Array<{ __typename?: 'Conversation', id: string, createdAt: any, updatedAt: any }> };
+export type GetChatQuery = { __typename?: 'Query', getChat: { __typename?: 'Chat', id: string, createdAt: any, updatedAt: any } };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -132,41 +135,41 @@ export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetUsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, email: string, username: string, updatedAt: any, createdAt: any }> };
 
 
-export const CreateConversationDocument = gql`
-    mutation CreateConversation($userIds: [Int!]!) {
-  createConversation(userIds: $userIds) {
+export const CreateChatDocument = gql`
+    mutation CreateChat($userIds: [Int!]!) {
+  createChat(userIds: $userIds) {
     id
     createdAt
     updatedAt
   }
 }
     `;
-export type CreateConversationMutationFn = Apollo.MutationFunction<CreateConversationMutation, CreateConversationMutationVariables>;
+export type CreateChatMutationFn = Apollo.MutationFunction<CreateChatMutation, CreateChatMutationVariables>;
 
 /**
- * __useCreateConversationMutation__
+ * __useCreateChatMutation__
  *
- * To run a mutation, you first call `useCreateConversationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateConversationMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreateChatMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateChatMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createConversationMutation, { data, loading, error }] = useCreateConversationMutation({
+ * const [createChatMutation, { data, loading, error }] = useCreateChatMutation({
  *   variables: {
  *      userIds: // value for 'userIds'
  *   },
  * });
  */
-export function useCreateConversationMutation(baseOptions?: Apollo.MutationHookOptions<CreateConversationMutation, CreateConversationMutationVariables>) {
+export function useCreateChatMutation(baseOptions?: Apollo.MutationHookOptions<CreateChatMutation, CreateChatMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateConversationMutation, CreateConversationMutationVariables>(CreateConversationDocument, options);
+        return Apollo.useMutation<CreateChatMutation, CreateChatMutationVariables>(CreateChatDocument, options);
       }
-export type CreateConversationMutationHookResult = ReturnType<typeof useCreateConversationMutation>;
-export type CreateConversationMutationResult = Apollo.MutationResult<CreateConversationMutation>;
-export type CreateConversationMutationOptions = Apollo.BaseMutationOptions<CreateConversationMutation, CreateConversationMutationVariables>;
+export type CreateChatMutationHookResult = ReturnType<typeof useCreateChatMutation>;
+export type CreateChatMutationResult = Apollo.MutationResult<CreateChatMutation>;
+export type CreateChatMutationOptions = Apollo.BaseMutationOptions<CreateChatMutation, CreateChatMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($options: LoginInput!) {
   login(options: $options) {
@@ -242,9 +245,9 @@ export function useCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type CurrentUserQueryHookResult = ReturnType<typeof useCurrentUserQuery>;
 export type CurrentUserLazyQueryHookResult = ReturnType<typeof useCurrentUserLazyQuery>;
 export type CurrentUserQueryResult = Apollo.QueryResult<CurrentUserQuery, CurrentUserQueryVariables>;
-export const GetConversationsDocument = gql`
-    query GetConversations {
-  getConversations {
+export const GetChatDocument = gql`
+    query GetChat($chatId: Int!) {
+  getChat(chatId: $chatId) {
     id
     createdAt
     updatedAt
@@ -253,31 +256,32 @@ export const GetConversationsDocument = gql`
     `;
 
 /**
- * __useGetConversationsQuery__
+ * __useGetChatQuery__
  *
- * To run a query within a React component, call `useGetConversationsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetConversationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetChatQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetChatQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetConversationsQuery({
+ * const { data, loading, error } = useGetChatQuery({
  *   variables: {
+ *      chatId: // value for 'chatId'
  *   },
  * });
  */
-export function useGetConversationsQuery(baseOptions?: Apollo.QueryHookOptions<GetConversationsQuery, GetConversationsQueryVariables>) {
+export function useGetChatQuery(baseOptions: Apollo.QueryHookOptions<GetChatQuery, GetChatQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetConversationsQuery, GetConversationsQueryVariables>(GetConversationsDocument, options);
+        return Apollo.useQuery<GetChatQuery, GetChatQueryVariables>(GetChatDocument, options);
       }
-export function useGetConversationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetConversationsQuery, GetConversationsQueryVariables>) {
+export function useGetChatLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetChatQuery, GetChatQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetConversationsQuery, GetConversationsQueryVariables>(GetConversationsDocument, options);
+          return Apollo.useLazyQuery<GetChatQuery, GetChatQueryVariables>(GetChatDocument, options);
         }
-export type GetConversationsQueryHookResult = ReturnType<typeof useGetConversationsQuery>;
-export type GetConversationsLazyQueryHookResult = ReturnType<typeof useGetConversationsLazyQuery>;
-export type GetConversationsQueryResult = Apollo.QueryResult<GetConversationsQuery, GetConversationsQueryVariables>;
+export type GetChatQueryHookResult = ReturnType<typeof useGetChatQuery>;
+export type GetChatLazyQueryHookResult = ReturnType<typeof useGetChatLazyQuery>;
+export type GetChatQueryResult = Apollo.QueryResult<GetChatQuery, GetChatQueryVariables>;
 export const GetUsersDocument = gql`
     query GetUsers {
   users {
