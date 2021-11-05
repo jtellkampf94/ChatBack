@@ -5,33 +5,33 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  PrimaryColumn,
   ManyToOne,
-  JoinColumn,
+  Column,
 } from "typeorm";
+
 import { Chat } from "./Chat";
 import { User } from "./User";
 
 @ObjectType()
 @Entity()
-export class UserChat extends BaseEntity {
+export class ChatMembers extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @PrimaryColumn()
-  userId: number;
+  @ManyToOne(() => Chat, (chat) => chat)
+  chat: Chat;
 
-  @PrimaryColumn()
+  @Field()
+  @Column()
   chatId: number;
 
-  @ManyToOne(() => User, (u) => u.chatConnection, { primary: true })
-  @JoinColumn({ name: "userId" })
-  user: Promise<User>;
+  @ManyToOne(() => User, (user) => user)
+  user: User;
 
-  @ManyToOne(() => Chat, (c) => c.userConnection, { primary: true })
-  @JoinColumn({ name: "chatId" })
-  chat: Promise<Chat>;
+  @Field()
+  @Column()
+  userId: number;
 
   @Field(() => Date)
   @CreateDateColumn()

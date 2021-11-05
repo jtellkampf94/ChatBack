@@ -8,8 +8,8 @@ import {
   OneToMany,
 } from "typeorm";
 
+import { ChatMembers } from "./ChatMembers";
 import { Message } from "./Message";
-import { UserChat } from "./UserChat";
 
 @ObjectType()
 @Entity()
@@ -18,11 +18,11 @@ export class Chat extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @OneToMany(() => UserChat, (uc) => uc.chat)
-  userConnection: Promise<UserChat[]>;
-
   @OneToMany(() => Message, (message) => message.chat)
   messages: Message[];
+
+  @OneToMany(() => ChatMembers, (chatMembers) => chatMembers.chat)
+  chatMembers: ChatMembers[];
 
   @Field(() => Message)
   latestMessage: Message;
