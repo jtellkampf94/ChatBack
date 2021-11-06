@@ -12,8 +12,7 @@ import cors from "cors";
 import { User } from "./entities/User";
 import { Message } from "./entities/Message";
 import { Chat } from "./entities/Chat";
-import { ChatMembers } from "./entities/ChatMembers";
-import { Contact } from "./entities/Contact";
+import { ChatMember } from "./entities/ChatMember";
 import { UserResolver } from "./resolvers/User";
 
 import { COOKIE_NAME } from "./constants";
@@ -28,7 +27,7 @@ const main = async () => {
     password: process.env.PG_PASSWORD,
     // logging: true,
     synchronize: true,
-    entities: [User, Chat, Message, ChatMembers, Contact],
+    entities: [User, Chat, Message, ChatMember],
   });
 
   const app = express();

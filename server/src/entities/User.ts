@@ -8,8 +8,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from "typeorm";
-import { Contact } from "./Contact";
-import { UserChat } from "./UserChat";
+import { ChatMember } from "./ChatMember";
 
 @ObjectType()
 @Entity()
@@ -29,11 +28,8 @@ export class User extends BaseEntity {
   @Column()
   password!: string;
 
-  @OneToMany(() => UserChat, (uc) => uc.user)
-  chatConnection: Promise<UserChat[]>;
-
-  @OneToMany(() => Contact, (contact) => contact.user)
-  contacts: Contact[];
+  @OneToMany(() => ChatMember, (chatMember) => chatMember.user)
+  chatMembers: ChatMember[];
 
   @Field(() => Date)
   @CreateDateColumn()

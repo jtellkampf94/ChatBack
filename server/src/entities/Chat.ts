@@ -8,7 +8,7 @@ import {
   OneToMany,
 } from "typeorm";
 
-import { ChatMembers } from "./ChatMembers";
+import { ChatMember } from "./ChatMember";
 import { Message } from "./Message";
 
 @ObjectType()
@@ -21,8 +21,8 @@ export class Chat extends BaseEntity {
   @OneToMany(() => Message, (message) => message.chat)
   messages: Message[];
 
-  @OneToMany(() => ChatMembers, (chatMembers) => chatMembers.chat)
-  chatMembers: ChatMembers[];
+  @OneToMany(() => ChatMember, (chatMember) => chatMember.chat)
+  chatMembers: ChatMember[];
 
   @Field(() => Message)
   latestMessage: Message;

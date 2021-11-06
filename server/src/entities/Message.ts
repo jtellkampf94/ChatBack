@@ -36,6 +36,10 @@ export class Message extends BaseEntity {
   @ManyToOne(() => Chat, (chat) => chat.messages)
   chat!: Chat;
 
+  @Field()
+  @Column()
+  imageUrl: string;
+
   @Field(() => Date)
   @CreateDateColumn()
   createdAt: Date;
