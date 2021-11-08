@@ -1,41 +1,34 @@
-import { ObjectType, Field, ID } from "type-graphql";
-import {
-  BaseEntity,
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-} from "typeorm";
-import { ChatMember } from "./ChatMember";
+import { ObjectType, Field } from "type-graphql";
+import { Entity, Column } from "typeorm";
+import { Model } from "./Model";
 
 @ObjectType()
 @Entity()
-export class User extends BaseEntity {
-  @Field(() => ID)
-  @PrimaryGeneratedColumn()
-  id!: number;
+export class User extends Model {
+  @Field()
+  @Column({ unique: true })
+  username: string;
 
   @Field()
   @Column({ unique: true })
-  username!: string;
-
-  @Field()
-  @Column({ unique: true })
-  email!: string;
+  email: string;
 
   @Column()
-  password!: string;
+  password: string;
 
-  @OneToMany(() => ChatMember, (chatMember) => chatMember.user)
-  chatMembers: ChatMember[];
+  @Field()
+  @Column()
+  firstName: string;
 
-  @Field(() => Date)
-  @CreateDateColumn()
-  createdAt: Date;
+  @Field()
+  @Column()
+  lastName: string;
 
-  @Field(() => Date)
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @Field({ nullable: true })
+  @Column({ nullable: true, default: null })
+  profilePictureUrl: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true, default: null })
+  about: string;
 }

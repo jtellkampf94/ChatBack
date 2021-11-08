@@ -1,22 +1,20 @@
-import { ObjectType, Field, ID } from "type-graphql";
-import {
-  BaseEntity,
-  Entity,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-} from "typeorm";
+import { ObjectType, Field } from "type-graphql";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
 
+import { Model } from "./Model";
 import { ChatMember } from "./ChatMember";
 import { Message } from "./Message";
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
-export class Chat extends BaseEntity {
-  @Field(() => ID)
-  @PrimaryGeneratedColumn()
-  id!: number;
+export class Chat extends Model {
+  @OneToOne(() => User)
+  @JoinColumn()
+  createdBy: User;
+
+  @Column()
+  createdById: number;
 
   @OneToMany(() => Message, (message) => message.chat)
   messages: Message[];
@@ -26,12 +24,4 @@ export class Chat extends BaseEntity {
 
   @Field(() => Message)
   latestMessage: Message;
-
-  @Field(() => Date)
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @Field(() => Date)
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

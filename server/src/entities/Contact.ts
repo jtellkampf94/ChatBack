@@ -1,42 +1,16 @@
-import { ObjectType, Field, ID } from "type-graphql";
-import {
-  BaseEntity,
-  Entity,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  Column,
-} from "typeorm";
+import { ObjectType, Field } from "type-graphql";
+import { Entity, ManyToOne, Column, OneToOne, JoinColumn } from "typeorm";
 
 import { User } from "./User";
+import { Model } from "./Model";
 
 @ObjectType()
 @Entity()
-export class Contact extends BaseEntity {
-  @Field(() => ID)
-  @PrimaryGeneratedColumn()
-  id!: number;
-
-  @Field()
-  @Column()
-  contactId!: number;
-
-  @ManyToOne(() => User, (user) => user.id)
+export class Contact extends Model {
+  @ManyToOne(() => User)
   contact: User;
 
-  @Field()
-  @Column()
-  userId!: number;
-
-  @ManyToOne(() => User, (user) => user.id)
+  @OneToOne(() => User)
+  @JoinColumn()
   user: User;
-
-  @Field(() => Date)
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @Field(() => Date)
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

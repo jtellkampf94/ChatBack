@@ -18,6 +18,21 @@ export class RegisterInput {
   email!: string;
 
   @Field()
+  @Length(1, 25, {
+    message: "first name must be between 1 and 25 characters long",
+  })
+  firstName!: string;
+
+  @Field()
+  @Length(1, 25, {
+    message: "last name must be between 1 and 25 characters long",
+  })
+  lastName!: string;
+
+  @Field({ nullable: true })
+  profilePictureUrl: string;
+
+  @Field()
   @Length(5, 25, {
     message: "password must be between 5 and 25 characters long",
   })
