@@ -52,6 +52,6 @@ const Home: NextPage = () => {
   );
 };
 
-export const getServerSideProps = isUserLoggedIn;
+// export const getServerSideProps = isUserLoggedIn;
 
 export default Home;

@@ -26,7 +26,7 @@ export class Message extends Model {
   @ManyToOne(() => Chat)
   chat!: Chat;
 
-  @Field()
-  @Column()
+  @Field({ nullable: true })
+  @Column({ nullable: true, default: null })
   imageUrl: string;
 }

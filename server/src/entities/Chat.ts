@@ -13,6 +13,7 @@ export class Chat extends Model {
   @JoinColumn()
   createdBy: User;
 
+  @Field()
   @Column()
   createdById: number;
 

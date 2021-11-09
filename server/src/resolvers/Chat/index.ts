@@ -18,7 +18,7 @@ export class ChatResolver {
     }).save();
 
     userIds.forEach(async (userId) => {
-      await ChatMember.create({ userId, chatId: chat.id });
+      await ChatMember.create({ userId, chatId: chat.id }).save();
     });
 
     return chat;

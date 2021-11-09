@@ -11,4 +11,6 @@ export const globalTheme = {
   readBlueCheck: "#4fc3f7",
   greyCheck: "#a4a4a4",
   messageGreen: "#dcf8c6",
+  registerBackgroundGrey: "#f8f9fa",
+  white: "#fff",
 };
