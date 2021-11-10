@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import WhatsAppIcon from "@material-ui/icons/WhatsApp";
+import TextField from "@material-ui/core/TextField";
 
 const Container = styled.div`
   display: flex;
@@ -32,13 +33,6 @@ const Register: React.FC = () => {
   return (
     <Container>
       <RegisterBox>
-        {/* <img
-          src="http://assets.stickpng.com/images/580b57fcd9996e24bc43c543.png"
-          alt=""
-          style={{ marginBottom: 10 }}
-          height={50}
-          width={50}
-        /> */}
         <WhatsAppIcon
           style={{
             width: "50px",
@@ -47,22 +41,11 @@ const Register: React.FC = () => {
           }}
         />
         <Title>Register</Title>
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus
-          perferendis expedita dolor! Exercitationem beatae necessitatibus ipsam
-          distinctio. Autem, nostrum quis illo distinctio saepe dolorum repellat
-          sit nobis officia soluta exercitationem? Cum obcaecati dolores
-          excepturi nobis, aut eaque expedita ex laboriosam quasi reprehenderit
-          quo reiciendis possimus. Illum necessitatibus amet officiis eaque
-          obcaecati quis ea! Est possimus quod alias enim itaque laboriosam!
-          autem ab repellendus sequi dolore pariatur? Iure provident quibusdam,
-          nulla minima animi fugit doloribus? Molestiae autem soluta impedit eos
-          reprehenderit pariatur officia cupiditate aliquid et, commodi iusto,
-          ullam, facilis totam ratione eius? Recusandae suscipit saepe neque
-          voluptates iusto eum autem tempora voluptatem animi libero. Rem
-          corporis commodi eaque quaerat odit voluptatum sed voluptas explicabo
-          nobis at? Inventore tenetur ut iusto dicta, aut autem
-        </p>
+        <input name="firstName" placeholder="First Name" type="text" />
+        <input name="lastName" placeholder="Last Name" type="text" />
+        <input type="email" placeholder="Email" name="email" />
+        <input name="username" placeholder="Username" type="text" />
+        <input name="password" placeholder="password" type="password" />
       </RegisterBox>
     </Container>
   );
