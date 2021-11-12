@@ -1,14 +1,13 @@
+import { Fragment, useState, FormEvent } from "react";
 import styled from "styled-components";
 import WhatsAppIcon from "@material-ui/icons/WhatsApp";
-import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import Avatar from "@material-ui/core/Avatar";
 import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 import NavigateBeforeIcon from "@material-ui/icons/NavigateBefore";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import SendIcon from "@material-ui/icons/Send";
 
-import { useState, FormEvent, Fragment } from "react";
+import Field from "../components/Field";
 
 const Container = styled.div`
   display: flex;
@@ -45,11 +44,6 @@ const Form = styled.form`
   flex-direction: column;
 `;
 
-const Box = styled.div`
-  margin-top: 15px;
-  text-align: center;
-`;
-
 const ButtonContainer = styled.div`
   display: flex;
   flex-direction: row-reverse;
@@ -81,28 +75,20 @@ const Register: React.FC = () => {
       default:
         return (
           <Fragment>
-            <Box>
-              <TextField
-                onChange={(e) => setFirstName(e.target.value)}
-                value={firstName}
-                name="firstName"
-                placeholder="First Name"
-                label="First Name"
-                variant="outlined"
-                type="text"
-              />
-            </Box>
-            <Box>
-              <TextField
-                onChange={(e) => setLastName(e.target.value)}
-                value={lastName}
-                name="lastName"
-                placeholder="Last Name"
-                label="Last Name"
-                variant="outlined"
-                type="text"
-              />
-            </Box>
+            <Field
+              setState={setFirstName}
+              value={firstName}
+              name="firstName"
+              placeholder="First Name"
+              label="First Name"
+            />
+            <Field
+              setState={setLastName}
+              value={lastName}
+              name="lastName"
+              placeholder="Last Name"
+              label="Last Name"
+            />
             <ButtonContainer>
               <Button
                 variant="outlined"
@@ -118,39 +104,29 @@ const Register: React.FC = () => {
       case 2:
         return (
           <Fragment>
-            <Box>
-              <TextField
-                onChange={(e) => setEmail(e.target.value)}
-                value={email}
-                type="email"
-                placeholder="Email"
-                label="Email"
-                variant="outlined"
-                name="email"
-              />
-            </Box>
-            <Box>
-              <TextField
-                onChange={(e) => setUsername(e.target.value)}
-                value={username}
-                name="username"
-                placeholder="Username"
-                label="Username"
-                variant="outlined"
-                type="text"
-              />
-            </Box>
-            <Box>
-              <TextField
-                onChange={(e) => setPassword(e.target.value)}
-                value={password}
-                name="password"
-                placeholder="Password"
-                label="Password"
-                variant="outlined"
-                type="password"
-              />
-            </Box>
+            <Field
+              setState={setEmail}
+              value={email}
+              type="email"
+              placeholder="Email"
+              label="Email"
+              name="email"
+            />
+            <Field
+              setState={setUsername}
+              value={username}
+              name="username"
+              placeholder="Username"
+              label="Username"
+            />
+            <Field
+              setState={setPassword}
+              value={password}
+              name="password"
+              placeholder="Password"
+              label="Password"
+              type="password"
+            />
             <ButtonContainer>
               <Button
                 variant="outlined"
@@ -174,38 +150,35 @@ const Register: React.FC = () => {
       case 3:
         return (
           <Fragment>
-            <Box>
-              <TextField
-                variant="outlined"
-                id="outlined-multiline-flexible"
-                label="About"
-                name="about"
-                placeholder="Tell us about yourself..."
-                multiline
-                maxRows={4}
-                value={about}
-                onChange={(e) => setAbout(e.target.value)}
+            <Field
+              id="outlined-multiline-flexible"
+              label="About"
+              name="about"
+              placeholder="Tell us about yourself..."
+              multiline
+              maxRows={4}
+              value={about}
+              setState={setAbout}
+            />
+
+            <label htmlFor="contained-button-file">
+              <Input
+                accept="image/*"
+                id="contained-button-file"
+                multiple
+                type="file"
+                // onChange={(e) => setProfilePicture(e.target.files)}
+                // value={profilePicture}
               />
-              <Box>
-                <label htmlFor="contained-button-file">
-                  <Input
-                    accept="image/*"
-                    id="contained-button-file"
-                    multiple
-                    type="file"
-                    // onChange={(e) => setProfilePicture(e.target.files)}
-                    // value={profilePicture}
-                  />
-                  <Button
-                    startIcon={<AccountCircleIcon />}
-                    variant="outlined"
-                    component="span"
-                  >
-                    Upload
-                  </Button>
-                </label>
-              </Box>
-            </Box>
+              <Button
+                startIcon={<AccountCircleIcon />}
+                variant="outlined"
+                component="span"
+              >
+                Upload
+              </Button>
+            </label>
+
             <ButtonContainer>
               <Button
                 onClick={() => setPage(4)}
