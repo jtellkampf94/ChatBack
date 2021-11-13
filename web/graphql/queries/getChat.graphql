@@ -1,7 +1,0 @@
-query GetChat($chatId: Int!) {
-  getChat(chatId: $chatId) {
-    id
-    createdAt
-    updatedAt
-  }
-}
