@@ -1,23 +1,22 @@
 import { Field, ObjectType } from "type-graphql";
-import { Column, Entity, ManyToOne } from "typeorm";
+import { BaseEntity, Entity, ManyToOne, PrimaryColumn } from "typeorm";
 
 import { User } from "./User";
-import { Model } from "./Model";
 
 @ObjectType()
 @Entity()
-export class Contact extends Model {
+export class Contact extends BaseEntity {
   @ManyToOne(() => User)
   contact: User;
 
   @Field()
-  @Column()
+  @PrimaryColumn()
   contactId: number;
 
   @ManyToOne(() => User)
   user: User;
 
   @Field()
-  @Column()
+  @PrimaryColumn()
   userId: number;
 }

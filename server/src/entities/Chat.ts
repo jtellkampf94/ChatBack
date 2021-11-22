@@ -1,5 +1,5 @@
 import { ObjectType, Field } from "type-graphql";
-import { Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
+import { Column, Entity, OneToMany, ManyToOne } from "typeorm";
 
 import { Model } from "./Model";
 import { ChatMember } from "./ChatMember";
@@ -9,8 +9,7 @@ import { User } from "./User";
 @ObjectType()
 @Entity()
 export class Chat extends Model {
-  @OneToOne(() => User)
-  @JoinColumn()
+  @ManyToOne(() => User)
   createdBy: User;
 
   @Field()

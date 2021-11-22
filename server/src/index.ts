@@ -18,6 +18,7 @@ import { Contact } from "./entities/Contact";
 import { UserResolver } from "./resolvers/User";
 import { MessageResolver } from "./resolvers/Message";
 import { ChatResolver } from "./resolvers/Chat";
+import { ContactResolver } from "./resolvers/Contact";
 
 import { COOKIE_NAME } from "./constants";
 
@@ -29,7 +30,7 @@ const main = async () => {
     database: process.env.PG_DATABASE_NAME,
     username: process.env.PG_USERNAME,
     password: process.env.PG_PASSWORD,
-    // logging: true,
+    logging: true,
     synchronize: true,
     entities: [User, Chat, Message, ChatMember, Contact],
   });
@@ -64,7 +65,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver, MessageResolver, ChatResolver],
+      resolvers: [UserResolver, MessageResolver, ChatResolver, ContactResolver],
       validate: false,
     }),
     context: ({ req, res }) => ({ req, res, redis }),

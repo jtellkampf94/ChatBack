@@ -5,6 +5,7 @@ import {
   Arg,
   UseMiddleware,
   Query,
+  Int,
 } from "type-graphql";
 
 import { isAuth } from "../../middleware/isAuth";
@@ -16,7 +17,7 @@ export class ContactResolver {
   @Mutation(() => Contact)
   @UseMiddleware(isAuth)
   createContact(
-    @Arg("contactId") contactId: number,
+    @Arg("contactId", () => Int) contactId: number,
     @Ctx() { req }: MyContext
   ): Promise<Contact> {
     return Contact.create({

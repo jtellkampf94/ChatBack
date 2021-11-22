@@ -1,4 +1,13 @@
-import { Resolver, Mutation, UseMiddleware, Ctx, Arg, Int } from "type-graphql";
+import {
+  Resolver,
+  Mutation,
+  UseMiddleware,
+  Ctx,
+  Arg,
+  Int,
+  Query,
+} from "type-graphql";
+import { getConnection } from "typeorm";
 
 import { isAuth } from "../../middleware/isAuth";
 import { MyContext } from "../../types";
@@ -13,8 +22,9 @@ export class ChatResolver {
     @Arg("userIds", () => [Int!]!) userIds: [number],
     @Ctx() { req }: MyContext
   ): Promise<Chat> {
+    const createdById = Number(req.session.userId);
     const chat = await Chat.create({
-      createdById: Number(req.session.userId),
+      createdById,
     }).save();
 
     userIds.forEach(async (userId) => {
@@ -22,5 +32,20 @@ export class ChatResolver {
     });
 
     return chat;
+  }
+
+  @Query(() => [Chat])
+  @UseMiddleware(isAuth)
+  getChats(@Ctx() { req }: MyContext): Promise<Chat[]> {
+    const userId = Number(req.session.userId);
+    return getConnection()
+      .createQueryBuilder()
+      .select("chat")
+      .from(Chat, "chat")
+      .leftJoin("chat.chatMembers", "chatMember")
+      .where("chat.createdById = :createdById", { createdById: userId })
+      .orWhere("chatMember.userId = :userId", { userId })
+      .orderBy("chat.updatedAt", "DESC")
+      .getMany();
   }
 }
