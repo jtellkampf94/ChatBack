@@ -1,5 +1,5 @@
-import { ObjectType, Field } from "type-graphql";
-import { Entity, ManyToOne, Column, OneToOne, JoinColumn } from "typeorm";
+import { Field, ObjectType } from "type-graphql";
+import { Column, Entity, ManyToOne } from "typeorm";
 
 import { User } from "./User";
 import { Model } from "./Model";
@@ -10,7 +10,14 @@ export class Contact extends Model {
   @ManyToOne(() => User)
   contact: User;
 
-  @OneToOne(() => User)
-  @JoinColumn()
+  @Field()
+  @Column()
+  contactId: number;
+
+  @ManyToOne(() => User)
   user: User;
+
+  @Field()
+  @Column()
+  userId: number;
 }
