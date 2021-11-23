@@ -48,4 +48,35 @@ export class ChatResolver {
       .orderBy("chat.updatedAt", "DESC")
       .getMany();
   }
+
+  @Query(() => Chat)
+  @UseMiddleware(isAuth)
+  async getChat(
+    @Arg("chatId", () => Int) chatId: number,
+    @Ctx() { req }: MyContext
+  ): Promise<Chat> {
+    const chat = await Chat.findOne({
+      where: { id: chatId },
+      relations: ["chatMembers", "messages"],
+    });
+
+    if (!chat) throw new Error("no chat has this Id");
+
+    let isChatMember = false;
+
+    const userId = Number(req.session.userId);
+
+    for (let member of chat.chatMembers) {
+      if (member.userId === userId) {
+        isChatMember = true;
+        break;
+      }
+    }
+
+    if (chat.createdById !== userId || !isChatMember) {
+      throw new Error("you are not authorized to view chat");
+    }
+
+    return chat;
+  }
 }
