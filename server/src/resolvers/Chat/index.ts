@@ -79,4 +79,25 @@ export class ChatResolver {
 
     return chat;
   }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async exitChat(
+    @Arg("chatId", () => Int) chatId: number,
+    @Ctx() { req }: MyContext
+  ) {
+    const userId = Number(req.session.userId);
+
+    const chat = await Chat.findOne(chatId);
+
+    if (!chat) throw new Error("chat does not exist");
+
+    const chatMember = await ChatMember.findOne({ chatId, userId });
+
+    if (!chatMember) throw new Error("unauthorized");
+
+    await chatMember.remove();
+
+    return true;
+  }
 }

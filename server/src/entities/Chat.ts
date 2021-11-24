@@ -19,7 +19,9 @@ export class Chat extends Model {
   @OneToMany(() => Message, (message) => message.chat)
   messages: Message[];
 
-  @OneToMany(() => ChatMember, (chatMember) => chatMember.chat)
+  @OneToMany(() => ChatMember, (chatMember) => chatMember.chat, {
+    onDelete: "CASCADE",
+  })
   chatMembers: ChatMember[];
 
   @Field(() => Message)
