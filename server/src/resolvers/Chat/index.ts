@@ -6,6 +6,8 @@ import {
   Arg,
   Int,
   Query,
+  FieldResolver,
+  Root,
 } from "type-graphql";
 import { getConnection } from "typeorm";
 
@@ -13,9 +15,37 @@ import { isAuth } from "../../middleware/isAuth";
 import { MyContext } from "../../types";
 import { Chat } from "../../entities/Chat";
 import { ChatMember } from "../../entities/ChatMember";
+import { Message } from "../../entities/Message";
+import { User } from "../../entities/User";
 
-@Resolver()
+@Resolver((of) => Chat)
 export class ChatResolver {
+  @FieldResolver(() => Message, { nullable: true })
+  async latestMessage(@Root() chat: Chat): Promise<Message | null> {
+    const message = await Message.findOne({
+      where: { chatId: chat.id },
+      order: { createdAt: "DESC" },
+    });
+
+    if (!message) return null;
+
+    return message;
+  }
+
+  @FieldResolver(() => [User])
+  async members(@Root() chat: Chat): Promise<User[]> {
+    let members: User[] = [];
+
+    const chatMembers = await ChatMember.find({ where: { chatId: chat.id } });
+
+    for (let member of chatMembers) {
+      const user = await User.findOne(member.userId);
+      if (user) members.push(user);
+    }
+
+    return members;
+  }
+
   @Mutation(() => Chat)
   @UseMiddleware(isAuth)
   async createChat(
@@ -26,6 +56,8 @@ export class ChatResolver {
     const chat = await Chat.create({
       createdById,
     }).save();
+
+    userIds.push(createdById);
 
     userIds.forEach(async (userId) => {
       await ChatMember.create({ userId, chatId: chat.id }).save();
