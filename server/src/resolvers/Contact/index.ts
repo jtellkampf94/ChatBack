@@ -11,6 +11,7 @@ import {
 import { isAuth } from "../../middleware/isAuth";
 import { MyContext } from "../../types";
 import { Contact } from "../../entities/Contact";
+import { User } from "../../entities/User";
 
 @Resolver()
 export class ContactResolver {
@@ -26,9 +27,18 @@ export class ContactResolver {
     }).save();
   }
 
-  @Query(() => [Contact])
+  @Query(() => [User])
   @UseMiddleware(isAuth)
-  getContacts(@Ctx() { req }: MyContext): Promise<Contact[]> {
-    return Contact.find({ contactId: Number(req.session.userId) });
+  async getContacts(@Ctx() { req }: MyContext): Promise<User[]> {
+    const contactIds = await Contact.find({
+      where: { userId: Number(req.session.userId) },
+      relations: ["contact"],
+    });
+
+    if (contactIds.length === 0) return [];
+
+    const contacts = contactIds.map((contact) => contact.contact);
+
+    return contacts;
   }
 }

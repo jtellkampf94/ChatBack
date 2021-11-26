@@ -59,9 +59,9 @@ export class ChatResolver {
 
     userIds.push(createdById);
 
-    userIds.forEach(async (userId) => {
+    for (let userId of userIds) {
       await ChatMember.create({ userId, chatId: chat.id }).save();
-    });
+    }
 
     return chat;
   }
