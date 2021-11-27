@@ -41,4 +41,21 @@ export class ContactResolver {
 
     return contacts;
   }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async deleteContact(
+    @Arg("contactId", () => Int) contactId: number,
+    @Ctx() { req }: MyContext
+  ): Promise<boolean> {
+    const userId = Number(req.session.userId);
+
+    const contact = await Contact.findOne({ userId, contactId });
+
+    if (!contact) throw new Error("Contact not found");
+
+    await contact.remove();
+
+    return true;
+  }
 }
