@@ -1,0 +1,20 @@
+query GetChats {
+  getChats {
+    id
+    createdById
+    groupName
+    groupAvatarUrl
+    latestMessage {
+      text
+      createdAt
+      userId
+    }
+    members {
+      id
+      firstName
+      lastName
+      username
+      profilePictureUrl
+    }
+  }
+}

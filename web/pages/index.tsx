@@ -5,6 +5,7 @@ import styled from "styled-components";
 import ChatScreen from "../components/ChatScreen";
 import Sidebar from "../components/Sidebar";
 import { isUserLoggedIn } from "../utils/isUserLoggedIn";
+import { User } from "../generated/graphql";
 
 const Container = styled.div`
   display: flex;
@@ -32,7 +33,11 @@ const ChatScreenContainer = styled.div`
   `};
 `;
 
-const Home: NextPage = () => {
+interface HomePageProps {
+  currentUser: User;
+}
+
+const Home: NextPage<HomePageProps> = ({ currentUser }) => {
   return (
     <div>
       <Head>
@@ -42,7 +47,7 @@ const Home: NextPage = () => {
       </Head>
       <Container>
         <SidebarContainer>
-          <Sidebar />
+          <Sidebar userId={Number(currentUser.id)} />
         </SidebarContainer>
         <ChatScreenContainer>
           <ChatScreen />
@@ -52,6 +57,6 @@ const Home: NextPage = () => {
   );
 };
 
-// export const getServerSideProps = isUserLoggedIn;
+export const getServerSideProps = isUserLoggedIn;
 
 export default Home;

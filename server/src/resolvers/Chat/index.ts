@@ -50,11 +50,13 @@ export class ChatResolver {
   @UseMiddleware(isAuth)
   async createChat(
     @Arg("userIds", () => [Int!]!) userIds: [number],
+    @Arg("groupName", { nullable: true }) groupName: string,
     @Ctx() { req }: MyContext
   ): Promise<Chat> {
     const createdById = Number(req.session.userId);
     const chat = await Chat.create({
       createdById,
+      groupName,
     }).save();
 
     userIds.push(createdById);
@@ -128,7 +130,8 @@ export class ChatResolver {
 
     if (!chatMember) throw new Error("unauthorized");
 
-    await chatMember.remove();
+    chatMember.isActive = false;
+    await chatMember.save();
 
     return true;
   }

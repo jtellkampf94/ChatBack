@@ -6,6 +6,7 @@ import SearchIcon from "@material-ui/icons/Search";
 
 import Chat from "./Chat";
 import { globalTheme } from "../themes/globalTheme";
+import { useGetChatsQuery } from "../generated/graphql";
 
 const Container = styled.div`
   width: 100%;
@@ -89,7 +90,12 @@ const ChatContainer = styled.div`
   }
 `;
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  userId: number;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ userId }) => {
+  const { error, loading, data } = useGetChatsQuery();
   return (
     <Container>
       <Header>
@@ -120,16 +126,9 @@ const Sidebar: React.FC = () => {
         </SearchBar>
       </Search>
       <ChatContainer>
-        <Chat />
-        <Chat />
-        <Chat />
-        <Chat />
-        <Chat />
-        <Chat />
-        <Chat />
-        <Chat />
-        <Chat />
-        <Chat />
+        {data?.getChats.map((chat) => (
+          <Chat chat={chat} userId={userId} />
+        ))}
       </ChatContainer>
     </Container>
   );

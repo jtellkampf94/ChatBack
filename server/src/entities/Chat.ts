@@ -25,6 +25,14 @@ export class Chat extends Model {
   @Field(() => [User])
   members: User[];
 
+  @Field({ nullable: true })
+  @Column({ nullable: true, default: null })
+  groupName: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true, default: null })
+  groupAvatarUrl: string;
+
   @Field(() => Message, { nullable: true })
   latestMessage: Message;
 }

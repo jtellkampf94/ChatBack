@@ -40,6 +40,8 @@ export const isUserLoggedIn: GetServerSideProps = async ({
   }
 
   return {
-    props: {},
+    props: {
+      currentUser: result.data.currentUser
+    },
   };
 };

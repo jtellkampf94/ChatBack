@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { Avatar } from "@material-ui/core";
 
+import { GetChatsQuery } from "../generated/graphql";
+
 const Container = styled.div`
   width: 100%;
   height: 77px;
@@ -42,15 +44,25 @@ const TimeOfLastMessage = styled.div`
   font-weight: 300;
 `;
 
-const Chat: React.FC = () => {
+interface ChatProps {
+  chat: GetChatsQuery["getChats"][0];
+  userId: number;
+}
+
+const Chat: React.FC<ChatProps> = ({ chat, userId }) => {
+  const isGroupChat = chat.members.length > 2;
+  const otherUser = chat.members.filter(
+    (member) => Number(member.id) !== userId
+  );
+
   return (
     <Container>
       <Avatar style={{ width: "52px", height: "52px" }} />
       <TextContainer>
-        <Name>Jonathan Tellkampf</Name>
-        <LastMessage>Tant que je puis</LastMessage>
+        <Name>{isGroupChat ? chat.groupName : otherUser[0].username}</Name>
+        <LastMessage>{chat.latestMessage?.text}</LastMessage>
       </TextContainer>
-      <TimeOfLastMessage>12:33</TimeOfLastMessage>
+      <TimeOfLastMessage>{chat.latestMessage?.createdAt}</TimeOfLastMessage>
     </Container>
   );
 };

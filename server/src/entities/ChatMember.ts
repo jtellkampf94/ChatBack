@@ -21,4 +21,8 @@ export class ChatMember extends Model {
   @Field()
   @Column()
   userId!: number;
+
+  @Field()
+  @Column({ default: true })
+  isActive!: boolean;
 }
