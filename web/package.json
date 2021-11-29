@@ -15,11 +15,13 @@
     "@material-ui/icons": "^4.11.2",
     "better-react-spinkit": "^2.0.4",
     "graphql": "^15.6.1",
+    "moment": "^2.29.1",
     "next": "11.1.2",
     "next-with-apollo": "^5.1.1",
     "react": "17.0.2",
     "react-apollo": "^3.1.5",
     "react-dom": "17.0.2",
+    "react-moment": "^1.1.1",
     "styled-components": "^5.3.1"
   },
   "devDependencies": {

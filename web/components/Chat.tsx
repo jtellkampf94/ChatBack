@@ -1,7 +1,10 @@
 import styled from "styled-components";
 import { Avatar } from "@material-ui/core";
+import GroupIcon from "@material-ui/icons/Group";
+import Moment from "react-moment";
 
 import { GetChatsQuery } from "../generated/graphql";
+import { isSameDay, getDifferenceInDays } from "../utils/dateFunctions";
 
 const Container = styled.div`
   width: 100%;
@@ -37,11 +40,14 @@ const LastMessage = styled.p`
 `;
 
 const TimeOfLastMessage = styled.div`
+  display: flex;
+  justify-content: flex-end;
   margin-top: 10px;
   align-self: start;
   font-size: 12px;
   color: ${({ theme }) => theme.globalTheme.greyMessageColor};
   font-weight: 300;
+  width: 75px;
 `;
 
 interface ChatProps {
@@ -54,15 +60,39 @@ const Chat: React.FC<ChatProps> = ({ chat, userId }) => {
   const otherUser = chat.members.filter(
     (member) => Number(member.id) !== userId
   );
+  const nowDate = new Date();
+  const latestMessageDate = new Date(chat.latestMessage?.createdAt);
+  let dateFormat;
+
+  if (isSameDay(nowDate, latestMessageDate)) {
+    dateFormat = (
+      <Moment format="HH:mm">{chat.latestMessage?.createdAt}</Moment>
+    );
+  } else if (
+    getDifferenceInDays(nowDate, latestMessageDate) < 1 &&
+    nowDate.getDay() !== latestMessageDate.getDay()
+  ) {
+    dateFormat = "Yesterday";
+  } else {
+    dateFormat = (
+      <Moment format="DD-MM-YYYY">{chat.latestMessage?.createdAt}</Moment>
+    );
+  }
 
   return (
     <Container>
-      <Avatar style={{ width: "52px", height: "52px" }} />
+      {isGroupChat ? (
+        <Avatar style={{ width: "52px", height: "52px" }}>
+          <GroupIcon style={{ width: "40px", height: "40px" }} />
+        </Avatar>
+      ) : (
+        <Avatar style={{ width: "52px", height: "52px" }} />
+      )}
       <TextContainer>
         <Name>{isGroupChat ? chat.groupName : otherUser[0].username}</Name>
         <LastMessage>{chat.latestMessage?.text}</LastMessage>
       </TextContainer>
-      <TimeOfLastMessage>{chat.latestMessage?.createdAt}</TimeOfLastMessage>
+      <TimeOfLastMessage>{dateFormat}</TimeOfLastMessage>
     </Container>
   );
 };
