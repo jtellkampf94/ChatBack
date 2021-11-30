@@ -20,11 +20,12 @@ export type Chat = {
   __typename?: 'Chat';
   createdAt: Scalars['DateTime'];
   createdById: Scalars['Float'];
-  groupAvatarUrl: Scalars['String'];
-  groupName: Scalars['String'];
+  groupAvatarUrl?: Maybe<Scalars['String']>;
+  groupName?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   latestMessage?: Maybe<Message>;
   members: Array<User>;
+  messages?: Maybe<Array<Message>>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -64,6 +65,7 @@ export type Mutation = {
 
 
 export type MutationCreateChatArgs = {
+  groupName?: Maybe<Scalars['String']>;
   userIds: Array<Scalars['Int']>;
 };
 
@@ -160,10 +162,17 @@ export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', id: string, email: string, username: string, updatedAt: any, createdAt: any } | null | undefined };
 
+export type GetChatQueryVariables = Exact<{
+  chatId: Scalars['Int'];
+}>;
+
+
+export type GetChatQuery = { __typename?: 'Query', getChat: { __typename?: 'Chat', id: string, createdById: number, createdAt: any, updatedAt: any, groupName?: string | null | undefined, groupAvatarUrl?: string | null | undefined, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, username: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', userId: number, text: string, createdAt: any }> | null | undefined } };
+
 export type GetChatsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetChatsQuery = { __typename?: 'Query', getChats: Array<{ __typename?: 'Chat', id: string, createdById: number, groupName: string, groupAvatarUrl: string, latestMessage?: { __typename?: 'Message', text: string, createdAt: any, userId: number } | null | undefined, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, username: string, profilePictureUrl?: string | null | undefined }> }> };
+export type GetChatsQuery = { __typename?: 'Query', getChats: Array<{ __typename?: 'Chat', id: string, createdById: number, groupName?: string | null | undefined, groupAvatarUrl?: string | null | undefined, latestMessage?: { __typename?: 'Message', text: string, createdAt: any, userId: number } | null | undefined, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, username: string, profilePictureUrl?: string | null | undefined }> }> };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -318,6 +327,58 @@ export function useCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type CurrentUserQueryHookResult = ReturnType<typeof useCurrentUserQuery>;
 export type CurrentUserLazyQueryHookResult = ReturnType<typeof useCurrentUserLazyQuery>;
 export type CurrentUserQueryResult = Apollo.QueryResult<CurrentUserQuery, CurrentUserQueryVariables>;
+export const GetChatDocument = gql`
+    query GetChat($chatId: Int!) {
+  getChat(chatId: $chatId) {
+    id
+    createdById
+    createdAt
+    updatedAt
+    groupName
+    groupAvatarUrl
+    members {
+      id
+      firstName
+      lastName
+      username
+      profilePictureUrl
+    }
+    messages {
+      userId
+      text
+      createdAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetChatQuery__
+ *
+ * To run a query within a React component, call `useGetChatQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetChatQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetChatQuery({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *   },
+ * });
+ */
+export function useGetChatQuery(baseOptions: Apollo.QueryHookOptions<GetChatQuery, GetChatQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetChatQuery, GetChatQueryVariables>(GetChatDocument, options);
+      }
+export function useGetChatLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetChatQuery, GetChatQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetChatQuery, GetChatQueryVariables>(GetChatDocument, options);
+        }
+export type GetChatQueryHookResult = ReturnType<typeof useGetChatQuery>;
+export type GetChatLazyQueryHookResult = ReturnType<typeof useGetChatLazyQuery>;
+export type GetChatQueryResult = Apollo.QueryResult<GetChatQuery, GetChatQueryVariables>;
 export const GetChatsDocument = gql`
     query GetChats {
   getChats {

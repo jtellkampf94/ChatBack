@@ -5,6 +5,7 @@ import Moment from "react-moment";
 
 import { GetChatsQuery } from "../generated/graphql";
 import { isSameDay, getDifferenceInDays } from "../utils/dateFunctions";
+import { useChatId } from "../context/ChatContext";
 
 const Container = styled.div`
   width: 100%;
@@ -56,6 +57,7 @@ interface ChatProps {
 }
 
 const Chat: React.FC<ChatProps> = ({ chat, userId }) => {
+  const { setChatId } = useChatId();
   const isGroupChat = chat.members.length > 2;
   const otherUser = chat.members.filter(
     (member) => Number(member.id) !== userId
@@ -79,8 +81,15 @@ const Chat: React.FC<ChatProps> = ({ chat, userId }) => {
     );
   }
 
+  const handleClick = () => {
+    console.log("hi");
+    if (setChatId) {
+      setChatId(Number(chat.id));
+    }
+  };
+
   return (
-    <Container>
+    <Container onClick={handleClick}>
       {isGroupChat ? (
         <Avatar style={{ width: "52px", height: "52px" }}>
           <GroupIcon style={{ width: "40px", height: "40px" }} />

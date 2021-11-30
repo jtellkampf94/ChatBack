@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { IconButton, Avatar } from "@material-ui/core";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
@@ -7,6 +8,7 @@ import SendIcon from "@material-ui/icons/Send";
 
 import { globalTheme } from "../themes/globalTheme";
 import Message from "./Message";
+import { useGetChatQuery, GetChatQuery } from "../generated/graphql";
 
 const Container = styled.div`
   width: 100%;
@@ -84,7 +86,13 @@ const MessageInput = styled.input`
   }
 `;
 
-const ChatScreen: React.FC = () => {
+interface ChatScreenProps {
+  chatId: number;
+}
+
+const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
+  const { data, loading, error } = useGetChatQuery({ variables: { chatId } });
+
   return (
     <Container>
       <Header>
@@ -95,7 +103,7 @@ const ChatScreen: React.FC = () => {
               height: "44px",
             }}
           />
-          <Name>Jonathan Tellkampf</Name>
+          <Name>{data?.getChat.groupName}</Name>
         </IconsContainer>
 
         <IconsContainer>

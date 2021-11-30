@@ -16,6 +16,7 @@ export class Chat extends Model {
   @Column()
   createdById: number;
 
+  @Field(() => [Message], { nullable: true })
   @OneToMany(() => Message, (message) => message.chat)
   messages: Message[];
 

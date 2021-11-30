@@ -92,6 +92,7 @@ export class ChatResolver {
     const chat = await Chat.findOne({
       where: { id: chatId },
       relations: ["chatMembers", "messages"],
+      order: { createdAt: "DESC" },
     });
 
     if (!chat) throw new Error("no chat has this Id");

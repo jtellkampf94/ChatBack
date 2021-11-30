@@ -1,0 +1,22 @@
+query GetChat($chatId: Int!) {
+  getChat(chatId: $chatId) {
+    id
+    createdById
+    createdAt
+    updatedAt
+    groupName
+    groupAvatarUrl
+    members {
+      id
+      firstName
+      lastName
+      username
+      profilePictureUrl
+    }
+    messages {
+      userId
+      text
+      createdAt
+    }
+  }
+}
