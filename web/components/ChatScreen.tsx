@@ -8,7 +8,7 @@ import SendIcon from "@material-ui/icons/Send";
 
 import { globalTheme } from "../themes/globalTheme";
 import Message from "./Message";
-import { useGetChatQuery, GetChatQuery } from "../generated/graphql";
+import { useGetChatQuery } from "../generated/graphql";
 
 const Container = styled.div`
   width: 100%;

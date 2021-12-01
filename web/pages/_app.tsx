@@ -8,6 +8,7 @@ import {
 } from "@apollo/client";
 
 import { Theme } from "../themes";
+import { UserProvider } from "../context/UserContext";
 
 export const createApolloClient = (headers?: Record<string, string>) => {
   const link = createHttpLink({
@@ -26,7 +27,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ApolloProvider client={createApolloClient()}>
       <Theme>
-        <Component {...pageProps} />
+        <UserProvider>
+          <Component {...pageProps} />
+        </UserProvider>
       </Theme>
     </ApolloProvider>
   );

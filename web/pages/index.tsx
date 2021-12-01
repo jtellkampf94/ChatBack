@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+import { useEffect } from "react";
 import Head from "next/head";
 import styled from "styled-components";
 
@@ -7,6 +8,7 @@ import Sidebar from "../components/Sidebar";
 import { isUserLoggedIn } from "../utils/isUserLoggedIn";
 import { User } from "../generated/graphql";
 import { ChatProvider } from "../context/ChatContext";
+import { useUser } from "../context/UserContext";
 
 const Container = styled.div`
   display: flex;
@@ -30,6 +32,13 @@ interface HomePageProps {
 }
 
 const Home: NextPage<HomePageProps> = ({ currentUser }) => {
+  const { setUser } = useUser();
+  useEffect(() => {
+    if (setUser) {
+      setUser(currentUser);
+    }
+  }, [currentUser, setUser]);
+
   return (
     <div>
       <Head>
@@ -40,7 +49,7 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
       <ChatProvider>
         <Container>
           <SidebarContainer>
-            <Sidebar userId={Number(currentUser.id)} />
+            <Sidebar />
           </SidebarContainer>
           <ChatSection />
         </Container>
