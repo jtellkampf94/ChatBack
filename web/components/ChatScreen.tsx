@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { IconButton, Avatar } from "@material-ui/core";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import SearchIcon from "@material-ui/icons/Search";
 import AddAPhotoOutlinedIcon from "@material-ui/icons/AddAPhotoOutlined";
 import SendIcon from "@material-ui/icons/Send";
+import GroupIcon from "@material-ui/icons/Group";
 
 import { globalTheme } from "../themes/globalTheme";
 import Message from "./Message";
 import { useGetChatQuery } from "../generated/graphql";
+import { useUser } from "../context/UserContext";
 
 const Container = styled.div`
   width: 100%;
@@ -31,6 +32,13 @@ const IconsContainer = styled.div`
 `;
 
 const UserAvatar = styled(Avatar)`
+  cursor: pointer;
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+const GroupUserAvatar = styled(Avatar)`
   cursor: pointer;
   &:hover {
     opacity: 0.8;
@@ -92,18 +100,38 @@ interface ChatScreenProps {
 
 const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
   const { data, loading, error } = useGetChatQuery({ variables: { chatId } });
+  const { user } = useUser();
 
+  const userId = user ? Number(user.id) : null;
+  const isGroupChat = data ? data.getChat.members.length > 2 : null;
   return (
     <Container>
       <Header>
         <IconsContainer>
-          <UserAvatar
-            style={{
-              width: "44px",
-              height: "44px",
-            }}
-          />
-          <Name>{data?.getChat.groupName}</Name>
+          {!isGroupChat ? (
+            <UserAvatar
+              style={{
+                width: "44px",
+                height: "44px",
+              }}
+            />
+          ) : (
+            <UserAvatar
+              style={{
+                width: "44px",
+                height: "44px",
+              }}
+            >
+              <GroupIcon style={{ width: "34px", height: "34px" }} />
+            </UserAvatar>
+          )}
+          <Name>
+            {userId && isGroupChat
+              ? data?.getChat.groupName
+              : data?.getChat.members.filter(
+                  (member) => Number(member.id) !== userId
+                )[0].username}
+          </Name>
         </IconsContainer>
 
         <IconsContainer>

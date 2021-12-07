@@ -7,17 +7,22 @@ import { GetChatsQuery } from "../generated/graphql";
 import { isSameDay, getDifferenceInDays } from "../utils/dateFunctions";
 import { useChatId } from "../context/ChatContext";
 
-const Container = styled.div`
+const Container = styled("div")<{ highlighted: boolean }>`
   width: 100%;
   height: 77px;
   padding: 10px 24px 10px 16px;
   display: flex;
   align-items: center;
   border-bottom: 1px solid ${({ theme }) => theme.globalTheme.greyLineColor};
+  background-color: ${(props) =>
+    props.highlighted ? props.theme.globalTheme.selectGrey : "white"};
 
   &:hover {
     cursor: pointer;
-    background-color: ${({ theme }) => theme.globalTheme.primaryGrey};
+    background-color: ${(props) =>
+      props.highlighted
+        ? props.theme.globalTheme.selectGrey
+        : props.theme.globalTheme.hoverGrey};
   }
 `;
 
@@ -57,7 +62,7 @@ interface ChatProps {
 }
 
 const Chat: React.FC<ChatProps> = ({ chat, userId }) => {
-  const { setChatId } = useChatId();
+  const { chatId, setChatId } = useChatId();
   const isGroupChat = chat.members.length > 2;
   const otherUser = chat.members.filter(
     (member) => Number(member.id) !== userId
@@ -82,14 +87,13 @@ const Chat: React.FC<ChatProps> = ({ chat, userId }) => {
   }
 
   const handleClick = () => {
-    console.log("hi");
     if (setChatId) {
       setChatId(Number(chat.id));
     }
   };
 
   return (
-    <Container onClick={handleClick}>
+    <Container highlighted={chatId === Number(chat.id)} onClick={handleClick}>
       {isGroupChat ? (
         <Avatar style={{ width: "52px", height: "52px" }}>
           <GroupIcon style={{ width: "40px", height: "40px" }} />

@@ -12,5 +12,6 @@ export const globalTheme = {
   greyCheck: "#a4a4a4",
   messageGreen: "#dcf8c6",
   registerBackgroundGrey: "#f8f9fa",
+  hoverGrey: "#f7f7f7",
   white: "#fff",
 };
