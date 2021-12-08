@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import http from "http";
 import { createConnection } from "typeorm";
 import express from "express";
 import { buildSchema } from "type-graphql";
@@ -36,9 +37,25 @@ const main = async () => {
   });
 
   const app = express();
+  const httpServer = http.createServer(app);
 
   const RedisStore = connectRedis(session);
   const redis = new Redis();
+  const sessionMiddleware = session({
+    store: new RedisStore({
+      client: redis,
+    }),
+    name: COOKIE_NAME,
+    secret: String(process.env.REDIS_SECRET),
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
+      httpOnly: true,
+      sameSite: "lax",
+    },
+  });
+
   app.use(
     cors({
       origin: "http://localhost:3000",
@@ -46,28 +63,24 @@ const main = async () => {
     })
   );
 
-  app.use(
-    session({
-      store: new RedisStore({
-        client: redis,
-      }),
-      name: COOKIE_NAME,
-      secret: String(process.env.REDIS_SECRET),
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
-        httpOnly: true,
-        sameSite: "lax",
-      },
-    })
-  );
+  app.use(sessionMiddleware);
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
       resolvers: [UserResolver, MessageResolver, ChatResolver, ContactResolver],
       validate: false,
     }),
+    subscriptions: {
+      path: "/",
+      onConnect: (_, ws: any) => {
+        sessionMiddleware(ws.upgradeReq, {} as any, () => {
+          if (!ws.upgradereq.session.userId) {
+            throw new Error("not authenticated");
+          }
+        });
+      },
+      onDisconnect: () => console.log("Client disconnected from subscriptions"),
+    },
     context: ({ req, res }) => ({ req, res, redis }),
   });
 
@@ -78,8 +91,9 @@ const main = async () => {
     path: "/",
     cors: false,
   });
+  apolloServer.installSubscriptionHandlers(httpServer);
 
-  app.listen(4000, () => {
+  httpServer.listen(4000, () => {
     console.log("Server started on port 4000");
   });
 };

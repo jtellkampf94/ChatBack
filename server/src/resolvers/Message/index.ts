@@ -7,17 +7,20 @@ import {
   Subscription,
   Root,
   UseMiddleware,
+  PubSub,
+  PubSubEngine,
 } from "type-graphql";
 
 import { isAuth } from "../../middleware/isAuth";
 import { MyContext } from "../../types";
 import { Message } from "../../entities/Message";
 import { Chat } from "../../entities/Chat";
+import { NEW_MESSAGE } from "../../constants";
 
 @Resolver()
 export class MessageResolver {
   @UseMiddleware(isAuth)
-  @Subscription({ topics: "NEW_MESSAGE" })
+  @Subscription(() => Message, { topics: NEW_MESSAGE })
   async newMessage(
     @Root() newMessagePayload: Message,
     @Arg("chatId", () => Int) chatId: number,
@@ -43,16 +46,21 @@ export class MessageResolver {
   async sendMessage(
     @Arg("text") text: string,
     @Arg("chatId", () => Int) chatId: number,
-    @Ctx() { req }: MyContext
-  ) {
+    @Ctx() { req }: MyContext,
+    @PubSub() pubSub: PubSubEngine
+  ): Promise<Message> {
     const chat = await Chat.findOne(chatId);
 
     if (!chat) throw new Error("chat does not exist");
 
-    return Message.create({
+    const message = await Message.create({
       text,
       chatId,
       userId: Number(req.session.userId),
     }).save();
+
+    await pubSub.publish(NEW_MESSAGE, message);
+
+    return message;
   }
 }
