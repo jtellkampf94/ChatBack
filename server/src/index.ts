@@ -73,15 +73,19 @@ const main = async () => {
     subscriptions: {
       path: "/",
       onConnect: (_, ws: any) => {
-        sessionMiddleware(ws.upgradeReq, {} as any, () => {
-          if (!ws.upgradereq.session.userId) {
-            throw new Error("not authenticated");
-          }
-        });
+        // sessionMiddleware(ws.upgradeReq, {} as any, () => {
+        //   if (!ws.upgradeReq.session.userId) {
+        //     throw new Error("not authenticated");
+        //   }
+        // });
+        return new Promise((res) =>
+          sessionMiddleware(ws.upgradeReq, {} as any, () => {
+            res({ req: ws.upgradeReq });
+          })
+        );
       },
-      onDisconnect: () => console.log("Client disconnected from subscriptions"),
     },
-    context: ({ req, res }) => ({ req, res, redis }),
+    context: ({ req, res, connection }) => ({ req, res, redis, connection }),
   });
 
   await apolloServer.start();
