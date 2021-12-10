@@ -10,6 +10,6 @@ export type MyContext = {
     session?: SessionWithUserId;
   };
   res: Response;
-  connection: ExecutionParams;
+  connection: ExecutionParams<any>;
   redis: Redis;
 };

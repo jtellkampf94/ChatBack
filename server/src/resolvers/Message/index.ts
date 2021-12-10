@@ -20,7 +20,6 @@ const pubSub = new PubSub();
 
 @Resolver()
 export class MessageResolver {
-  @UseMiddleware(isAuth)
   @Subscription(() => Message, {
     //@ts-ignore
     subscribe: async (_, { chatId }, { connection }) => {

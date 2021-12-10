@@ -73,11 +73,6 @@ const main = async () => {
     subscriptions: {
       path: "/",
       onConnect: (_, ws: any) => {
-        // sessionMiddleware(ws.upgradeReq, {} as any, () => {
-        //   if (!ws.upgradeReq.session.userId) {
-        //     throw new Error("not authenticated");
-        //   }
-        // });
         return new Promise((res) =>
           sessionMiddleware(ws.upgradeReq, {} as any, () => {
             res({ req: ws.upgradeReq });
