@@ -33,17 +33,14 @@ export class ChatResolver {
   }
 
   @FieldResolver(() => [User])
-  async members(@Root() chat: Chat): Promise<User[]> {
-    let members: User[] = [];
+  async members(
+    @Root() chat: Chat,
+    @Ctx() { chatMemberLoader }: MyContext
+  ): Promise<User[]> {
+    const chatMembers = await chatMemberLoader.load(chat.id);
+    const memberIds = chatMembers.map((cm) => cm.userId);
 
-    const chatMembers = await ChatMember.find({ where: { chatId: chat.id } });
-
-    for (let member of chatMembers) {
-      const user = await User.findOne(member.userId);
-      if (user) members.push(user);
-    }
-
-    return members;
+    return User.findByIds(memberIds);
   }
 
   @Mutation(() => Chat)

@@ -1,3 +1,4 @@
+import { chatMemberLoader } from "./loaders/ChatMemberLoader";
 import { Request, Response } from "express";
 import { ExecutionParams } from "subscriptions-transport-ws";
 import { Session } from "express-session";
@@ -12,4 +13,5 @@ export type MyContext = {
   res: Response;
   connection: ExecutionParams<any>;
   redis: Redis;
+  chatMemberLoader: ReturnType<typeof chatMemberLoader>;
 };

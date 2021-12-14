@@ -22,6 +22,7 @@ import { ChatResolver } from "./resolvers/Chat";
 import { ContactResolver } from "./resolvers/Contact";
 
 import { COOKIE_NAME } from "./constants";
+import { chatMemberLoader } from "./loaders/ChatMemberLoader";
 
 dotenv.config();
 
@@ -80,7 +81,13 @@ const main = async () => {
         );
       },
     },
-    context: ({ req, res, connection }) => ({ req, res, redis, connection }),
+    context: ({ req, res, connection }) => ({
+      req,
+      res,
+      redis,
+      connection,
+      chatMemberLoader: chatMemberLoader(),
+    }),
   });
 
   await apolloServer.start();
