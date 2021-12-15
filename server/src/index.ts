@@ -22,6 +22,7 @@ import { ChatResolver } from "./resolvers/Chat";
 import { ContactResolver } from "./resolvers/Contact";
 
 import { COOKIE_NAME } from "./constants";
+import { userLoader } from "./loaders/UserLoader";
 import { chatMemberLoader } from "./loaders/ChatMemberLoader";
 
 dotenv.config();
@@ -87,6 +88,7 @@ const main = async () => {
       redis,
       connection,
       chatMemberLoader: chatMemberLoader(),
+      userLoader: userLoader(),
     }),
   });
 
