@@ -75,7 +75,7 @@ const SearchInput = styled.input`
 const ChatContainer = styled.div`
   width: 100%;
   height: calc(100vh - 120px);
-  overflow-y: scroll;
+  overflow-y: auto;
 
   &::-webkit-scrollbar {
     width: 6px !important;

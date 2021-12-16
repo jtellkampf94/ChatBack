@@ -7,12 +7,14 @@ import {
   Subscription,
   Root,
   UseMiddleware,
+  Query,
 } from "type-graphql";
 import { PubSub } from "apollo-server-express";
 
 import { isAuth } from "../../middleware/isAuth";
 import { MyContext } from "../../types";
 import { Message } from "../../entities/Message";
+import { ChatMember } from "../../entities/ChatMember";
 import { Chat } from "../../entities/Chat";
 import { NEW_MESSAGE } from "../../constants";
 
@@ -74,5 +76,24 @@ export class MessageResolver {
     await pubSub.publish(NEW_MESSAGE, message);
 
     return message;
+  }
+
+  @UseMiddleware(isAuth)
+  @Query(() => [Message], { nullable: true })
+  async getMessages(
+    @Arg("chatId", () => Int) chatId: number,
+    @Ctx() { req }: MyContext
+  ): Promise<Message[]> {
+    const chatMember = await ChatMember.findOne({
+      where: { chatId, userId: Number(req.session.userId) },
+    });
+
+    if (!chatMember)
+      throw new Error("you are not authorized to view messages of this chat");
+
+    return Message.find({
+      where: { chatId },
+      order: { createdAt: "DESC" },
+    });
   }
 }
