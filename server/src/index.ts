@@ -24,6 +24,7 @@ import { ContactResolver } from "./resolvers/Contact";
 import { COOKIE_NAME } from "./constants";
 import { userLoader } from "./loaders/UserLoader";
 import { chatMemberLoader } from "./loaders/ChatMemberLoader";
+import { latestMessageLoader } from "./loaders/LatestMessageLoader";
 
 dotenv.config();
 
@@ -89,6 +90,7 @@ const main = async () => {
       connection,
       chatMemberLoader: chatMemberLoader(),
       userLoader: userLoader(),
+      latestMessageLoader: latestMessageLoader(),
     }),
   });
 

@@ -5,7 +5,6 @@ type BatchUser = (userIds: readonly number[]) => Promise<User[]>;
 
 const batchUsers: BatchUser = async (userIds) => {
   const users = await User.findByIds([...userIds]);
-  console.log("!!!!!!!!!!!!!!!!!!!!USERS!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
   const userMap: { [key: number]: User } = {};
 

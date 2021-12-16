@@ -5,6 +5,7 @@ import { Redis } from "ioredis";
 
 import { chatMemberLoader } from "./loaders/ChatMemberLoader";
 import { userLoader } from "./loaders/UserLoader";
+import { latestMessageLoader } from "./loaders/LatestMessageLoader";
 
 export type SessionWithUserId = Session & { userId: string | {} };
 
@@ -17,4 +18,5 @@ export type MyContext = {
   redis: Redis;
   chatMemberLoader: ReturnType<typeof chatMemberLoader>;
   userLoader: ReturnType<typeof userLoader>;
+  latestMessageLoader: ReturnType<typeof latestMessageLoader>;
 };

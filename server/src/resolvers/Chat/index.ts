@@ -21,15 +21,12 @@ import { User } from "../../entities/User";
 @Resolver((of) => Chat)
 export class ChatResolver {
   @FieldResolver(() => Message, { nullable: true })
-  async latestMessage(@Root() chat: Chat): Promise<Message | null> {
-    console.log("!!!!!!!!!!!!!!!!!!!!Latest Message!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    const message = await Message.findOne({
-      where: { chatId: chat.id },
-      order: { createdAt: "DESC" },
-    });
-
+  async latestMessage(
+    @Root() chat: Chat,
+    @Ctx() { latestMessageLoader }: MyContext
+  ): Promise<Message | null> {
+    const message = await latestMessageLoader.load(chat.id);
     if (!message) return null;
-
     return message;
   }
 
@@ -38,7 +35,6 @@ export class ChatResolver {
     @Root() chat: Chat,
     @Ctx() { chatMemberLoader, userLoader }: MyContext
   ): Promise<(User | Error)[]> {
-    console.log("!!!!!!!!!!!!!!!!!!!!Members!!!!!!!!!!!!!!!!!!!!!!!!!!");
     const chatMembers = await chatMemberLoader.load(chat.id);
     const memberIds = chatMembers.map((cm) => cm.userId);
 
