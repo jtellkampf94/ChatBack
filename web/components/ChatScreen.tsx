@@ -8,7 +8,11 @@ import GroupIcon from "@material-ui/icons/Group";
 
 import { globalTheme } from "../themes/globalTheme";
 import Message from "./Message";
-import { useGetChatQuery } from "../generated/graphql";
+import {
+  useGetChatQuery,
+  useGetMessagesQuery,
+  GetChatQuery,
+} from "../generated/graphql";
 import { useUser } from "../context/UserContext";
 
 const Container = styled.div`
@@ -100,10 +104,24 @@ interface ChatScreenProps {
 
 const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
   const { data, loading, error } = useGetChatQuery({ variables: { chatId } });
+  const {
+    data: messageData,
+    loading: messageLoading,
+    error: messageError,
+  } = useGetMessagesQuery({ variables: { chatId } });
   const { user } = useUser();
 
   const userId = user ? Number(user.id) : null;
   const isGroupChat = data ? data.getChat.members.length > 2 : null;
+
+  const chatMembersMap: {
+    [key: number]: GetChatQuery["getChat"]["members"][0];
+  } = {};
+
+  data?.getChat.members.forEach((member) => {
+    chatMembersMap[Number(member.id)] = member;
+  });
+
   return (
     <Container>
       <Header>
@@ -145,7 +163,24 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
       </Header>
 
       <MessagesContainer>
-        <Message read />
+        {messageData &&
+          messageData.getMessages?.map((message) => {
+            const isUser = userId === Number(message.userId);
+            return (
+              <Message
+                key={message.id}
+                text={message.text}
+                isUser={isUser}
+                sender={
+                  !isUser
+                    ? chatMembersMap[Number(message.userId)].firstName +
+                      chatMembersMap[Number(message.userId)].lastName
+                    : undefined
+                }
+                read
+              />
+            );
+          })}
       </MessagesContainer>
 
       <ChatBox>
