@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import styled from "styled-components";
 import { IconButton, Avatar } from "@material-ui/core";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
@@ -7,7 +8,9 @@ import SendIcon from "@material-ui/icons/Send";
 import GroupIcon from "@material-ui/icons/Group";
 
 import { globalTheme } from "../themes/globalTheme";
+import { capitalizeFirstLetter } from "../utils/capitalizeFirstLetter";
 import Message from "./Message";
+
 import {
   useGetChatQuery,
   useGetMessagesQuery,
@@ -42,23 +45,21 @@ const UserAvatar = styled(Avatar)`
   }
 `;
 
-const GroupUserAvatar = styled(Avatar)`
-  cursor: pointer;
-  &:hover {
-    opacity: 0.8;
-  }
-`;
-
 const Name = styled.p`
   font-size: 19px;
   font-weight: 400;
   margin-left: 17px;
 `;
 
+const EndOfMessage = styled.div``;
+
 const MessagesContainer = styled.div`
   background-color: ${({ theme }) => theme.globalTheme.chatScreenBackground};
   height: calc(100vh - 144px);
   overflow-y: scroll;
+  display: flex;
+  flex-direction: column-reverse;
+  padding: 0 9%;
 
   &::-webkit-scrollbar {
     width: 6px !important;
@@ -103,6 +104,7 @@ interface ChatScreenProps {
 }
 
 const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
+  const endOfMessageRef = useRef<null | HTMLDivElement>(null);
   const { data, loading, error } = useGetChatQuery({ variables: { chatId } });
   const {
     data: messageData,
@@ -121,6 +123,13 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
   data?.getChat.members.forEach((member) => {
     chatMembersMap[Number(member.id)] = member;
   });
+
+  const scrollToBottom = () => {
+    endOfMessageRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
 
   return (
     <Container>
@@ -172,15 +181,19 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
                 text={message.text}
                 isUser={isUser}
                 sender={
-                  !isUser
-                    ? chatMembersMap[Number(message.userId)].firstName +
-                      chatMembersMap[Number(message.userId)].lastName
+                  !isUser && Object.keys(chatMembersMap).length !== 0
+                    ? `${capitalizeFirstLetter(
+                        chatMembersMap[Number(message.userId)].firstName
+                      )} ${capitalizeFirstLetter(
+                        chatMembersMap[Number(message.userId)].lastName
+                      )}`
                     : undefined
                 }
                 read
               />
             );
           })}
+        <EndOfMessage ref={endOfMessageRef} />
       </MessagesContainer>
 
       <ChatBox>

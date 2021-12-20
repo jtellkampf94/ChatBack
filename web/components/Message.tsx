@@ -13,6 +13,15 @@ const Container = styled("div")<{ isUser: boolean }>`
   flex-direction: column;
   border-radius: 7.5px;
   padding: 8px 9px;
+  width: fit-content;
+  margin: 10px 0;
+  align-self: ${(props) => (props.isUser ? "flex-end" : "flex-start")};
+
+  & p,
+  div {
+    text-align: ${(props) => (props.isUser ? "right" : "left")};
+    justify-content: ${(props) => (props.isUser ? "flex-end" : "flex-start")};
+  }
 `;
 
 const Header = styled.p`
