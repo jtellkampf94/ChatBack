@@ -9,6 +9,7 @@ import GroupIcon from "@material-ui/icons/Group";
 
 import { globalTheme } from "../themes/globalTheme";
 import { capitalizeFirstLetter } from "../utils/capitalizeFirstLetter";
+import { getRandomColor } from "../utils/getRandomColor";
 import Message from "./Message";
 
 import {
@@ -117,11 +118,14 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
   const isGroupChat = data ? data.getChat.members.length > 2 : null;
 
   const chatMembersMap: {
-    [key: number]: GetChatQuery["getChat"]["members"][0];
+    [key: number]: {
+      member: GetChatQuery["getChat"]["members"][0];
+      color: string;
+    };
   } = {};
 
   data?.getChat.members.forEach((member) => {
-    chatMembersMap[Number(member.id)] = member;
+    chatMembersMap[Number(member.id)] = { member, color: getRandomColor() };
   });
 
   const scrollToBottom = () => {
@@ -175,18 +179,26 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
         {messageData &&
           messageData.getMessages?.map((message) => {
             const isUser = userId === Number(message.userId);
+            const isChatMembersMapEmpty =
+              Object.keys(chatMembersMap).length === 0;
+            const messageUserId = Number(message.userId);
             return (
               <Message
                 key={message.id}
                 text={message.text}
                 isUser={isUser}
                 sender={
-                  !isUser && Object.keys(chatMembersMap).length !== 0
+                  !isUser && !isChatMembersMapEmpty
                     ? `${capitalizeFirstLetter(
-                        chatMembersMap[Number(message.userId)].firstName
+                        chatMembersMap[messageUserId].member.firstName
                       )} ${capitalizeFirstLetter(
-                        chatMembersMap[Number(message.userId)].lastName
+                        chatMembersMap[messageUserId].member.lastName
                       )}`
+                    : undefined
+                }
+                color={
+                  !isUser && !isChatMembersMapEmpty
+                    ? chatMembersMap[messageUserId].color
                     : undefined
                 }
                 read

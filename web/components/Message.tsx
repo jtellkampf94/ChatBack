@@ -24,12 +24,13 @@ const Container = styled("div")<{ isUser: boolean }>`
   }
 `;
 
-const Header = styled.p`
+const Header = styled("p")<{ color: undefined | string }>`
   &::first-letter {
     text-transform: uppercase;
   }
   font-weight: 700;
   font-size: 14px;
+  color: ${(props) => (props.color ? props.color : "black")};
 `;
 
 const Text = styled.p``;
@@ -53,6 +54,7 @@ interface MessageProps {
   isUser?: boolean;
   text: string;
   sender?: string;
+  color?: string;
 }
 
 const Message: React.FC<MessageProps> = ({
@@ -63,6 +65,7 @@ const Message: React.FC<MessageProps> = ({
   isUser,
   text,
   sender,
+  color,
 }) => {
   const renderIcon = () => {
     const grey = globalTheme.greyCheck;
@@ -84,7 +87,7 @@ const Message: React.FC<MessageProps> = ({
 
   return (
     <Container isUser={isUser ? isUser : false}>
-      {sender && <Header>{sender}</Header>}
+      {sender && <Header color={color}>{sender}</Header>}
       <Text>{text}</Text>
       <MessageFooter>
         <DateSent>05:55</DateSent>
