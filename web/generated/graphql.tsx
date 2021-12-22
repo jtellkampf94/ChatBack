@@ -97,6 +97,7 @@ export type MutationRegisterArgs = {
 
 export type MutationSendMessageArgs = {
   chatId: Scalars['Int'];
+  imageUrl?: Maybe<Scalars['String']>;
   text: Scalars['String'];
 };
 
@@ -173,6 +174,15 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'User', id: string, email: string, username: string, updatedAt: any, createdAt: any } };
 
+export type SendMessageMutationVariables = Exact<{
+  chatId: Scalars['Int'];
+  text: Scalars['String'];
+  imageUrl?: Maybe<Scalars['String']>;
+}>;
+
+
+export type SendMessageMutation = { __typename?: 'Mutation', sendMessage: { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, createdAt: any, userId: number, chatId: number } };
+
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -201,6 +211,13 @@ export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetUsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, email: string, username: string, updatedAt: any, createdAt: any }> };
+
+export type Unnamed_1_SubscriptionVariables = Exact<{
+  chatId: Scalars['Int'];
+}>;
+
+
+export type Unnamed_1_Subscription = { __typename?: 'Subscription', newMessage: { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, createdAt: any, userId: number, chatId: number } };
 
 
 export const CreateChatDocument = gql`
@@ -312,6 +329,46 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const SendMessageDocument = gql`
+    mutation SendMessage($chatId: Int!, $text: String!, $imageUrl: String) {
+  sendMessage(chatId: $chatId, text: $text, imageUrl: $imageUrl) {
+    id
+    text
+    imageUrl
+    createdAt
+    userId
+    chatId
+  }
+}
+    `;
+export type SendMessageMutationFn = Apollo.MutationFunction<SendMessageMutation, SendMessageMutationVariables>;
+
+/**
+ * __useSendMessageMutation__
+ *
+ * To run a mutation, you first call `useSendMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendMessageMutation, { data, loading, error }] = useSendMessageMutation({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      text: // value for 'text'
+ *      imageUrl: // value for 'imageUrl'
+ *   },
+ * });
+ */
+export function useSendMessageMutation(baseOptions?: Apollo.MutationHookOptions<SendMessageMutation, SendMessageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendMessageMutation, SendMessageMutationVariables>(SendMessageDocument, options);
+      }
+export type SendMessageMutationHookResult = ReturnType<typeof useSendMessageMutation>;
+export type SendMessageMutationResult = Apollo.MutationResult<SendMessageMutation>;
+export type SendMessageMutationOptions = Apollo.BaseMutationOptions<SendMessageMutation, SendMessageMutationVariables>;
 export const CurrentUserDocument = gql`
     query CurrentUser {
   currentUser {
@@ -529,3 +586,38 @@ export function useGetUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
 export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
 export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
+export const Document = gql`
+    subscription ($chatId: Int!) {
+  newMessage(chatId: $chatId) {
+    id
+    text
+    imageUrl
+    createdAt
+    userId
+    chatId
+  }
+}
+    `;
+
+/**
+ * __useSubscription__
+ *
+ * To run a query within a React component, call `useSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubscription({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *   },
+ * });
+ */
+export function useSubscription(baseOptions: Apollo.SubscriptionHookOptions<Subscription, SubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<Subscription, SubscriptionVariables>(Document, options);
+      }
+export type SubscriptionHookResult = ReturnType<typeof useSubscription>;
+export type SubscriptionResult = Apollo.SubscriptionResult<Subscription>;

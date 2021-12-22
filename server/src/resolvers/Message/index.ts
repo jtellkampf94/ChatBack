@@ -61,6 +61,7 @@ export class MessageResolver {
   async sendMessage(
     @Arg("text") text: string,
     @Arg("chatId", () => Int) chatId: number,
+    @Arg("imageUrl", { nullable: true }) imageUrl: string,
     @Ctx() { req }: MyContext
   ): Promise<Message> {
     const chat = await Chat.findOne(chatId);
@@ -71,6 +72,7 @@ export class MessageResolver {
       text,
       chatId,
       userId: Number(req.session.userId),
+      imageUrl: imageUrl ? imageUrl : undefined,
     }).save();
 
     await pubSub.publish(NEW_MESSAGE, message);

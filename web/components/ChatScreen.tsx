@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import styled from "styled-components";
 import { IconButton, Avatar } from "@material-ui/core";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
@@ -16,6 +16,7 @@ import {
   useGetChatQuery,
   useGetMessagesQuery,
   GetChatQuery,
+  useSendMessageMutation,
 } from "../generated/graphql";
 import { useUser } from "../context/UserContext";
 
@@ -76,13 +77,14 @@ const MessagesContainer = styled.div`
   }
 `;
 
-const ChatBox = styled.div`
+const ChatBox = styled.form`
   height: 77px;
   padding: 10px 17px;
   display: flex;
   align-items: center;
   background-color: ${({ theme }) => theme.globalTheme.chatBoxBackground};
   border-top: 1px solid ${({ theme }) => theme.globalTheme.greyLineColor};
+  width: 100%;
 `;
 
 const MessageInput = styled.input`
@@ -106,6 +108,7 @@ interface ChatScreenProps {
 
 const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
   const endOfMessageRef = useRef<null | HTMLDivElement>(null);
+  const [messageText, setMessageText] = useState("");
   const { data, loading, error } = useGetChatQuery({ variables: { chatId } });
   const {
     data: messageData,
@@ -133,6 +136,11 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
       behavior: "smooth",
       block: "start",
     });
+  };
+
+  const handleSubmit = () => {
+    useSendMessageMutation({ variables: { chatId, text: messageText } });
+    scrollToBottom();
   };
 
   return (
@@ -208,11 +216,15 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
         <EndOfMessage ref={endOfMessageRef} />
       </MessagesContainer>
 
-      <ChatBox>
+      <ChatBox onSubmit={handleSubmit}>
         <AddAPhotoOutlinedIcon
           style={{ fill: globalTheme.iconColor, width: "30px", height: "30px" }}
         />
-        <MessageInput placeholder="Type a message" />
+        <MessageInput
+          onChange={(e) => setMessageText(e.target.value)}
+          value={messageText}
+          placeholder="Type a message"
+        />
         <SendIcon
           style={{ fill: globalTheme.iconColor, width: "30px", height: "30px" }}
         />
