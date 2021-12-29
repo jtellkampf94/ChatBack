@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 import { IconButton, Avatar } from "@material-ui/core";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
@@ -15,6 +15,7 @@ import {
   useGetChatQuery,
   useGetMessagesQuery,
   GetChatQuery,
+  useNewMessageSubscription,
 } from "../generated/graphql";
 import { useUser } from "../context/UserContext";
 
@@ -81,13 +82,12 @@ interface ChatScreenProps {
 
 const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
   const endOfMessageRef = useRef<null | HTMLDivElement>(null);
-  const { data, loading, error } = useGetChatQuery({ variables: { chatId } });
-  const {
-    data: messageData,
-    loading: messageLoading,
-    error: messageError,
-  } = useGetMessagesQuery({ variables: { chatId } });
+  const { data } = useGetChatQuery({ variables: { chatId } });
+  const { data: messageData } = useGetMessagesQuery({ variables: { chatId } });
   const { user } = useUser();
+  const { data: newMessageData } = useNewMessageSubscription({
+    variables: { chatId },
+  });
 
   const userId = user ? Number(user.id) : null;
   const isGroupChat = data ? data.getChat.members.length > 2 : null;
@@ -110,6 +110,9 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
     });
   };
 
+  const incomingMessage = newMessageData?.newMessage;
+
+  console.log(incomingMessage?.text);
   return (
     <Container>
       <Header>
@@ -151,39 +154,39 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
       </Header>
 
       <MessagesContainer>
-        {messageData &&
-          messageData.getMessages?.map((message) => {
-            const isUser = userId === Number(message.userId);
-            const isChatMembersMapEmpty =
-              Object.keys(chatMembersMap).length === 0;
-            const messageUserId = Number(message.userId);
-            return (
-              <Message
-                key={message.id}
-                text={message.text}
-                isUser={isUser}
-                sender={
-                  !isUser && !isChatMembersMapEmpty
-                    ? `${capitalizeFirstLetter(
-                        chatMembersMap[messageUserId].member.firstName
-                      )} ${capitalizeFirstLetter(
-                        chatMembersMap[messageUserId].member.lastName
-                      )}`
-                    : undefined
-                }
-                color={
-                  !isUser && !isChatMembersMapEmpty
-                    ? chatMembersMap[messageUserId].color
-                    : undefined
-                }
-                read
-              />
-            );
-          })}
+        {messageData?.getMessages?.map((message) => {
+          const isUser = userId === Number(message.userId);
+          const isChatMembersMapEmpty =
+            Object.keys(chatMembersMap).length === 0;
+          const messageUserId = Number(message.userId);
+          return (
+            <Message
+              key={message.id}
+              text={message.text}
+              isUser={isUser}
+              sender={
+                !isUser && !isChatMembersMapEmpty
+                  ? `${capitalizeFirstLetter(
+                      chatMembersMap[messageUserId].member.firstName
+                    )} ${capitalizeFirstLetter(
+                      chatMembersMap[messageUserId].member.lastName
+                    )}`
+                  : undefined
+              }
+              color={
+                !isUser && !isChatMembersMapEmpty
+                  ? chatMembersMap[messageUserId].color
+                  : undefined
+              }
+              read
+            />
+          );
+        })}
+        {incomingMessage}
         <EndOfMessage ref={endOfMessageRef} />
       </MessagesContainer>
 
-     <ChatForm chatId={chatId} scrollToBottom={scrollToBottom}/>
+      <ChatForm chatId={chatId} scrollToBottom={scrollToBottom} />
     </Container>
   );
 };
