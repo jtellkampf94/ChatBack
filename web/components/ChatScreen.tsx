@@ -16,6 +16,7 @@ import {
   useGetMessagesQuery,
   GetChatQuery,
   useNewMessageSubscription,
+  GetMessagesQuery,
 } from "../generated/graphql";
 import { useUser } from "../context/UserContext";
 
@@ -81,6 +82,8 @@ interface ChatScreenProps {
 }
 
 const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
+  const [messages, setMessages] =
+    useState<GetMessagesQuery["getMessages"]>(null);
   const endOfMessageRef = useRef<null | HTMLDivElement>(null);
   const { data } = useGetChatQuery({ variables: { chatId } });
   const { data: messageData } = useGetMessagesQuery({ variables: { chatId } });
@@ -111,8 +114,22 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
   };
 
   const incomingMessage = newMessageData?.newMessage;
+  const allMessages = messageData?.getMessages;
 
-  console.log(incomingMessage?.text);
+  useEffect(() => {
+    setMessages(allMessages);
+  }, [allMessages]);
+
+  useEffect(() => {
+    if (incomingMessage) {
+      if (Array.isArray(messages)) {
+        setMessages([...messages, incomingMessage]);
+      } else {
+        setMessages([incomingMessage]);
+      }
+    }
+  }, [incomingMessage]);
+
   return (
     <Container>
       <Header>
@@ -154,7 +171,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
       </Header>
 
       <MessagesContainer>
-        {messageData?.getMessages?.map((message) => {
+        {messages?.map((message) => {
           const isUser = userId === Number(message.userId);
           const isChatMembersMapEmpty =
             Object.keys(chatMembersMap).length === 0;
