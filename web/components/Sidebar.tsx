@@ -8,6 +8,7 @@ import Chat from "./Chat";
 import { globalTheme } from "../themes/globalTheme";
 import { useGetChatsQuery } from "../generated/graphql";
 import { useUser } from "../context/UserContext";
+import { useNewMessage } from "../context/NewMessageContext";
 
 const Container = styled.div`
   width: 100%;
@@ -94,6 +95,7 @@ const ChatContainer = styled.div`
 const Sidebar: React.FC = () => {
   const { user } = useUser();
   const { error, loading, data } = useGetChatsQuery();
+  const { newMessage } = useNewMessage();
 
   const userId = user ? Number(user.id) : null;
 
@@ -129,7 +131,14 @@ const Sidebar: React.FC = () => {
       <ChatContainer>
         {userId &&
           data?.getChats.map((chat) => (
-            <Chat key={chat.id} chat={chat} userId={userId} />
+            <Chat
+              key={chat.id}
+              chat={chat}
+              userId={userId}
+              newMessage={
+                Number(chat.id) === newMessage?.chatId ? newMessage : undefined
+              }
+            />
           ))}
       </ChatContainer>
     </Container>

@@ -3,7 +3,7 @@ import { Avatar } from "@material-ui/core";
 import GroupIcon from "@material-ui/icons/Group";
 import Moment from "react-moment";
 
-import { GetChatsQuery } from "../generated/graphql";
+import { GetChatsQuery, NewMessageSubscription } from "../generated/graphql";
 import { isSameDay, getDifferenceInDays } from "../utils/dateFunctions";
 import { useChatId } from "../context/ChatContext";
 
@@ -59,21 +59,26 @@ const TimeOfLastMessage = styled.div`
 interface ChatProps {
   chat: GetChatsQuery["getChats"][0];
   userId: number;
+  newMessage?: NewMessageSubscription["newMessage"];
 }
 
-const Chat: React.FC<ChatProps> = ({ chat, userId }) => {
+const Chat: React.FC<ChatProps> = ({ chat, userId, newMessage }) => {
   const { chatId, setChatId } = useChatId();
   const isGroupChat = chat.members.length > 2;
   const otherUser = chat.members.filter(
     (member) => Number(member.id) !== userId
   );
   const nowDate = new Date();
-  const latestMessageDate = new Date(chat.latestMessage?.createdAt);
+  const latestMessageDate = new Date(
+    newMessage ? newMessage.createdAt : chat.latestMessage?.createdAt
+  );
   let dateFormat;
 
   if (isSameDay(nowDate, latestMessageDate)) {
     dateFormat = (
-      <Moment format="HH:mm">{chat.latestMessage?.createdAt}</Moment>
+      <Moment format="HH:mm">
+        {newMessage ? newMessage.createdAt : chat.latestMessage?.createdAt}
+      </Moment>
     );
   } else if (
     getDifferenceInDays(nowDate, latestMessageDate) < 1 &&
@@ -82,7 +87,9 @@ const Chat: React.FC<ChatProps> = ({ chat, userId }) => {
     dateFormat = "Yesterday";
   } else {
     dateFormat = (
-      <Moment format="DD-MM-YYYY">{chat.latestMessage?.createdAt}</Moment>
+      <Moment format="DD-MM-YYYY">
+        {newMessage ? newMessage.createdAt : chat.latestMessage?.createdAt}
+      </Moment>
     );
   }
 
@@ -103,7 +110,9 @@ const Chat: React.FC<ChatProps> = ({ chat, userId }) => {
       )}
       <TextContainer>
         <Name>{isGroupChat ? chat.groupName : otherUser[0].username}</Name>
-        <LastMessage>{chat.latestMessage?.text}</LastMessage>
+        <LastMessage>
+          {newMessage ? newMessage.text : chat.latestMessage?.text}
+        </LastMessage>
       </TextContainer>
       <TimeOfLastMessage>{dateFormat}</TimeOfLastMessage>
     </Container>

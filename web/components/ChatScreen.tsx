@@ -8,6 +8,7 @@ import GroupIcon from "@material-ui/icons/Group";
 import { globalTheme } from "../themes/globalTheme";
 import { capitalizeFirstLetter } from "../utils/capitalizeFirstLetter";
 import { getRandomColor } from "../utils/getRandomColor";
+import { useNewMessage } from "../context/NewMessageContext";
 import Message from "./Message";
 import ChatForm from "./ChatForm";
 
@@ -84,6 +85,7 @@ interface ChatScreenProps {
 const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
   const [messages, setMessages] =
     useState<GetMessagesQuery["getMessages"]>(null);
+  const { setNewMessage } = useNewMessage();
   const endOfMessageRef = useRef<null | HTMLDivElement>(null);
   const { data } = useGetChatQuery({ variables: { chatId } });
   const { data: messageData } = useGetMessagesQuery({ variables: { chatId } });
@@ -123,9 +125,13 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
   useEffect(() => {
     if (incomingMessage) {
       if (Array.isArray(messages)) {
-        setMessages([...messages, incomingMessage]);
+        setMessages([incomingMessage, ...messages]);
       } else {
         setMessages([incomingMessage]);
+      }
+
+      if (setNewMessage) {
+        setNewMessage(incomingMessage);
       }
     }
   }, [incomingMessage]);
@@ -199,7 +205,6 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
             />
           );
         })}
-        {incomingMessage}
         <EndOfMessage ref={endOfMessageRef} />
       </MessagesContainer>
 

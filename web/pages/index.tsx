@@ -8,6 +8,7 @@ import Sidebar from "../components/Sidebar";
 import { isUserLoggedIn } from "../utils/isUserLoggedIn";
 import { User } from "../generated/graphql";
 import { ChatProvider } from "../context/ChatContext";
+import { NewMessageProvider } from "../context/NewMessageContext";
 import { useUser } from "../context/UserContext";
 
 const Container = styled.div`
@@ -47,12 +48,14 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ChatProvider>
-        <Container>
-          <SidebarContainer>
-            <Sidebar />
-          </SidebarContainer>
-          <ChatSection />
-        </Container>
+        <NewMessageProvider>
+          <Container>
+            <SidebarContainer>
+              <Sidebar />
+            </SidebarContainer>
+            <ChatSection />
+          </Container>
+        </NewMessageProvider>
       </ChatProvider>
     </div>
   );
