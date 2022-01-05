@@ -103,7 +103,7 @@ export class ChatResolver {
       }
     }
 
-    if (chat.createdById !== userId || !isChatMember) {
+    if (!isChatMember) {
       throw new Error("you are not authorized to view chat");
     }
 

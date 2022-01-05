@@ -1,34 +1,64 @@
-import { ObjectType, Field } from "type-graphql";
-import { Entity, Column } from "typeorm";
-import { Model } from "./Model";
+import { ObjectType, Field, ID } from "type-graphql";
+import {
+  Entity,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  PrimaryGeneratedColumn,
+  BaseEntity,
+} from "typeorm";
+import { Chat } from "./Chat";
+import { Message } from "./Message";
 
 @ObjectType()
 @Entity()
-export class User extends Model {
-  @Field()
-  @Column({ unique: true })
-  username: string;
-
-  @Field()
-  @Column({ unique: true })
-  email: string;
-
-  @Column()
-  password: string;
+export class User extends BaseEntity {
+  @Field(() => ID)
+  @PrimaryGeneratedColumn()
+  id!: number;
 
   @Field()
   @Column()
-  firstName: string;
+  username!: string;
 
   @Field()
   @Column()
-  lastName: string;
+  email!: string;
+
+  @Field()
+  @Column()
+  password!: string;
+
+  @Field()
+  @Column()
+  firstName!: string;
+
+  @Field()
+  @Column()
+  lastName!: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true, default: null })
-  profilePictureUrl: string;
+  profilePictureUrl?: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true, default: null })
-  about: string;
+  about?: string;
+
+  @Field(() => [User!], { nullable: true })
+  contacts?: [User];
+
+  @Field(() => [Chat!], { nullable: true })
+  chats?: [Chat];
+
+  @Field(() => [Message!], { nullable: true })
+  messages?: [Message];
+
+  @Field(() => Date)
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @Field(() => Date)
+  @UpdateDateColumn()
+  updatedAt!: Date;
 }

@@ -97,6 +97,8 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
   const userId = user ? Number(user.id) : null;
   const isGroupChat = data ? data.getChat.members.length > 2 : null;
 
+  console.log(userId, data?.getChat.members);
+
   const chatMembersMap: {
     [key: number]: {
       member: GetChatQuery["getChat"]["members"][0];
@@ -177,6 +179,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
       </Header>
 
       <MessagesContainer>
+        <EndOfMessage ref={endOfMessageRef} />
         {messages?.map((message) => {
           const isUser = userId === Number(message.userId);
           const isChatMembersMapEmpty =
@@ -205,7 +208,6 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatId }) => {
             />
           );
         })}
-        <EndOfMessage ref={endOfMessageRef} />
       </MessagesContainer>
 
       <ChatForm chatId={chatId} scrollToBottom={scrollToBottom} />

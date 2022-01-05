@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 import styled from "styled-components";
+import IconButton from "@material-ui/core/IconButton";
 import AddAPhotoOutlinedIcon from "@material-ui/icons/AddAPhotoOutlined";
 import SendIcon from "@material-ui/icons/Send";
 
@@ -38,25 +39,32 @@ interface ChatFormProps {
 
 const ChatForm: React.FC<ChatFormProps> = ({ chatId, scrollToBottom }) => {
   const [messageText, setMessageText] = useState("");
+  const [sendMessage] = useSendMessageMutation();
 
-  const handleSubmit = () => {
-    useSendMessageMutation({ variables: { chatId, text: messageText } });
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await sendMessage({ variables: { chatId, text: messageText } });
+    setMessageText("");
     scrollToBottom();
   };
 
   return (
     <ChatBox onSubmit={handleSubmit}>
-      <AddAPhotoOutlinedIcon
-        style={{ fill: globalTheme.iconColor, width: "30px", height: "30px" }}
-      />
+      <IconButton type="button">
+        <AddAPhotoOutlinedIcon
+          style={{ fill: globalTheme.iconColor, width: "30px", height: "30px" }}
+        />
+      </IconButton>
       <MessageInput
         onChange={(e) => setMessageText(e.target.value)}
         value={messageText}
         placeholder="Type a message"
       />
-      <SendIcon
-        style={{ fill: globalTheme.iconColor, width: "30px", height: "30px" }}
-      />
+      <IconButton type="submit">
+        <SendIcon
+          style={{ fill: globalTheme.iconColor, width: "30px", height: "30px" }}
+        />
+      </IconButton>
     </ChatBox>
   );
 };
