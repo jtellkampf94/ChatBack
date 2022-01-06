@@ -1,28 +1,36 @@
-import { ObjectType, Field } from "type-graphql";
-import { Entity, ManyToOne, Column } from "typeorm";
+import {
+  Entity,
+  ManyToOne,
+  Column,
+  PrimaryColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  BaseEntity,
+} from "typeorm";
 
-import { Model } from "./Model";
 import { Chat } from "./Chat";
 import { User } from "./User";
 
-@ObjectType()
 @Entity()
-export class ChatMember extends Model {
+export class ChatMember extends BaseEntity {
   @ManyToOne(() => Chat)
-  chat: Chat;
+  chat!: Chat;
 
-  @Field()
-  @Column()
+  @PrimaryColumn()
   chatId!: number;
 
   @ManyToOne(() => User)
-  user: User;
+  user!: User;
 
-  @Field()
-  @Column()
+  @PrimaryColumn()
   userId!: number;
 
-  @Field()
   @Column({ default: true })
   isActive!: boolean;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
