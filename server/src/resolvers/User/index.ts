@@ -4,8 +4,11 @@ import {
   Mutation,
   Arg,
   Ctx,
+  Root,
   UseMiddleware,
+  FieldResolver,
 } from "type-graphql";
+import { getConnection } from "typeorm";
 import bcrypt from "bcryptjs";
 
 import { MyContext } from "../../types";
@@ -13,10 +16,62 @@ import { COOKIE_NAME } from "../../constants";
 import { RegisterInput } from "./RegisterInput";
 import { LoginInput } from "./LoginInput";
 import { User } from "../../entities/User";
+import { Chat } from "../../entities/Chat";
+import { Contact } from "../../entities/Contact";
+import { Message } from "../../entities/Message";
+
 import { isAuth } from "../../middleware/isAuth";
 
-@Resolver()
+@Resolver((of) => User)
 export class UserResolver {
+  @FieldResolver(() => [User!], { nullable: true })
+  @UseMiddleware(isAuth)
+  async contacts(
+    @Root() user: User,
+    @Ctx() { req }: MyContext
+  ): Promise<User[] | null> {
+    const userId = Number(req.session.userId);
+
+    if (userId !== user.id)
+      throw new Error("You are unauthorized to view contacts of this user");
+
+    const contacts = await Contact.find({
+      where: { userId },
+      relations: ["contact"],
+    });
+
+    if (contacts.length === 0) return null;
+
+    return contacts.map((contact) => contact.contact);
+  }
+
+  // @FieldResolver(() => [Chat!], {nullable: true})
+  // @UseMiddleware(isAuth)
+  // async chats(@Root() user: User,
+  // @Ctx() { req }: MyContext): Promise<Chat[] | null> {
+  //   const userId = Number(req.session.userId);
+
+  //   if (userId !== user.id)
+  //     throw new Error("You are unauthorized to view chat of this user");
+
+  //   const chats = await getConnection()
+  //   .createQueryBuilder()
+  //   .select("chat")
+  //   .from(Chat, "chat")
+  //   .leftJoin("chat.chatMembers", "chatMember")
+  //   .where("chat.createdById = :createdById", { createdById: userId })
+  //   .orWhere("chatMember.userId = :userId", { userId })
+  //   .orderBy("chat.updatedAt", "DESC")
+  //   .getMany();
+
+  // }
+
+  // @FieldResolver(() => [Message!], {nullable: true})
+  // @UseMiddleware(isAuth)
+  // async messages() {
+
+  // }
+
   @Query(() => [User])
   @UseMiddleware(isAuth)
   users(): Promise<User[]> {
