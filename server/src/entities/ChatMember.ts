@@ -8,19 +8,10 @@ import {
   BaseEntity,
 } from "typeorm";
 
-import { Chat } from "./Chat";
-import { User } from "./User";
-
-@Entity()
+@Entity("public.chat_member")
 export class ChatMember extends BaseEntity {
-  @ManyToOne(() => Chat)
-  chat!: Chat;
-
   @PrimaryColumn()
   chatId!: number;
-
-  @ManyToOne(() => User)
-  user!: User;
 
   @PrimaryColumn()
   userId!: number;

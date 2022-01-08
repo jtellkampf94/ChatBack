@@ -96,12 +96,12 @@ export class ChatResolver {
 
     const userId = Number(req.session.userId);
 
-    for (let member of chat.chatMembers) {
-      if (member.userId === userId) {
-        isChatMember = true;
-        break;
-      }
-    }
+    // for (let member of chat.chatMembers) {
+    //   if (member.userId === userId) {
+    //     isChatMember = true;
+    //     break;
+    //   }
+    // }
 
     if (!isChatMember) {
       throw new Error("you are not authorized to view chat");

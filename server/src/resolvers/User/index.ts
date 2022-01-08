@@ -8,7 +8,7 @@ import {
   UseMiddleware,
   FieldResolver,
 } from "type-graphql";
-import { getConnection } from "typeorm";
+import { getConnection, getRepository } from "typeorm";
 import bcrypt from "bcryptjs";
 
 import { MyContext } from "../../types";
@@ -45,26 +45,23 @@ export class UserResolver {
     return contacts.map((contact) => contact.contact);
   }
 
-  // @FieldResolver(() => [Chat!], {nullable: true})
-  // @UseMiddleware(isAuth)
-  // async chats(@Root() user: User,
-  // @Ctx() { req }: MyContext): Promise<Chat[] | null> {
-  //   const userId = Number(req.session.userId);
+  @FieldResolver(() => [Chat!], { nullable: true })
+  @UseMiddleware(isAuth)
+  async chats(
+    @Root() user: User,
+    @Ctx() { req }: MyContext
+  ): Promise<Chat[] | null> {
+    const userId = Number(req.session.userId);
 
-  //   if (userId !== user.id)
-  //     throw new Error("You are unauthorized to view chat of this user");
+    if (userId !== user.id)
+      throw new Error("You are unauthorized to view chat of this user");
 
-  //   const chats = await getConnection()
-  //   .createQueryBuilder()
-  //   .select("chat")
-  //   .from(Chat, "chat")
-  //   .leftJoin("chat.chatMembers", "chatMember")
-  //   .where("chat.createdById = :createdById", { createdById: userId })
-  //   .orWhere("chatMember.userId = :userId", { userId })
-  //   .orderBy("chat.updatedAt", "DESC")
-  //   .getMany();
-
-  // }
+    return await getRepository(Chat)
+      .createQueryBuilder("chat")
+      .leftJoinAndSelect("chat.members", "user")
+      .where("user.id = :userId", { userId })
+      .getMany();
+  }
 
   // @FieldResolver(() => [Message!], {nullable: true})
   // @UseMiddleware(isAuth)

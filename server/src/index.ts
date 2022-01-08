@@ -36,7 +36,7 @@ const main = async () => {
     password: process.env.PG_PASSWORD,
     logging: true,
     synchronize: true,
-    entities: [User, Chat, Message, ChatMember, Contact],
+    entities: [ChatMember, User, Chat, Message, Contact],
   });
 
   const app = express();

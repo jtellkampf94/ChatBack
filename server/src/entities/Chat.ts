@@ -4,12 +4,13 @@ import {
   Entity,
   OneToMany,
   ManyToOne,
+  ManyToMany,
+  JoinTable,
   BaseEntity,
   PrimaryGeneratedColumn,
   CreateDateColumn,
 } from "typeorm";
 
-import { ChatMember } from "./ChatMember";
 import { Message } from "./Message";
 import { User } from "./User";
 
@@ -35,10 +36,19 @@ export class Chat extends BaseEntity {
   @OneToMany(() => Message, (message) => message.chat)
   messages?: Message[];
 
-  @OneToMany(() => ChatMember, (chatMember) => chatMember.chat)
-  chatMembers!: ChatMember[];
-
   @Field(() => [User!]!)
+  @ManyToMany(() => User, (user) => user.chats)
+  @JoinTable({
+    name: "public.chat_member",
+    joinColumn: {
+      name: "userId",
+      referencedColumnName: "id",
+    },
+    inverseJoinColumn: {
+      name: "chatId",
+      referencedColumnName: "id",
+    },
+  })
   members!: User[];
 
   @Field({ nullable: true })
