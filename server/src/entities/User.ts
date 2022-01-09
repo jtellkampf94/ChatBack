@@ -6,8 +6,9 @@ import {
   UpdateDateColumn,
   PrimaryGeneratedColumn,
   BaseEntity,
-  ManyToMany,
+  OneToMany,
 } from "typeorm";
+import { ChatMember } from "./ChatMember";
 import { Chat } from "./Chat";
 import { Message } from "./Message";
 
@@ -49,8 +50,10 @@ export class User extends BaseEntity {
   contacts?: User[];
 
   @Field(() => [Chat!], { nullable: true })
-  @ManyToMany(() => Chat, (chat) => chat.members)
   chats?: Chat[];
+
+  @OneToMany(() => ChatMember, (chatMember) => chatMember.user)
+  chatMember?: ChatMember[];
 
   @Field(() => [Message!], { nullable: true })
   messages?: [Message];

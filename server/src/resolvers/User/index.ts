@@ -19,6 +19,7 @@ import { User } from "../../entities/User";
 import { Chat } from "../../entities/Chat";
 import { Contact } from "../../entities/Contact";
 import { Message } from "../../entities/Message";
+import { ChatMember } from "../../entities/ChatMember";
 
 import { isAuth } from "../../middleware/isAuth";
 
@@ -56,11 +57,13 @@ export class UserResolver {
     if (userId !== user.id)
       throw new Error("You are unauthorized to view chat of this user");
 
-    return await getRepository(Chat)
-      .createQueryBuilder("chat")
-      .leftJoinAndSelect("chat.members", "user")
-      .where("user.id = :userId", { userId })
+    const chatMembers = await getRepository(ChatMember)
+      .createQueryBuilder("chatMember")
+      .leftJoinAndSelect("chatMember.chat", "chat")
+      .where("chatMember.userId = :userId", { userId })
       .getMany();
+
+    return chatMembers.map((chatMember) => chatMember.chat);
   }
 
   // @FieldResolver(() => [Message!], {nullable: true})

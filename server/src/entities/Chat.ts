@@ -13,6 +13,7 @@ import {
 
 import { Message } from "./Message";
 import { User } from "./User";
+import { ChatMember } from "./ChatMember";
 
 @ObjectType()
 @Entity()
@@ -37,19 +38,10 @@ export class Chat extends BaseEntity {
   messages?: Message[];
 
   @Field(() => [User!]!)
-  @ManyToMany(() => User, (user) => user.chats)
-  @JoinTable({
-    name: "public.chat_member",
-    joinColumn: {
-      name: "userId",
-      referencedColumnName: "id",
-    },
-    inverseJoinColumn: {
-      name: "chatId",
-      referencedColumnName: "id",
-    },
-  })
   members!: User[];
+
+  @OneToMany(() => ChatMember, (chatMember) => chatMember.chat)
+  chatMembers!: ChatMember[];
 
   @Field({ nullable: true })
   @Column({ nullable: true, default: null })
