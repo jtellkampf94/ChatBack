@@ -57,20 +57,20 @@ export class UserResolver {
     if (userId !== user.id)
       throw new Error("You are unauthorized to view chat of this user");
 
-    const chatMembers = await getRepository(ChatMember)
-      .createQueryBuilder("chatMember")
-      .leftJoinAndSelect("chatMember.chat", "chat")
-      .where("chatMember.userId = :userId", { userId })
+    return await getRepository(Chat)
+      .createQueryBuilder("chat")
+      .where((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select("chatMember.chatId")
+          .from(ChatMember, "chatMember")
+          .where("chatMember.userId = :userId")
+          .getQuery();
+        return "chat.id IN " + subQuery;
+      })
+      .setParameter("userId", userId)
       .getMany();
-
-    return chatMembers.map((chatMember) => chatMember.chat);
   }
-
-  // @FieldResolver(() => [Message!], {nullable: true})
-  // @UseMiddleware(isAuth)
-  // async messages() {
-
-  // }
 
   @Query(() => [User])
   @UseMiddleware(isAuth)
