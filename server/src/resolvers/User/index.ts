@@ -69,6 +69,8 @@ export class UserResolver {
         return "chat.id IN " + subQuery;
       })
       .setParameter("userId", userId)
+      .leftJoinAndSelect("chat.messages", "message")
+      .orderBy("message.createdAt", "DESC")
       .getMany();
   }
 
