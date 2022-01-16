@@ -37,6 +37,9 @@ export class Chat extends BaseEntity {
   @OneToMany(() => Message, (message) => message.chat)
   messages?: Message[];
 
+  @Field(() => Message, { nullable: true })
+  latestMessage?: Message;
+
   @Field(() => [User!]!)
   members!: User[];
 

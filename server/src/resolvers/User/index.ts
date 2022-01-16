@@ -46,33 +46,33 @@ export class UserResolver {
     return contacts.map((contact) => contact.contact);
   }
 
-  @FieldResolver(() => [Chat!], { nullable: true })
-  @UseMiddleware(isAuth)
-  async chats(
-    @Root() user: User,
-    @Ctx() { req }: MyContext
-  ): Promise<Chat[] | null> {
-    const userId = Number(req.session.userId);
+  // @FieldResolver(() => [Chat!], { nullable: true })
+  // @UseMiddleware(isAuth)
+  // async chats(
+  //   @Root() user: User,
+  //   @Ctx() { req }: MyContext
+  // ): Promise<Chat[] | null> {
+  //   const userId = Number(req.session.userId);
 
-    if (userId !== user.id)
-      throw new Error("You are unauthorized to view chat of this user");
+  //   if (userId !== user.id)
+  //     throw new Error("You are unauthorized to view chat of this user");
 
-    return await getRepository(Chat)
-      .createQueryBuilder("chat")
-      .where((qb) => {
-        const subQuery = qb
-          .subQuery()
-          .select("chatMember.chatId")
-          .from(ChatMember, "chatMember")
-          .where("chatMember.userId = :userId")
-          .getQuery();
-        return "chat.id IN " + subQuery;
-      })
-      .setParameter("userId", userId)
-      .leftJoinAndSelect("chat.messages", "message")
-      .orderBy("message.createdAt", "DESC")
-      .getMany();
-  }
+  //   return await getRepository(Chat)
+  //     .createQueryBuilder("chat")
+  //     .where((qb) => {
+  //       const subQuery = qb
+  //         .subQuery()
+  //         .select("chatMember.chatId")
+  //         .from(ChatMember, "chatMember")
+  //         .where("chatMember.userId = :userId")
+  //         .getQuery();
+  //       return "chat.id IN " + subQuery;
+  //     })
+  //     .setParameter("userId", userId)
+  //     .leftJoinAndSelect("chat.messages", "message")
+  //     .orderBy("message.createdAt", "DESC")
+  //     .getMany();
+  // }
 
   @Query(() => [User])
   @UseMiddleware(isAuth)
