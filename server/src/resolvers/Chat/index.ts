@@ -30,6 +30,16 @@ export class ChatResolver {
     return message;
   }
 
+  @FieldResolver(() => [Message!], { nullable: true })
+  async messages(
+    @Root() chat: Chat,
+    @Ctx() { messageLoader }: MyContext,
+    @Arg("limit") limit: number
+  ): Promise<Message[] | null> {
+    console.log(chat.id, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    return messageLoader(limit).load(chat.id);
+  }
+
   @FieldResolver(() => [User])
   async members(
     @Root() chat: Chat,

@@ -25,6 +25,7 @@ import { COOKIE_NAME } from "./constants";
 import { userLoader } from "./loaders/UserLoader";
 import { chatMemberLoader } from "./loaders/ChatMemberLoader";
 import { latestMessageLoader } from "./loaders/LatestMessageLoader";
+import { messageLoader } from "./loaders/MessageLoader";
 
 dotenv.config();
 
@@ -91,6 +92,7 @@ const main = async () => {
       chatMemberLoader: chatMemberLoader(),
       userLoader: userLoader(),
       latestMessageLoader: latestMessageLoader(),
+      messageLoader,
     }),
   });
 
