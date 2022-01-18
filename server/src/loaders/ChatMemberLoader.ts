@@ -5,7 +5,10 @@ import { ChatMember } from "../entities/ChatMember";
 type BatchChatMember = (chatIds: readonly number[]) => Promise<ChatMember[][]>;
 
 const batchChatMembers: BatchChatMember = async (chatIds) => {
-  const chatMembers = await ChatMember.find({ chatId: In([...chatIds]) });
+  const chatMembers = await ChatMember.find({
+    where: { chatId: In([...chatIds]) },
+    relations: ["user"],
+  });
 
   const chatMemberMap: { [key: number]: ChatMember[] } = {};
   chatMembers.forEach((cm) => {

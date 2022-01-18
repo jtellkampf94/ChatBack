@@ -2,8 +2,9 @@ import { getConnection } from "typeorm";
 import DataLoader from "dataloader";
 import { Message } from "../entities/Message";
 
-export const messageLoader = (limit: number) => {
-  return new DataLoader<number, Message[]>(async (chatIds) => {
+export const messageLoader = () => {
+  let limit: number;
+  const messageLoader = new DataLoader<number, Message[]>(async (chatIds) => {
     const latestMessages: Message[] = await getConnection().query(`
       SELECT * FROM (
         SELECT m.*,
@@ -24,4 +25,11 @@ export const messageLoader = (limit: number) => {
 
     return chatIds.map((chatId) => messagesMap[chatId]);
   });
+
+  return {
+    getMessages(messageLimit: number) {
+      limit = messageLimit;
+      return messageLoader;
+    },
+  };
 };

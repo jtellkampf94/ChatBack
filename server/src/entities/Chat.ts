@@ -4,8 +4,7 @@ import {
   Entity,
   OneToMany,
   ManyToOne,
-  ManyToMany,
-  JoinTable,
+  UpdateDateColumn,
   BaseEntity,
   PrimaryGeneratedColumn,
   CreateDateColumn,
@@ -26,19 +25,21 @@ export class Chat extends BaseEntity {
   @CreateDateColumn()
   createdAt: Date;
 
+  @Field(() => Date)
+  @UpdateDateColumn()
+  updatedAt: Date;
+
   @Field(() => User)
   @ManyToOne(() => User)
   createdBy!: User;
 
   @Column()
+  @Field()
   createdById!: number;
 
   @Field(() => [Message!], { nullable: true })
   @OneToMany(() => Message, (message) => message.chat)
   messages?: Message[];
-
-  @Field(() => Message, { nullable: true })
-  latestMessage?: Message;
 
   @Field(() => [User!]!)
   members!: User[];

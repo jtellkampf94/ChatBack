@@ -8,7 +8,7 @@ import {
   UseMiddleware,
   FieldResolver,
 } from "type-graphql";
-import { getConnection, getRepository } from "typeorm";
+import { getRepository } from "typeorm";
 import bcrypt from "bcryptjs";
 
 import { MyContext } from "../../types";
@@ -18,7 +18,6 @@ import { LoginInput } from "./LoginInput";
 import { User } from "../../entities/User";
 import { Chat } from "../../entities/Chat";
 import { Contact } from "../../entities/Contact";
-import { Message } from "../../entities/Message";
 import { ChatMember } from "../../entities/ChatMember";
 
 import { isAuth } from "../../middleware/isAuth";
@@ -70,7 +69,7 @@ export class UserResolver {
       })
       .setParameter("userId", userId)
       .leftJoin("chat.messages", "message")
-      .orderBy("message.createdAt", "DESC")
+      .orderBy("chat.updatedAt", "DESC")
       .getMany();
   }
 

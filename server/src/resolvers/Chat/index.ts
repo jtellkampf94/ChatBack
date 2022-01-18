@@ -20,35 +20,22 @@ import { User } from "../../entities/User";
 
 @Resolver((of) => Chat)
 export class ChatResolver {
-  @FieldResolver(() => Message, { nullable: true })
-  async latestMessage(
-    @Root() chat: Chat,
-    @Ctx() { latestMessageLoader }: MyContext
-  ): Promise<Message | null> {
-    const message = await latestMessageLoader.load(chat.id);
-    if (!message) return null;
-    return message;
-  }
-
   @FieldResolver(() => [Message!], { nullable: true })
   async messages(
     @Root() chat: Chat,
     @Ctx() { messageLoader }: MyContext,
-    @Arg("limit") limit: number
+    @Arg("limit", () => Int) limit: number
   ): Promise<Message[] | null> {
-    console.log(chat.id, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    return messageLoader(limit).load(chat.id);
+    return messageLoader.getMessages(limit).load(chat.id);
   }
 
   @FieldResolver(() => [User])
   async members(
     @Root() chat: Chat,
-    @Ctx() { chatMemberLoader, userLoader }: MyContext
+    @Ctx() { chatMemberLoader }: MyContext
   ): Promise<(User | Error)[]> {
     const chatMembers = await chatMemberLoader.load(chat.id);
-    const memberIds = chatMembers.map((cm) => cm.userId);
-
-    return userLoader.loadMany(memberIds);
+    return chatMembers.map((cm) => cm.user);
   }
 
   @Mutation(() => Chat)
