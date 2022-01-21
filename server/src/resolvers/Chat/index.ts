@@ -24,9 +24,10 @@ export class ChatResolver {
   async messages(
     @Root() chat: Chat,
     @Ctx() { messageLoader }: MyContext,
-    @Arg("limit", () => Int) limit: number
+    @Arg("limit", () => Int) limit: number,
+    @Arg("cursor", () => String, { nullable: true }) cursor: string | null
   ): Promise<Message[] | null> {
-    return messageLoader.getMessages(limit).load(chat.id);
+    return messageLoader.getMessages({ limit, cursor }).load(chat.id);
   }
 
   @FieldResolver(() => [User])
