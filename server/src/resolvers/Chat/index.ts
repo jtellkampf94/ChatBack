@@ -53,10 +53,16 @@ export class ChatResolver {
     }).save();
 
     userIds.push(createdById);
+    const chatMembers: Array<{ userId: number; chatId: number }> = userIds.map(
+      (userId) => ({ userId, chatId: chat.id })
+    );
 
-    for (let userId of userIds) {
-      await ChatMember.create({ userId, chatId: chat.id }).save();
-    }
+    await getConnection()
+      .createQueryBuilder()
+      .insert()
+      .into(ChatMember)
+      .values(chatMembers)
+      .execute();
 
     return chat;
   }
@@ -84,22 +90,14 @@ export class ChatResolver {
   ): Promise<Chat> {
     const chat = await Chat.findOne({
       where: { id: chatId },
-      relations: ["chatMembers", "messages"],
-      order: { createdAt: "DESC" },
+      relations: ["chatMembers"],
     });
 
     if (!chat) throw new Error("no chat has this Id");
 
-    let isChatMember = false;
-
     const userId = Number(req.session.userId);
 
-    // for (let member of chat.chatMembers) {
-    //   if (member.userId === userId) {
-    //     isChatMember = true;
-    //     break;
-    //   }
-    // }
+    const isChatMember = chat.chatMembers.find((cm) => cm.userId === userId);
 
     if (!isChatMember) {
       throw new Error("you are not authorized to view chat");
