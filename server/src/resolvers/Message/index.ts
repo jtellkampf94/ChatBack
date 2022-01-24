@@ -8,6 +8,7 @@ import {
   Root,
   UseMiddleware,
   Query,
+  FieldResolver,
 } from "type-graphql";
 import { PubSub } from "apollo-server-express";
 
@@ -16,12 +17,21 @@ import { MyContext } from "../../types";
 import { Message } from "../../entities/Message";
 import { ChatMember } from "../../entities/ChatMember";
 import { Chat } from "../../entities/Chat";
+import { User } from "../../entities/User";
 import { NEW_MESSAGE } from "../../constants";
 
 const pubSub = new PubSub();
 
-@Resolver()
+@Resolver((of) => Message)
 export class MessageResolver {
+  @FieldResolver(() => User!)
+  async user(
+    @Root() message: Message,
+    @Ctx() { userLoader }: MyContext
+  ): Promise<User> {
+    return userLoader.load(message.userId);
+  }
+
   @Subscription(() => Message, {
     //@ts-ignore
     subscribe: async (_, { chatId }, { connection }) => {

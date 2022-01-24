@@ -21,11 +21,23 @@ export const isUserLoggedIn: GetServerSideProps = async ({
   const CURRENT_USER_QUERY = gql`
     query GetCurrentUser {
       currentUser {
-        id
-        email
-        username
-        updatedAt
-        createdAt
+        contacts {
+          id
+          profilePictureUrl
+          firstName
+          lastName
+          createdAt
+        }
+        chats {
+          id
+          groupAvatarUrl
+          updatedAt
+          messages(limit: 1) {
+            id
+            text
+            createdAt
+          }
+        }
       }
     }
   `;
@@ -41,7 +53,7 @@ export const isUserLoggedIn: GetServerSideProps = async ({
 
   return {
     props: {
-      currentUser: result.data.currentUser
+      currentUser: result.data.currentUser,
     },
   };
 };
