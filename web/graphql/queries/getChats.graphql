@@ -1,13 +1,11 @@
-query GetChats {
+query GetChats($limit: Int!, $cursor: String) {
   getChats {
     id
     createdById
     groupName
     groupAvatarUrl
-    latestMessage {
-      text
-      createdAt
-      userId
+    messages(limit: $limit, cursor: $cursor) {
+      ...MessageFragment
     }
     members {
       id

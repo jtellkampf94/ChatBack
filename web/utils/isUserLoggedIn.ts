@@ -21,12 +21,24 @@ export const isUserLoggedIn: GetServerSideProps = async ({
   const CURRENT_USER_QUERY = gql`
     query GetCurrentUser {
       currentUser {
+        id
+        email
+        username
+        firstName
+        lastName
+        updatedAt
+        createdAt
         contacts {
           id
           profilePictureUrl
           firstName
           lastName
           createdAt
+        }
+        members {
+          id
+          firstName
+          lastName
         }
         chats {
           id

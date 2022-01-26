@@ -33,12 +33,12 @@ interface HomePageProps {
 }
 
 const Home: NextPage<HomePageProps> = ({ currentUser }) => {
-  const { setUser } = useUser();
-  useEffect(() => {
-    if (setUser) {
-      setUser(currentUser);
-    }
-  }, [currentUser, setUser]);
+  // const { setUser } = useUser();
+  // useEffect(() => {
+  //   if (setUser) {
+  //     setUser(currentUser);
+  //   }
+  // }, [currentUser, setUser]);
 
   return (
     <div>
@@ -51,7 +51,10 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
         <NewMessageProvider>
           <Container>
             <SidebarContainer>
-              <Sidebar />
+              <Sidebar
+                chats={currentUser.chats}
+                userId={Number(currentUser.id)}
+              />
             </SidebarContainer>
             <ChatSection />
           </Container>

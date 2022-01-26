@@ -46,13 +46,13 @@ export class MessageResolver {
 
       if (!chat) throw new Error("chat does not exist");
 
-      // const isChatMember =
-      //   chat.chatMembers.filter(
-      //     (chatMember) =>
-      //       Number(chatMember.userId) === userId && chatMember.isActive
-      //   ).length > 0;
+      const isChatMember =
+        chat.chatMembers.filter(
+          (chatMember) =>
+            Number(chatMember.userId) === userId && chatMember.isActive
+        ).length > 0;
 
-      // if (!isChatMember) throw new Error("not authorized");
+      if (!isChatMember) throw new Error("not authorized");
 
       return pubSub.asyncIterator(NEW_MESSAGE);
     },

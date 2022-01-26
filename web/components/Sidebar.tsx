@@ -6,7 +6,7 @@ import SearchIcon from "@material-ui/icons/Search";
 
 import Chat from "./Chat";
 import { globalTheme } from "../themes/globalTheme";
-import { useGetChatsQuery } from "../generated/graphql";
+import { useGetChatsQuery, User } from "../generated/graphql";
 import { useUser } from "../context/UserContext";
 import { useNewMessage } from "../context/NewMessageContext";
 
@@ -92,13 +92,12 @@ const ChatContainer = styled.div`
   }
 `;
 
-const Sidebar: React.FC = () => {
-  const { user } = useUser();
-  const { error, loading, data } = useGetChatsQuery();
-  const { newMessage } = useNewMessage();
+interface SidebarProps {
+  chats: User["chats"];
+  userId: number;
+}
 
-  const userId = user ? Number(user.id) : null;
-
+const Sidebar: React.FC<SidebarProps> = ({ chats, userId }) => {
   return (
     <Container>
       <Header>
@@ -129,17 +128,16 @@ const Sidebar: React.FC = () => {
         </SearchBar>
       </Search>
       <ChatContainer>
-        {userId &&
-          data?.getChats.map((chat) => (
-            <Chat
-              key={chat.id}
-              chat={chat}
-              userId={userId}
-              newMessage={
-                Number(chat.id) === newMessage?.chatId ? newMessage : undefined
-              }
-            />
-          ))}
+        {chats?.map((chat) => (
+          <Chat
+            key={chat.id}
+            chat={chat}
+            userId={userId}
+            newMessage={
+              Number(chat.id) === newMessage?.chatId ? newMessage : undefined
+            }
+          />
+        ))}
       </ChatContainer>
     </Container>
   );

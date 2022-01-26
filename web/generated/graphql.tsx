@@ -19,20 +19,26 @@ export type Scalars = {
 export type Chat = {
   __typename?: 'Chat';
   createdAt: Scalars['DateTime'];
+  createdBy: User;
   createdById: Scalars['Float'];
   groupAvatarUrl?: Maybe<Scalars['String']>;
   groupName?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
-  latestMessage?: Maybe<Message>;
   members: Array<User>;
   messages?: Maybe<Array<Message>>;
   updatedAt: Scalars['DateTime'];
 };
 
+
+export type ChatMessagesArgs = {
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
+};
+
 export type Contact = {
   __typename?: 'Contact';
-  contactId: Scalars['Float'];
-  userId: Scalars['Float'];
+  contact: User;
+  user: User;
 };
 
 export type LoginInput = {
@@ -42,13 +48,13 @@ export type LoginInput = {
 
 export type Message = {
   __typename?: 'Message';
+  chat: Chat;
   chatId: Scalars['Float'];
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   imageUrl?: Maybe<Scalars['String']>;
   text: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-  userId: Scalars['Float'];
+  user: User;
 };
 
 export type Mutation = {
@@ -143,15 +149,20 @@ export type SubscriptionNewMessageArgs = {
 export type User = {
   __typename?: 'User';
   about?: Maybe<Scalars['String']>;
+  chats?: Maybe<Array<Chat>>;
+  contacts?: Maybe<Array<User>>;
   createdAt: Scalars['DateTime'];
   email: Scalars['String'];
   firstName: Scalars['String'];
   id: Scalars['ID'];
   lastName: Scalars['String'];
+  messages?: Maybe<Array<Message>>;
   profilePictureUrl?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   username: Scalars['String'];
 };
+
+export type MessageFragmentFragment = { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string } };
 
 export type CreateChatMutationVariables = Exact<{
   userIds: Array<Scalars['Int']> | Scalars['Int'];
@@ -181,31 +192,36 @@ export type SendMessageMutationVariables = Exact<{
 }>;
 
 
-export type SendMessageMutation = { __typename?: 'Mutation', sendMessage: { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, createdAt: any, userId: number, chatId: number } };
+export type SendMessageMutation = { __typename?: 'Mutation', sendMessage: { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string } } };
 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', id: string, email: string, username: string, updatedAt: any, createdAt: any } | null | undefined };
+export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', id: string, email: string, username: string, firstName: string, lastName: string, updatedAt: any, createdAt: any, contacts?: Array<{ __typename?: 'User', id: string, profilePictureUrl?: string | null | undefined, firstName: string, lastName: string, createdAt: any }> | null | undefined, chats?: Array<{ __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, updatedAt: any, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any }> | null | undefined }> | null | undefined } | null | undefined };
 
 export type GetChatQueryVariables = Exact<{
   chatId: Scalars['Int'];
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
 }>;
 
 
-export type GetChatQuery = { __typename?: 'Query', getChat: { __typename?: 'Chat', id: string, createdById: number, createdAt: any, updatedAt: any, groupName?: string | null | undefined, groupAvatarUrl?: string | null | undefined, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, username: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', userId: number, text: string, createdAt: any }> | null | undefined } };
+export type GetChatQuery = { __typename?: 'Query', getChat: { __typename?: 'Chat', id: string, createdById: number, createdAt: any, updatedAt: any, groupName?: string | null | undefined, groupAvatarUrl?: string | null | undefined, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, username: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string } }> | null | undefined } };
 
-export type GetChatsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetChatsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+}>;
 
 
-export type GetChatsQuery = { __typename?: 'Query', getChats: Array<{ __typename?: 'Chat', id: string, createdById: number, groupName?: string | null | undefined, groupAvatarUrl?: string | null | undefined, latestMessage?: { __typename?: 'Message', text: string, createdAt: any, userId: number } | null | undefined, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, username: string, profilePictureUrl?: string | null | undefined }> }> };
+export type GetChatsQuery = { __typename?: 'Query', getChats: Array<{ __typename?: 'Chat', id: string, createdById: number, groupName?: string | null | undefined, groupAvatarUrl?: string | null | undefined, messages?: Array<{ __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string } }> | null | undefined, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, username: string, profilePictureUrl?: string | null | undefined }> }> };
 
 export type GetMessagesQueryVariables = Exact<{
   chatId: Scalars['Int'];
 }>;
 
 
-export type GetMessagesQuery = { __typename?: 'Query', getMessages?: Array<{ __typename?: 'Message', id: string, userId: number, chatId: number, createdAt: any, text: string, imageUrl?: string | null | undefined }> | null | undefined };
+export type GetMessagesQuery = { __typename?: 'Query', getMessages?: Array<{ __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string } }> | null | undefined };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -217,9 +233,22 @@ export type NewMessageSubscriptionVariables = Exact<{
 }>;
 
 
-export type NewMessageSubscription = { __typename?: 'Subscription', newMessage: { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, createdAt: any, userId: number, chatId: number } };
+export type NewMessageSubscription = { __typename?: 'Subscription', newMessage: { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string } } };
 
-
+export const MessageFragmentFragmentDoc = gql`
+    fragment MessageFragment on Message {
+  id
+  text
+  imageUrl
+  chatId
+  createdAt
+  user {
+    id
+    firstName
+    lastName
+  }
+}
+    `;
 export const CreateChatDocument = gql`
     mutation CreateChat($userIds: [Int!]!) {
   createChat(userIds: $userIds) {
@@ -332,15 +361,10 @@ export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutatio
 export const SendMessageDocument = gql`
     mutation SendMessage($chatId: Int!, $text: String!, $imageUrl: String) {
   sendMessage(chatId: $chatId, text: $text, imageUrl: $imageUrl) {
-    id
-    text
-    imageUrl
-    createdAt
-    userId
-    chatId
+    ...MessageFragment
   }
 }
-    `;
+    ${MessageFragmentFragmentDoc}`;
 export type SendMessageMutationFn = Apollo.MutationFunction<SendMessageMutation, SendMessageMutationVariables>;
 
 /**
@@ -375,8 +399,27 @@ export const CurrentUserDocument = gql`
     id
     email
     username
+    firstName
+    lastName
     updatedAt
     createdAt
+    contacts {
+      id
+      profilePictureUrl
+      firstName
+      lastName
+      createdAt
+    }
+    chats {
+      id
+      groupAvatarUrl
+      updatedAt
+      messages(limit: 1) {
+        id
+        text
+        createdAt
+      }
+    }
   }
 }
     `;
@@ -408,7 +451,7 @@ export type CurrentUserQueryHookResult = ReturnType<typeof useCurrentUserQuery>;
 export type CurrentUserLazyQueryHookResult = ReturnType<typeof useCurrentUserLazyQuery>;
 export type CurrentUserQueryResult = Apollo.QueryResult<CurrentUserQuery, CurrentUserQueryVariables>;
 export const GetChatDocument = gql`
-    query GetChat($chatId: Int!) {
+    query GetChat($chatId: Int!, $limit: Int!, $cursor: String) {
   getChat(chatId: $chatId) {
     id
     createdById
@@ -423,14 +466,12 @@ export const GetChatDocument = gql`
       username
       profilePictureUrl
     }
-    messages {
-      userId
-      text
-      createdAt
+    messages(limit: $limit, cursor: $cursor) {
+      ...MessageFragment
     }
   }
 }
-    `;
+    ${MessageFragmentFragmentDoc}`;
 
 /**
  * __useGetChatQuery__
@@ -445,6 +486,8 @@ export const GetChatDocument = gql`
  * const { data, loading, error } = useGetChatQuery({
  *   variables: {
  *      chatId: // value for 'chatId'
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
  *   },
  * });
  */
@@ -460,16 +503,14 @@ export type GetChatQueryHookResult = ReturnType<typeof useGetChatQuery>;
 export type GetChatLazyQueryHookResult = ReturnType<typeof useGetChatLazyQuery>;
 export type GetChatQueryResult = Apollo.QueryResult<GetChatQuery, GetChatQueryVariables>;
 export const GetChatsDocument = gql`
-    query GetChats {
+    query GetChats($limit: Int!, $cursor: String) {
   getChats {
     id
     createdById
     groupName
     groupAvatarUrl
-    latestMessage {
-      text
-      createdAt
-      userId
+    messages(limit: $limit, cursor: $cursor) {
+      ...MessageFragment
     }
     members {
       id
@@ -480,7 +521,7 @@ export const GetChatsDocument = gql`
     }
   }
 }
-    `;
+    ${MessageFragmentFragmentDoc}`;
 
 /**
  * __useGetChatsQuery__
@@ -494,10 +535,12 @@ export const GetChatsDocument = gql`
  * @example
  * const { data, loading, error } = useGetChatsQuery({
  *   variables: {
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
  *   },
  * });
  */
-export function useGetChatsQuery(baseOptions?: Apollo.QueryHookOptions<GetChatsQuery, GetChatsQueryVariables>) {
+export function useGetChatsQuery(baseOptions: Apollo.QueryHookOptions<GetChatsQuery, GetChatsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetChatsQuery, GetChatsQueryVariables>(GetChatsDocument, options);
       }
@@ -511,15 +554,10 @@ export type GetChatsQueryResult = Apollo.QueryResult<GetChatsQuery, GetChatsQuer
 export const GetMessagesDocument = gql`
     query GetMessages($chatId: Int!) {
   getMessages(chatId: $chatId) {
-    id
-    userId
-    chatId
-    createdAt
-    text
-    imageUrl
+    ...MessageFragment
   }
 }
-    `;
+    ${MessageFragmentFragmentDoc}`;
 
 /**
  * __useGetMessagesQuery__
@@ -589,15 +627,10 @@ export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQuer
 export const NewMessageDocument = gql`
     subscription NewMessage($chatId: Int!) {
   newMessage(chatId: $chatId) {
-    id
-    text
-    imageUrl
-    createdAt
-    userId
-    chatId
+    ...MessageFragment
   }
 }
-    `;
+    ${MessageFragmentFragmentDoc}`;
 
 /**
  * __useNewMessageSubscription__

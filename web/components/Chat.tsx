@@ -70,7 +70,7 @@ const Chat: React.FC<ChatProps> = ({ chat, userId, newMessage }) => {
   );
   const nowDate = new Date();
   const latestMessageDate = new Date(
-    newMessage ? newMessage.createdAt : chat.latestMessage?.createdAt
+    newMessage ? newMessage.createdAt : chat.?.createdAt
   );
   let dateFormat;
 

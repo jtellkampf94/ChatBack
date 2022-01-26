@@ -1,4 +1,4 @@
-query GetChat($chatId: Int!) {
+query GetChat($chatId: Int!, $limit: Int!, $cursor: String) {
   getChat(chatId: $chatId) {
     id
     createdById
@@ -13,10 +13,8 @@ query GetChat($chatId: Int!) {
       username
       profilePictureUrl
     }
-    messages {
-      userId
-      text
-      createdAt
+    messages(limit: $limit, cursor: $cursor) {
+      ...MessageFragment
     }
   }
 }

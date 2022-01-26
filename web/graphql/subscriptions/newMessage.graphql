@@ -1,10 +1,5 @@
 subscription NewMessage($chatId: Int!) {
   newMessage(chatId: $chatId) {
-    id
-    text
-    imageUrl
-    createdAt
-    userId
-    chatId
+    ...MessageFragment
   }
 }
