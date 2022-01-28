@@ -94,10 +94,9 @@ const ChatContainer = styled.div`
 
 interface SidebarProps {
   chats: User["chats"];
-  userId: number;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ chats, userId }) => {
+const Sidebar: React.FC<SidebarProps> = ({ chats }) => {
   return (
     <Container>
       <Header>
@@ -132,10 +131,9 @@ const Sidebar: React.FC<SidebarProps> = ({ chats, userId }) => {
           <Chat
             key={chat.id}
             chat={chat}
-            userId={userId}
-            newMessage={
-              Number(chat.id) === newMessage?.chatId ? newMessage : undefined
-            }
+            // newMessage={
+            //   Number(chat.id) === newMessage?.chatId ? newMessage : undefined
+            // }
           />
         ))}
       </ChatContainer>

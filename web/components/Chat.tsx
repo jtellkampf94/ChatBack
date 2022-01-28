@@ -5,6 +5,7 @@ import Moment from "react-moment";
 
 import { GetChatsQuery, NewMessageSubscription } from "../generated/graphql";
 import { isSameDay, getDifferenceInDays } from "../utils/dateFunctions";
+import { capitalizeFirstLetter } from "../utils/capitalizeFirstLetter";
 import { useChatId } from "../context/ChatContext";
 
 const Container = styled("div")<{ highlighted: boolean }>`
@@ -58,40 +59,37 @@ const TimeOfLastMessage = styled.div`
 
 interface ChatProps {
   chat: GetChatsQuery["getChats"][0];
-  userId: number;
-  newMessage?: NewMessageSubscription["newMessage"];
+  // newMessage?: NewMessageSubscription["newMessage"];
 }
 
-const Chat: React.FC<ChatProps> = ({ chat, userId, newMessage }) => {
+const Chat: React.FC<ChatProps> = ({ chat }) => {
   const { chatId, setChatId } = useChatId();
-  const isGroupChat = chat.members.length > 2;
-  const otherUser = chat.members.filter(
-    (member) => Number(member.id) !== userId
-  );
+  const isGroupChat = chat.members.length > 1;
+  const otherUser = chat.members[0];
   const nowDate = new Date();
-  const latestMessageDate = new Date(
-    newMessage ? newMessage.createdAt : chat.?.createdAt
-  );
-  let dateFormat;
+  // const latestMessageDate = new Date(
+  //   newMessage ? newMessage.createdAt : chat.?.createdAt
+  // );
+  // let dateFormat;
 
-  if (isSameDay(nowDate, latestMessageDate)) {
-    dateFormat = (
-      <Moment format="HH:mm">
-        {newMessage ? newMessage.createdAt : chat.latestMessage?.createdAt}
-      </Moment>
-    );
-  } else if (
-    getDifferenceInDays(nowDate, latestMessageDate) < 1 &&
-    nowDate.getDay() !== latestMessageDate.getDay()
-  ) {
-    dateFormat = "Yesterday";
-  } else {
-    dateFormat = (
-      <Moment format="DD-MM-YYYY">
-        {newMessage ? newMessage.createdAt : chat.latestMessage?.createdAt}
-      </Moment>
-    );
-  }
+  // if (isSameDay(nowDate, latestMessageDate)) {
+  //   dateFormat = (
+  //     <Moment format="HH:mm">
+  //       {newMessage ? newMessage.createdAt : chat.latestMessage?.createdAt}
+  //     </Moment>
+  //   );
+  // } else if (
+  //   getDifferenceInDays(nowDate, latestMessageDate) < 1 &&
+  //   nowDate.getDay() !== latestMessageDate.getDay()
+  // ) {
+  //   dateFormat = "Yesterday";
+  // } else {
+  //   dateFormat = (
+  //     <Moment format="DD-MM-YYYY">
+  //       {newMessage ? newMessage.createdAt : chat.latestMessage?.createdAt}
+  //     </Moment>
+  //   );
+  // }
 
   const handleClick = () => {
     if (setChatId) {
@@ -109,12 +107,16 @@ const Chat: React.FC<ChatProps> = ({ chat, userId, newMessage }) => {
         <Avatar style={{ width: "52px", height: "52px" }} />
       )}
       <TextContainer>
-        <Name>{isGroupChat ? chat.groupName : otherUser[0].username}</Name>
-        <LastMessage>
-          {newMessage ? newMessage.text : chat.latestMessage?.text}
-        </LastMessage>
+        <Name>
+          {isGroupChat
+            ? chat.groupName
+            : `${capitalizeFirstLetter(
+                otherUser.firstName
+              )} ${capitalizeFirstLetter(otherUser.lastName)}`}
+        </Name>
+        <LastMessage>{chat?.messages?.[0].text}</LastMessage>
       </TextContainer>
-      <TimeOfLastMessage>{dateFormat}</TimeOfLastMessage>
+      {/* <TimeOfLastMessage>{dateFormat}</TimeOfLastMessage> */}
     </Container>
   );
 };

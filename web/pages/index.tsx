@@ -51,10 +51,7 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
         <NewMessageProvider>
           <Container>
             <SidebarContainer>
-              <Sidebar
-                chats={currentUser.chats}
-                userId={Number(currentUser.id)}
-              />
+              <Sidebar chats={currentUser.chats} />
             </SidebarContainer>
             <ChatSection />
           </Container>

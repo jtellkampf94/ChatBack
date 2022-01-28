@@ -33,10 +33,12 @@ export class ChatResolver {
   @FieldResolver(() => [User])
   async members(
     @Root() chat: Chat,
-    @Ctx() { chatMemberLoader }: MyContext
+    @Ctx() { chatMemberLoader, req }: MyContext
   ): Promise<(User | Error)[]> {
     const chatMembers = await chatMemberLoader.load(chat.id);
-    return chatMembers.map((cm) => cm.user);
+    return chatMembers
+      .map((cm) => cm.user)
+      .filter((user) => user.id !== Number(req.session.userId));
   }
 
   @Mutation(() => Chat)

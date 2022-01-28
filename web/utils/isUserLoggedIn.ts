@@ -35,15 +35,16 @@ export const isUserLoggedIn: GetServerSideProps = async ({
           lastName
           createdAt
         }
-        members {
-          id
-          firstName
-          lastName
-        }
         chats {
           id
           groupAvatarUrl
+          groupName
           updatedAt
+          members {
+            id
+            firstName
+            lastName
+          }
           messages(limit: 1) {
             id
             text
