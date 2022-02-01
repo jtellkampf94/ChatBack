@@ -56,7 +56,7 @@ export class UserResolver {
     if (userId !== user.id)
       throw new Error("You are unauthorized to view chat of this user");
 
-    return await getRepository(Chat)
+    return getRepository(Chat)
       .createQueryBuilder("chat")
       .where((qb) => {
         const subQuery = qb
@@ -68,7 +68,6 @@ export class UserResolver {
         return "chat.id IN " + subQuery;
       })
       .setParameter("userId", userId)
-      .leftJoin("chat.messages", "message")
       .orderBy("chat.updatedAt", "DESC")
       .getMany();
   }
