@@ -1,12 +1,6 @@
 import styled from "styled-components";
 import { Avatar } from "@material-ui/core";
 import GroupIcon from "@material-ui/icons/Group";
-import Moment from "react-moment";
-
-import { GetChatsQuery, NewMessageSubscription } from "../generated/graphql";
-import { isSameDay, getDifferenceInDays } from "../utils/dateFunctions";
-import { capitalizeFirstLetter } from "../utils/capitalizeFirstLetter";
-import { useChatId } from "../context/ChatContext";
 
 const Container = styled("div")<{ highlighted: boolean }>`
   width: 100%;
@@ -40,13 +34,13 @@ const Name = styled.p`
   font-weight: 400;
 `;
 
-const LastMessage = styled.p`
+const LastestMessage = styled.p`
   font-size: 16px;
   color: ${({ theme }) => theme.globalTheme.greyMessageColor};
   font-weight: 300;
 `;
 
-const TimeOfLastMessage = styled.div`
+const TimeOfLastestMessage = styled.div`
   display: flex;
   justify-content: flex-end;
   margin-top: 10px;
@@ -58,47 +52,24 @@ const TimeOfLastMessage = styled.div`
 `;
 
 interface ChatProps {
-  chat: GetChatsQuery["getChats"][0];
-  // newMessage?: NewMessageSubscription["newMessage"];
+  isHighlighted: boolean;
+  onClick: () => void;
+  name: string;
+  isGroupChat: boolean;
+  lastestMessage: string;
+  timeOfLastestMessage: string | JSX.Element;
 }
 
-const Chat: React.FC<ChatProps> = ({ chat }) => {
-  const { chatId, setChatId } = useChatId();
-  const isGroupChat = chat.members.length > 1;
-  const otherUser = chat.members[0];
-  const nowDate = new Date();
-  // const latestMessageDate = new Date(
-  //   newMessage ? newMessage.createdAt : chat.?.createdAt
-  // );
-  // let dateFormat;
-
-  // if (isSameDay(nowDate, latestMessageDate)) {
-  //   dateFormat = (
-  //     <Moment format="HH:mm">
-  //       {newMessage ? newMessage.createdAt : chat.latestMessage?.createdAt}
-  //     </Moment>
-  //   );
-  // } else if (
-  //   getDifferenceInDays(nowDate, latestMessageDate) < 1 &&
-  //   nowDate.getDay() !== latestMessageDate.getDay()
-  // ) {
-  //   dateFormat = "Yesterday";
-  // } else {
-  //   dateFormat = (
-  //     <Moment format="DD-MM-YYYY">
-  //       {newMessage ? newMessage.createdAt : chat.latestMessage?.createdAt}
-  //     </Moment>
-  //   );
-  // }
-
-  const handleClick = () => {
-    if (setChatId) {
-      setChatId(Number(chat.id));
-    }
-  };
-
+const Chat: React.FC<ChatProps> = ({
+  isHighlighted,
+  onClick,
+  name,
+  isGroupChat,
+  lastestMessage,
+  timeOfLastestMessage,
+}) => {
   return (
-    <Container highlighted={chatId === Number(chat.id)} onClick={handleClick}>
+    <Container highlighted={isHighlighted} onClick={onClick}>
       {isGroupChat ? (
         <Avatar style={{ width: "52px", height: "52px" }}>
           <GroupIcon style={{ width: "40px", height: "40px" }} />
@@ -107,16 +78,10 @@ const Chat: React.FC<ChatProps> = ({ chat }) => {
         <Avatar style={{ width: "52px", height: "52px" }} />
       )}
       <TextContainer>
-        <Name>
-          {isGroupChat
-            ? chat.groupName
-            : `${capitalizeFirstLetter(
-                otherUser.firstName
-              )} ${capitalizeFirstLetter(otherUser.lastName)}`}
-        </Name>
-        <LastMessage>{chat?.messages?.[0].text}</LastMessage>
+        <Name>{name}</Name>
+        <LastestMessage>{lastestMessage}</LastestMessage>
       </TextContainer>
-      {/* <TimeOfLastMessage>{dateFormat}</TimeOfLastMessage> */}
+      <TimeOfLastestMessage>{timeOfLastestMessage}</TimeOfLastestMessage>
     </Container>
   );
 };

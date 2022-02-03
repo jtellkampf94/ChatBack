@@ -4,11 +4,7 @@ import ChatIcon from "@material-ui/icons/Chat";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import SearchIcon from "@material-ui/icons/Search";
 
-import Chat from "./Chat";
 import { globalTheme } from "../themes/globalTheme";
-import { useGetChatsQuery, User } from "../generated/graphql";
-import { useUser } from "../context/UserContext";
-import { useNewMessage } from "../context/NewMessageContext";
 
 const Container = styled.div`
   width: 100%;
@@ -92,11 +88,7 @@ const ChatContainer = styled.div`
   }
 `;
 
-interface SidebarProps {
-  chats: User["chats"];
-}
-
-const Sidebar: React.FC<SidebarProps> = ({ chats }) => {
+const Sidebar: React.FC = ({ children }) => {
   return (
     <Container>
       <Header>
@@ -126,17 +118,7 @@ const Sidebar: React.FC<SidebarProps> = ({ chats }) => {
           <SearchInput placeholder="Search in chats" />
         </SearchBar>
       </Search>
-      <ChatContainer>
-        {chats?.map((chat) => (
-          <Chat
-            key={chat.id}
-            chat={chat}
-            // newMessage={
-            //   Number(chat.id) === newMessage?.chatId ? newMessage : undefined
-            // }
-          />
-        ))}
-      </ChatContainer>
+      <ChatContainer>{children}</ChatContainer>
     </Container>
   );
 };

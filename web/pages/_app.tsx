@@ -12,7 +12,6 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { WebSocketLink } from "@apollo/client/link/ws";
 
 import { Theme } from "../themes";
-import { UserProvider } from "../context/UserContext";
 
 export const createApolloClient = (headers?: Record<string, string>) => {
   const httpLink = new HttpLink({
@@ -54,9 +53,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ApolloProvider client={createApolloClient()}>
       <Theme>
-        <UserProvider>
-          <Component {...pageProps} />
-        </UserProvider>
+        <Component {...pageProps} />
       </Theme>
     </ApolloProvider>
   );

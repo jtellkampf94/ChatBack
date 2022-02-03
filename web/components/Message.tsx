@@ -47,50 +47,52 @@ const DateSent = styled.p`
 `;
 
 interface MessageProps {
-  sending?: boolean;
-  sent?: boolean;
-  delivered?: boolean;
-  read?: boolean;
-  isUser?: boolean;
+  status?: "sending" | "sent" | "delivered" | "read";
+  isUser: boolean;
   text: string;
   sender?: string;
   color?: string;
+  dateSent?: string | JSX.Element;
 }
 
 const Message: React.FC<MessageProps> = ({
-  sending,
-  sent,
-  delivered,
-  read,
+  status,
   isUser,
   text,
   sender,
   color,
+  dateSent,
 }) => {
   const renderIcon = () => {
     const grey = globalTheme.greyCheck;
     const blue = globalTheme.readBlueCheck;
     const size = { width: "16px", height: "16px" };
 
-    if (sending) {
-      return <AccessTimeIcon style={{ fill: grey, ...size }} />;
-    }
+    if (status) {
+      if (status === "sending") {
+        return <AccessTimeIcon style={{ fill: grey, ...size }} />;
+      }
 
-    if (sent) {
-      return <DoneIcon style={{ fill: grey, ...size }} />;
-    }
+      if (status === "sent") {
+        return <DoneIcon style={{ fill: grey, ...size }} />;
+      }
 
-    if (delivered || read) {
-      return <DoneAllIcon style={{ fill: delivered ? grey : blue, ...size }} />;
+      if (status === "delivered" || status === "read") {
+        return (
+          <DoneAllIcon
+            style={{ fill: status === "delivered" ? grey : blue, ...size }}
+          />
+        );
+      }
     }
   };
 
   return (
-    <Container isUser={isUser ? isUser : false}>
+    <Container isUser={isUser}>
       {sender && <Header color={color}>{sender}</Header>}
       <Text>{text}</Text>
       <MessageFooter>
-        <DateSent>05:55</DateSent>
+        <DateSent>{dateSent}</DateSent>
         {renderIcon()}
       </MessageFooter>
     </Container>

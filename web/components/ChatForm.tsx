@@ -1,11 +1,10 @@
-import { useState, FormEvent } from "react";
+import { FormEvent, ChangeEvent } from "react";
 import styled from "styled-components";
 import IconButton from "@material-ui/core/IconButton";
 import AddAPhotoOutlinedIcon from "@material-ui/icons/AddAPhotoOutlined";
 import SendIcon from "@material-ui/icons/Send";
 
 import { globalTheme } from "../themes/globalTheme";
-import { useSendMessageMutation } from "../generated/graphql";
 
 const ChatBox = styled.form`
   height: 77px;
@@ -33,31 +32,22 @@ const MessageInput = styled.input`
 `;
 
 interface ChatFormProps {
-  scrollToBottom: () => void;
-  chatId: number;
+  onSubmit: (e: FormEvent<HTMLFormElement>) => Promise<void>;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  value: string;
 }
 
-const ChatForm: React.FC<ChatFormProps> = ({ chatId, scrollToBottom }) => {
-  const [messageText, setMessageText] = useState("");
-  const [sendMessage] = useSendMessageMutation();
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    await sendMessage({ variables: { chatId, text: messageText } });
-    setMessageText("");
-    scrollToBottom();
-  };
-
+const ChatForm: React.FC<ChatFormProps> = ({ onSubmit, onChange, value }) => {
   return (
-    <ChatBox onSubmit={handleSubmit}>
+    <ChatBox onSubmit={onSubmit}>
       <IconButton type="button">
         <AddAPhotoOutlinedIcon
           style={{ fill: globalTheme.iconColor, width: "30px", height: "30px" }}
         />
       </IconButton>
       <MessageInput
-        onChange={(e) => setMessageText(e.target.value)}
-        value={messageText}
+        onChange={onChange}
+        value={value}
         placeholder="Type a message"
       />
       <IconButton type="submit">

@@ -4,7 +4,6 @@ import styled from "styled-components";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
-import Loading from "../components/Loading";
 import { useLoginMutation } from "../generated/graphql";
 
 const Container = styled.div`
@@ -56,7 +55,7 @@ const Login: React.FC = () => {
       <LoginContainer>
         <Logo src="http://assets.stickpng.com/images/580b57fcd9996e24bc43c543.png" />
         {loading ? (
-          <Loading />
+          "loading..."
         ) : (
           <Fragment>
             <form onSubmit={handleSubmit}>
