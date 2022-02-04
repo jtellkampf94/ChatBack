@@ -34,13 +34,13 @@ const Name = styled.p`
   font-weight: 400;
 `;
 
-const LastestMessage = styled.p`
+const LatestMessage = styled.p`
   font-size: 16px;
   color: ${({ theme }) => theme.globalTheme.greyMessageColor};
   font-weight: 300;
 `;
 
-const TimeOfLastestMessage = styled.div`
+const TimeOfLatestMessage = styled.div`
   display: flex;
   justify-content: flex-end;
   margin-top: 10px;
@@ -56,8 +56,8 @@ interface ChatProps {
   onClick: () => void;
   name: string;
   isGroupChat: boolean;
-  lastestMessage: string;
-  timeOfLastestMessage: string | JSX.Element;
+  latestMessage: string | undefined;
+  timeOfLatestMessage: string | JSX.Element | undefined;
 }
 
 const Chat: React.FC<ChatProps> = ({
@@ -65,8 +65,8 @@ const Chat: React.FC<ChatProps> = ({
   onClick,
   name,
   isGroupChat,
-  lastestMessage,
-  timeOfLastestMessage,
+  latestMessage,
+  timeOfLatestMessage,
 }) => {
   return (
     <Container highlighted={isHighlighted} onClick={onClick}>
@@ -79,9 +79,9 @@ const Chat: React.FC<ChatProps> = ({
       )}
       <TextContainer>
         <Name>{name}</Name>
-        <LastestMessage>{lastestMessage}</LastestMessage>
+        {latestMessage && <LatestMessage>{latestMessage}</LatestMessage>}
       </TextContainer>
-      <TimeOfLastestMessage>{timeOfLastestMessage}</TimeOfLastestMessage>
+      <TimeOfLatestMessage>{timeOfLatestMessage}</TimeOfLatestMessage>
     </Container>
   );
 };

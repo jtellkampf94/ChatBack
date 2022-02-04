@@ -14,20 +14,24 @@ export const isSameDay = (date1: Date, date2: Date): boolean => {
   );
 };
 
-export const formatDate = (timeOfLatestMessage: string, createdAt: string) => {
+export const formatDate = (timeOfLatestMessage: string | undefined) => {
+  if (timeOfLatestMessage === undefined) {
+    return undefined;
+  }
+
   const latestMessageDate = new Date(timeOfLatestMessage);
   const nowDate = new Date();
   let dateFormat;
 
   if (isSameDay(nowDate, latestMessageDate)) {
-    dateFormat = <Moment format="HH:mm">{createdAt}</Moment>;
+    dateFormat = <Moment format="HH:mm">{timeOfLatestMessage}</Moment>;
   } else if (
     getDifferenceInDays(nowDate, latestMessageDate) < 1 &&
     nowDate.getDay() !== latestMessageDate.getDay()
   ) {
     dateFormat = "Yesterday";
   } else {
-    dateFormat = <Moment format="DD-MM-YYYY">{createdAt}</Moment>;
+    dateFormat = <Moment format="DD-MM-YYYY">{timeOfLatestMessage}</Moment>;
   }
 
   return dateFormat;

@@ -10,6 +10,7 @@ import {
   Query,
   FieldResolver,
 } from "type-graphql";
+import { getConnection } from "typeorm";
 import { PubSub } from "apollo-server-express";
 
 import { isAuth } from "../../middleware/isAuth";
@@ -94,6 +95,8 @@ export class MessageResolver {
   @Query(() => [Message], { nullable: true })
   async getMessages(
     @Arg("chatId", () => Int) chatId: number,
+    @Arg("cursor", { nullable: true }) cursor: string,
+    @Arg("limit", () => Int) limit: number,
     @Ctx() { req }: MyContext
   ): Promise<Message[]> {
     const chatMember = await ChatMember.findOne({
@@ -103,9 +106,13 @@ export class MessageResolver {
     if (!chatMember)
       throw new Error("you are not authorized to view messages of this chat");
 
-    return Message.find({
-      where: { chatId },
-      order: { createdAt: "DESC" },
-    });
+    return await getConnection().query(`
+      SELECT m.*,
+      FROM 
+      public.message m
+      WHERE "chatId" = ${chatId}
+      ORDER BY "createdAt" DESC
+      ${cursor ? `WHERE "createdAt" < '${cursor}'::timestamp` : ""}  
+      LIMIT < ${limit + 1}`);
   }
 }

@@ -3,9 +3,13 @@ import { useState } from "react";
 import Head from "next/head";
 import styled from "styled-components";
 
+import { User } from "../generated/graphql";
+import { isUserLoggedIn } from "../utils/isUserLoggedIn";
+import { getUsersFullname } from "../utils/getUsersFullname";
+import { formatDate } from "../utils/dateFunctions";
+
 import ChatSection from "../containers/ChatSection";
 import Sidebar from "../components/Sidebar";
-import { User } from "../generated/graphql";
 import Chat from "../components/Chat";
 
 const Container = styled.div`
@@ -25,6 +29,15 @@ const SidebarContainer = styled.div`
   `};
 `;
 
+const ChatWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  flex: 60%;
+  ${({ theme }) => theme.homePageTheme.mediumScreen`
+    flex: 65%;
+  `};
+`;
+
 interface HomePageProps {
   currentUser: User;
 }
@@ -32,7 +45,7 @@ interface HomePageProps {
 const Home: NextPage<HomePageProps> = ({ currentUser }) => {
   const [chatId, setChatId] = useState<null | number>(null);
 
-  const handleSelectChatId = (selectedChatId: number) => {
+  const handleClick = (selectedChatId: number) => {
     setChatId(selectedChatId);
   };
 
@@ -45,14 +58,45 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
       </Head>
       <Container>
         <SidebarContainer>
-          <Sidebar>{/* <Chat /> */}</Sidebar>
+          <Sidebar>
+            {currentUser?.chats?.map((chat) => {
+              const selectedChatId = Number(chat.id);
+              return (
+                <Chat
+                  key={`chatId-${chat.id}`}
+                  isHighlighted={chatId === selectedChatId}
+                  onClick={() => handleClick(selectedChatId)}
+                  name={
+                    chat.groupName
+                      ? chat.groupName
+                      : getUsersFullname(chat.members, Number(currentUser.id))
+                  }
+                  isGroupChat={!!chat.groupName}
+                  latestMessage={chat.messages?.[0].text}
+                  timeOfLatestMessage={formatDate(chat.messages?.[0].createdAt)}
+                />
+              );
+            })}
+          </Sidebar>
         </SidebarContainer>
-        <ChatSection chatId={chatId} />
+        <ChatWrapper>
+          {chatId && currentUser?.chats && (
+            <ChatSection
+              chatId={chatId}
+              chat={
+                currentUser.chats.filter(
+                  (chat) => Number(chat.id) === chatId
+                )[0]
+              }
+              userId={Number(currentUser.id)}
+            />
+          )}
+        </ChatWrapper>
       </Container>
     </div>
   );
 };
 
-// export const getServerSideProps = isUserLoggedIn;
+export const getServerSideProps = isUserLoggedIn;
 
 export default Home;

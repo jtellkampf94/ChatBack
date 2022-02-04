@@ -1,19 +1,30 @@
 import { useRef, useState, FormEvent, Fragment, ChangeEvent } from "react";
 
-import { useSendMessageMutation } from "../generated/graphql";
-import ChatWrapper from "../components/ChatWrapper";
+import {
+  useSendMessageMutation,
+  useGetChatQuery,
+  Chat,
+} from "../generated/graphql";
+import { getUsersFullname } from "../utils/getUsersFullname";
 import ChatScreen from "../components/ChatScreen";
 import Message from "../components/Message";
 import ChatForm from "../components/ChatForm";
 
 interface ChatSectionProps {
-  chatId: number | null;
+  chatId: number;
+  chat: Chat;
+  userId: number;
 }
 
-const ChatSection: React.FC<ChatSectionProps> = ({ chatId }) => {
+const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
   const endOfMessageRef = useRef<null | HTMLDivElement>(null);
   const [messageText, setMessageText] = useState("");
+  const [limit, setLimit] = useState(20);
+  const [cursor, setCursor] = useState(null);
   const [sendMessage] = useSendMessageMutation();
+  const { loading, error, data } = useGetChatQuery({
+    variables: { chatId, limit, cursor },
+  });
 
   const scrollToBottom = () => {
     endOfMessageRef.current?.scrollIntoView({
@@ -36,22 +47,24 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId }) => {
   };
 
   return (
-    <ChatWrapper>
-      {chatId && (
-        <Fragment>
-          <ChatScreen
-            name="tttt"
-            isGroupChat={true}
-            endOfMessageRef={endOfMessageRef}
-          ></ChatScreen>
-          <ChatForm
-            onSubmit={handleSubmit}
-            onChange={handleChange}
-            value={messageText}
-          />
-        </Fragment>
-      )}
-    </ChatWrapper>
+    <Fragment>
+      {
+        <ChatScreen
+          name={
+            chat.groupName
+              ? chat.groupName
+              : getUsersFullname(chat.members, userId)
+          }
+          isGroupChat={!!chat.groupName}
+          endOfMessageRef={endOfMessageRef}
+        ></ChatScreen>
+      }
+      <ChatForm
+        onSubmit={handleSubmit}
+        onChange={handleChange}
+        value={messageText}
+      />
+    </Fragment>
   );
 };
 
