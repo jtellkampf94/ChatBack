@@ -44,7 +44,7 @@ const EndOfMessage = styled.div``;
 
 const MessagesContainer = styled.div`
   background-color: ${({ theme }) => theme.globalTheme.chatScreenBackground};
-  height: 100%;
+  height: calc(100vh - 144px);
   overflow-y: scroll;
   display: flex;
   flex-direction: column-reverse;

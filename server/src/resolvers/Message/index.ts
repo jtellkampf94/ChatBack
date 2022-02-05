@@ -107,12 +107,11 @@ export class MessageResolver {
       throw new Error("you are not authorized to view messages of this chat");
 
     return await getConnection().query(`
-      SELECT m.*,
-      FROM 
-      public.message m
+      SELECT m.*
+      FROM public.message m
       WHERE "chatId" = ${chatId}
+      ${cursor ? `AND "createdAt" < '${cursor}'::timestamp` : ""}  
       ORDER BY "createdAt" DESC
-      ${cursor ? `WHERE "createdAt" < '${cursor}'::timestamp` : ""}  
-      LIMIT < ${limit + 1}`);
+      LIMIT ${limit + 1}`);
   }
 }

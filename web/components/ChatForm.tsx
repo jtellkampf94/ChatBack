@@ -6,13 +6,19 @@ import SendIcon from "@material-ui/icons/Send";
 
 import { globalTheme } from "../themes/globalTheme";
 
+const Container = styled.div`
+  background-color: ${({ theme }) => theme.globalTheme.chatBoxBackground};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid ${({ theme }) => theme.globalTheme.greyLineColor};
+  border-bottom: 1px solid ${({ theme }) => theme.globalTheme.greyLineColor};
+`;
+
 const ChatBox = styled.form`
-  height: 77px;
   padding: 10px 17px;
   display: flex;
   align-items: center;
-  background-color: ${({ theme }) => theme.globalTheme.chatBoxBackground};
-  border-top: 1px solid ${({ theme }) => theme.globalTheme.greyLineColor};
   width: 100%;
 `;
 
@@ -39,23 +45,33 @@ interface ChatFormProps {
 
 const ChatForm: React.FC<ChatFormProps> = ({ onSubmit, onChange, value }) => {
   return (
-    <ChatBox onSubmit={onSubmit}>
-      <IconButton type="button">
-        <AddAPhotoOutlinedIcon
-          style={{ fill: globalTheme.iconColor, width: "30px", height: "30px" }}
+    <Container>
+      <ChatBox onSubmit={onSubmit}>
+        <IconButton type="button">
+          <AddAPhotoOutlinedIcon
+            style={{
+              fill: globalTheme.iconColor,
+              width: "30px",
+              height: "30px",
+            }}
+          />
+        </IconButton>
+        <MessageInput
+          onChange={onChange}
+          value={value}
+          placeholder="Type a message"
         />
-      </IconButton>
-      <MessageInput
-        onChange={onChange}
-        value={value}
-        placeholder="Type a message"
-      />
-      <IconButton type="submit">
-        <SendIcon
-          style={{ fill: globalTheme.iconColor, width: "30px", height: "30px" }}
-        />
-      </IconButton>
-    </ChatBox>
+        <IconButton type="submit">
+          <SendIcon
+            style={{
+              fill: globalTheme.iconColor,
+              width: "30px",
+              height: "30px",
+            }}
+          />
+        </IconButton>
+      </ChatBox>
+    </Container>
   );
 };
 

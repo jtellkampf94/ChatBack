@@ -125,6 +125,8 @@ export type QueryGetChatArgs = {
 
 export type QueryGetMessagesArgs = {
   chatId: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
 };
 
 export type RegisterInput = {
@@ -218,6 +220,8 @@ export type GetChatsQuery = { __typename?: 'Query', getChats: Array<{ __typename
 
 export type GetMessagesQueryVariables = Exact<{
   chatId: Scalars['Int'];
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -552,8 +556,8 @@ export type GetChatsQueryHookResult = ReturnType<typeof useGetChatsQuery>;
 export type GetChatsLazyQueryHookResult = ReturnType<typeof useGetChatsLazyQuery>;
 export type GetChatsQueryResult = Apollo.QueryResult<GetChatsQuery, GetChatsQueryVariables>;
 export const GetMessagesDocument = gql`
-    query GetMessages($chatId: Int!) {
-  getMessages(chatId: $chatId) {
+    query GetMessages($chatId: Int!, $limit: Int!, $cursor: String) {
+  getMessages(chatId: $chatId, limit: $limit, cursor: $cursor) {
     ...MessageFragment
   }
 }
@@ -572,6 +576,8 @@ export const GetMessagesDocument = gql`
  * const { data, loading, error } = useGetMessagesQuery({
  *   variables: {
  *      chatId: // value for 'chatId'
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
  *   },
  * });
  */
