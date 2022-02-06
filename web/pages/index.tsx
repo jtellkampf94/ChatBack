@@ -3,7 +3,7 @@ import { useState } from "react";
 import Head from "next/head";
 import styled from "styled-components";
 
-import { User } from "../generated/graphql";
+import { useGetChatsQuery, User } from "../generated/graphql";
 import { isUserLoggedIn } from "../utils/isUserLoggedIn";
 import { getUsersFullname } from "../utils/getUsersFullname";
 import { formatDate } from "../utils/dateFunctions";
@@ -44,6 +44,9 @@ interface HomePageProps {
 
 const Home: NextPage<HomePageProps> = ({ currentUser }) => {
   const [chatId, setChatId] = useState<null | number>(null);
+  const { data, refetch } = useGetChatsQuery({
+    variables: { limit: 1 },
+  });
 
   const handleClick = (selectedChatId: number) => {
     setChatId(selectedChatId);
@@ -59,7 +62,7 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
       <Container>
         <SidebarContainer>
           <Sidebar>
-            {currentUser?.chats?.map((chat) => {
+            {data?.getChats.map((chat) => {
               const selectedChatId = Number(chat.id);
               return (
                 <Chat
@@ -80,15 +83,14 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
           </Sidebar>
         </SidebarContainer>
         <ChatWrapper>
-          {chatId && currentUser?.chats && (
+          {chatId && data?.getChats && (
             <ChatSection
               chatId={chatId}
               chat={
-                currentUser.chats.filter(
-                  (chat) => Number(chat.id) === chatId
-                )[0]
+                data.getChats.filter((chat) => Number(chat.id) === chatId)[0]
               }
               userId={Number(currentUser.id)}
+              refetchChats={() => refetch()}
             />
           )}
         </ChatWrapper>

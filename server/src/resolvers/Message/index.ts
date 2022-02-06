@@ -34,35 +34,39 @@ export class MessageResolver {
   }
 
   @Subscription(() => Message, {
+    topics: NEW_MESSAGE,
     //@ts-ignore
-    subscribe: async (_, { chatId }, { connection }) => {
+    filter: async ({ chatId }: Message, _: any, { connection }: any) => {
+      const chatMembers = await ChatMember.find({
+        where: { chatId },
+      });
+
+      const userId = Number(connection.context.req.session.userId);
+
+      if (chatMembers.filter((cm) => cm.userId === userId).length === 1) {
+        console.log("ppppppppppp");
+
+        return false;
+      }
+
+      console.log("ooooooooooooooooooo");
+
+      return true;
+    },
+    //@ts-ignore
+    subscribe: async (_, __, { connection }) => {
       if (!connection.context.req.session.userId) {
         throw new Error("not authenticated");
       }
-      const userId = Number(connection.context.req.session.userId);
-      const chat = await Chat.findOne({
-        where: { id: chatId },
-        relations: ["chatMembers"],
-      });
-
-      if (!chat) throw new Error("chat does not exist");
-
-      const isChatMember =
-        chat.chatMembers.filter(
-          (chatMember) =>
-            Number(chatMember.userId) === userId && chatMember.isActive
-        ).length > 0;
-
-      if (!isChatMember) throw new Error("not authorized");
 
       return pubSub.asyncIterator(NEW_MESSAGE);
     },
   })
   async newMessage(
     @Root() newMessagePayload: Message,
-    @Arg("chatId", () => Int) chatId: number
-  ): Promise<Message> {
-    if (newMessagePayload.chatId !== chatId) throw new Error("not authorized");
+    @Ctx() ctx: any
+  ): Promise<Message | undefined> {
+    const userId = Number(ctx.connection.context.req.session.userId);
 
     return newMessagePayload;
   }
