@@ -9,9 +9,10 @@ import {
   UseMiddleware,
   Query,
   FieldResolver,
+  PubSub,
+  PubSubEngine,
 } from "type-graphql";
 import { getConnection } from "typeorm";
-import { PubSub } from "apollo-server-express";
 
 import { isAuth } from "../../middleware/isAuth";
 import { MyContext } from "../../types";
@@ -20,8 +21,6 @@ import { ChatMember } from "../../entities/ChatMember";
 import { Chat } from "../../entities/Chat";
 import { User } from "../../entities/User";
 import { NEW_MESSAGE } from "../../constants";
-
-const pubSub = new PubSub();
 
 @Resolver((of) => Message)
 export class MessageResolver {
@@ -35,39 +34,19 @@ export class MessageResolver {
 
   @Subscription(() => Message, {
     topics: NEW_MESSAGE,
-    //@ts-ignore
-    filter: async ({ chatId }: Message, _: any, { connection }: any) => {
-      const chatMembers = await ChatMember.find({
-        where: { chatId },
-      });
-
+    filter: async ({ payload, context: { connection } }) => {
       const userId = Number(connection.context.req.session.userId);
 
-      if (chatMembers.filter((cm) => cm.userId === userId).length === 1) {
-        console.log("ppppppppppp");
+      const isChatMember = await ChatMember.findOne({
+        where: { userId, chatId: payload.chatId },
+      });
 
-        return false;
-      }
-
-      console.log("ooooooooooooooooooo");
+      if (!isChatMember) return false;
 
       return true;
     },
-    //@ts-ignore
-    subscribe: async (_, __, { connection }) => {
-      if (!connection.context.req.session.userId) {
-        throw new Error("not authenticated");
-      }
-
-      return pubSub.asyncIterator(NEW_MESSAGE);
-    },
   })
-  async newMessage(
-    @Root() newMessagePayload: Message,
-    @Ctx() ctx: any
-  ): Promise<Message | undefined> {
-    const userId = Number(ctx.connection.context.req.session.userId);
-
+  async newMessage(@Root() newMessagePayload: Message): Promise<Message> {
     return newMessagePayload;
   }
 
@@ -77,7 +56,8 @@ export class MessageResolver {
     @Arg("text") text: string,
     @Arg("chatId", () => Int) chatId: number,
     @Arg("imageUrl", { nullable: true }) imageUrl: string,
-    @Ctx() { req }: MyContext
+    @Ctx() { req }: MyContext,
+    @PubSub() pubSub: PubSubEngine
   ): Promise<Message> {
     const chat = await Chat.findOne(chatId);
 

@@ -78,6 +78,9 @@ const main = async () => {
       onConnect: (_, ws: any) => {
         return new Promise((res) =>
           sessionMiddleware(ws.upgradeReq, {} as any, () => {
+            if (!ws.upgradeReq.session.userId) {
+              throw new Error("not authenticated");
+            }
             res({ req: ws.upgradeReq });
           })
         );
