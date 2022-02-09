@@ -1,10 +1,17 @@
-import { useRef, useState, FormEvent, Fragment, ChangeEvent } from "react";
+import {
+  useRef,
+  useState,
+  useEffect,
+  FormEvent,
+  Fragment,
+  ChangeEvent,
+} from "react";
 
 import {
   useSendMessageMutation,
   useGetMessagesQuery,
-  useNewMessageSubscription,
   GetChatsQuery,
+  NewMessageDocument,
 } from "../generated/graphql";
 import { getUsersFullname } from "../utils/getUsersFullname";
 import { capitalizeFirstLetter } from "../utils/capitalizeFirstLetter";
@@ -18,24 +25,44 @@ interface ChatSectionProps {
   chatId: number;
   chat: GetChatsQuery["getChats"][0];
   userId: number;
-  refetchChats: () => void;
 }
 
-const ChatSection: React.FC<ChatSectionProps> = ({
-  chatId,
-  chat,
-  userId,
-  refetchChats,
-}) => {
+const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
   const endOfMessageRef = useRef<null | HTMLDivElement>(null);
   const [messageText, setMessageText] = useState("");
   const [limit, setLimit] = useState(80);
   const [cursor, setCursor] = useState(null);
   const [sendMessage] = useSendMessageMutation();
-  const { loading, error, data, refetch } = useGetMessagesQuery({
+  const { loading, error, data, subscribeToMore } = useGetMessagesQuery({
     variables: { chatId, limit, cursor },
   });
-  useNewMessageSubscription();
+
+  const subscribe = (chatId: number) =>
+    subscribeToMore({
+      document: NewMessageDocument,
+      variables: { chatId, limit, cursor },
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+        //@ts-ignore
+        const newMessage = subscriptionData.data.newMessage;
+        const newMessageChatId = Number(newMessage.chatId);
+        if (prev.getMessages && chatId === newMessageChatId) {
+          return { getMessages: [newMessage, ...prev.getMessages] };
+        }
+
+        if (!prev.getMessages && chatId === newMessageChatId) {
+          return { getMessages: [newMessage] };
+        }
+
+        return prev;
+      },
+    });
+
+  useEffect(() => {
+    const unsubscribe = subscribe(chatId);
+
+    return () => unsubscribe();
+  }, [chatId]);
 
   const scrollToBottom = () => {
     endOfMessageRef.current?.scrollIntoView({
@@ -52,8 +79,6 @@ const ChatSection: React.FC<ChatSectionProps> = ({
     e.preventDefault();
     await sendMessage({ variables: { chatId, text: messageText } });
     setMessageText("");
-    refetch();
-    refetchChats();
     scrollToBottom();
   };
 

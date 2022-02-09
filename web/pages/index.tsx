@@ -1,9 +1,15 @@
 import type { NextPage } from "next";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Head from "next/head";
 import styled from "styled-components";
 
-import { useGetChatsQuery, User } from "../generated/graphql";
+import {
+  useGetChatsQuery,
+  useNewMessageSubscription,
+  User,
+  NewMessageSubscription,
+  NewMessageDocument,
+} from "../generated/graphql";
 import { isUserLoggedIn } from "../utils/isUserLoggedIn";
 import { getUsersFullname } from "../utils/getUsersFullname";
 import { formatDate } from "../utils/dateFunctions";
@@ -44,9 +50,34 @@ interface HomePageProps {
 
 const Home: NextPage<HomePageProps> = ({ currentUser }) => {
   const [chatId, setChatId] = useState<null | number>(null);
-  const { data, refetch } = useGetChatsQuery({
+  const { data, subscribeToMore } = useGetChatsQuery({
     variables: { limit: 1 },
   });
+  useNewMessageSubscription();
+
+  const subscribe = () =>
+    subscribeToMore({
+      document: NewMessageDocument,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+        //@ts-ignore
+        const newMessage = subscriptionData.data.newMessage;
+        const newChats = prev.getChats.map((chat) => {
+          if (Number(chat.id) === Number(newMessage.chatId)) {
+            return { ...chat, messages: [newMessage] };
+          }
+          return chat;
+        });
+
+        return { getChats: newChats };
+      },
+    });
+
+  useEffect(() => {
+    const unsubscribe = subscribe();
+
+    return () => unsubscribe();
+  }, []);
 
   const handleClick = (selectedChatId: number) => {
     setChatId(selectedChatId);
@@ -90,7 +121,6 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
                 data.getChats.filter((chat) => Number(chat.id) === chatId)[0]
               }
               userId={Number(currentUser.id)}
-              refetchChats={() => refetch()}
             />
           )}
         </ChatWrapper>

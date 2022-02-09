@@ -59,10 +59,6 @@ export class MessageResolver {
     @Ctx() { req }: MyContext,
     @PubSub() pubSub: PubSubEngine
   ): Promise<Message> {
-    const chat = await Chat.findOne(chatId);
-
-    if (!chat) throw new Error("chat does not exist");
-
     const message = await Message.create({
       text,
       chatId,
