@@ -48,6 +48,7 @@ export class ChatResolver {
     @Arg("groupName", { nullable: true }) groupName: string,
     @Ctx() { req }: MyContext
   ): Promise<Chat> {
+    // TODO: turn into tansaction and check if group require group name
     const createdById = Number(req.session.userId);
     const chat = await Chat.create({
       createdById,

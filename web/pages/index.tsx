@@ -17,6 +17,7 @@ import { formatDate } from "../utils/dateFunctions";
 import ChatSection from "../containers/ChatSection";
 import Sidebar from "../components/Sidebar";
 import Chat from "../components/Chat";
+import ChatPlaceholder from "../components/ChatPlaceholder";
 
 const Container = styled.div`
   display: flex;
@@ -114,7 +115,7 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
           </Sidebar>
         </SidebarContainer>
         <ChatWrapper>
-          {chatId && data?.getChats && (
+          {chatId && data?.getChats ? (
             <ChatSection
               chatId={chatId}
               chat={
@@ -122,6 +123,8 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
               }
               userId={Number(currentUser.id)}
             />
+          ) : (
+            <ChatPlaceholder />
           )}
         </ChatWrapper>
       </Container>
