@@ -18,6 +18,7 @@ import ChatSection from "../containers/ChatSection";
 import Sidebar from "../components/Sidebar";
 import Chat from "../components/Chat";
 import ChatPlaceholder from "../components/ChatPlaceholder";
+import ContactsTab from "../containers/ContactsTab";
 
 const Container = styled.div`
   display: flex;
@@ -51,6 +52,7 @@ interface HomePageProps {
 
 const Home: NextPage<HomePageProps> = ({ currentUser }) => {
   const [chatId, setChatId] = useState<null | number>(null);
+  const [toggleSidebar, setToggleSidebar] = useState(false);
   const { data, subscribeToMore } = useGetChatsQuery({
     variables: { limit: 1 },
   });
@@ -93,26 +95,32 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
       </Head>
       <Container>
         <SidebarContainer>
-          <Sidebar>
-            {data?.getChats.map((chat) => {
-              const selectedChatId = Number(chat.id);
-              return (
-                <Chat
-                  key={`chatId-${chat.id}`}
-                  isHighlighted={chatId === selectedChatId}
-                  onClick={() => handleClick(selectedChatId)}
-                  name={
-                    chat.groupName
-                      ? chat.groupName
-                      : getUsersFullname(chat.members, Number(currentUser.id))
-                  }
-                  isGroupChat={!!chat.groupName}
-                  latestMessage={chat.messages?.[0].text}
-                  timeOfLatestMessage={formatDate(chat.messages?.[0].createdAt)}
-                />
-              );
-            })}
-          </Sidebar>
+          {toggleSidebar ? (
+            <ContactsTab onClick={() => setToggleSidebar(!toggleSidebar)} />
+          ) : (
+            <Sidebar onClick={() => setToggleSidebar(!toggleSidebar)}>
+              {data?.getChats.map((chat) => {
+                const selectedChatId = Number(chat.id);
+                return (
+                  <Chat
+                    key={`chatId-${chat.id}`}
+                    isHighlighted={chatId === selectedChatId}
+                    onClick={() => handleClick(selectedChatId)}
+                    name={
+                      chat.groupName
+                        ? chat.groupName
+                        : getUsersFullname(chat.members, Number(currentUser.id))
+                    }
+                    isGroupChat={!!chat.groupName}
+                    latestMessage={chat.messages?.[0].text}
+                    timeOfLatestMessage={formatDate(
+                      chat.messages?.[0].createdAt
+                    )}
+                  />
+                );
+              })}
+            </Sidebar>
+          )}
         </SidebarContainer>
         <ChatWrapper>
           {chatId && data?.getChats ? (

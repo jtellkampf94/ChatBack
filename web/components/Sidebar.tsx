@@ -2,8 +2,8 @@ import styled from "styled-components";
 import { Avatar, IconButton } from "@material-ui/core";
 import ChatIcon from "@material-ui/icons/Chat";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
-import SearchIcon from "@material-ui/icons/Search";
 
+import SearchBar from "./SearchBar";
 import { globalTheme } from "../themes/globalTheme";
 
 const Container = styled.div`
@@ -36,39 +36,6 @@ const IconsContainer = styled.div`
   align-items: center;
 `;
 
-const Search = styled.div`
-  display: flex;
-  align-items: center;
-  height: 53px;
-  padding: 7px 14px;
-  border-radius: 2px;
-  background-color: ${({ theme }) => theme.globalTheme.searchBarColor};
-  border-bottom: 1px solid ${({ theme }) => theme.globalTheme.greyLineColor};
-`;
-
-const SearchBar = styled.div`
-  background-color: white;
-  border-radius: 18px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  height: 36px;
-  padding: 0 20px;
-`;
-
-const SearchInput = styled.input`
-  outline-width: 0;
-  border: none;
-  flex: 1;
-  width: 100%;
-  font-size: 15px;
-  margin-left: 20px;
-  height: 20px;
-  &::placeholder {
-    color: ${({ theme }) => theme.globalTheme.greyFontColor};
-  }
-`;
-
 const ChatContainer = styled.div`
   width: 100%;
   height: calc(100vh - 120px);
@@ -88,7 +55,11 @@ const ChatContainer = styled.div`
   }
 `;
 
-const Sidebar: React.FC = ({ children }) => {
+interface SidebarProps {
+  onClick: () => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ children, onClick }) => {
   return (
     <Container>
       <Header>
@@ -100,7 +71,7 @@ const Sidebar: React.FC = ({ children }) => {
         />
 
         <IconsContainer>
-          <IconButton>
+          <IconButton onClick={onClick}>
             <ChatIcon style={{ fill: globalTheme.iconColor }} />
           </IconButton>
           <IconButton>
@@ -109,15 +80,7 @@ const Sidebar: React.FC = ({ children }) => {
         </IconsContainer>
       </Header>
 
-      <Search>
-        <SearchBar>
-          <SearchIcon
-            fontSize="small"
-            style={{ fill: globalTheme.iconColor }}
-          />
-          <SearchInput placeholder="Search in chats" />
-        </SearchBar>
-      </Search>
+      <SearchBar placeholder="Search in chats" />
       <ChatContainer>{children}</ChatContainer>
     </Container>
   );

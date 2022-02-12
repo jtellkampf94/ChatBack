@@ -7,6 +7,7 @@ import {
   Query,
   Int,
 } from "type-graphql";
+import { getConnection } from "typeorm";
 
 import { isAuth } from "../../middleware/isAuth";
 import { MyContext } from "../../types";
@@ -30,10 +31,14 @@ export class ContactResolver {
   @Query(() => [User])
   @UseMiddleware(isAuth)
   async getContacts(@Ctx() { req }: MyContext): Promise<User[]> {
-    const contactIds = await Contact.find({
-      where: { userId: Number(req.session.userId) },
-      relations: ["contact"],
-    });
+    const userId = Number(req.session.userId);
+
+    const contactIds = await getConnection()
+      .createQueryBuilder(Contact, "contactInfo")
+      .leftJoinAndSelect("contactInfo.contact", "contact")
+      .where("contactInfo.userId = :userId", { userId })
+      .orderBy("contact.firstName", "ASC")
+      .getMany();
 
     if (contactIds.length === 0) return [];
 

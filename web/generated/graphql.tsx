@@ -213,6 +213,11 @@ export type GetChatsQueryVariables = Exact<{
 
 export type GetChatsQuery = { __typename?: 'Query', getChats: Array<{ __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, user: { __typename?: 'User', id: string } }> | null | undefined }> };
 
+export type GetContactsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetContactsQuery = { __typename?: 'Query', getContacts: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, about?: string | null | undefined, profilePictureUrl?: string | null | undefined }> };
+
 export type GetMessagesQueryVariables = Exact<{
   chatId: Scalars['Int'];
   limit: Scalars['Int'];
@@ -551,6 +556,44 @@ export function useGetChatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetChatsQueryHookResult = ReturnType<typeof useGetChatsQuery>;
 export type GetChatsLazyQueryHookResult = ReturnType<typeof useGetChatsLazyQuery>;
 export type GetChatsQueryResult = Apollo.QueryResult<GetChatsQuery, GetChatsQueryVariables>;
+export const GetContactsDocument = gql`
+    query GetContacts {
+  getContacts {
+    id
+    firstName
+    lastName
+    about
+    profilePictureUrl
+  }
+}
+    `;
+
+/**
+ * __useGetContactsQuery__
+ *
+ * To run a query within a React component, call `useGetContactsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetContactsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetContactsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetContactsQuery(baseOptions?: Apollo.QueryHookOptions<GetContactsQuery, GetContactsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetContactsQuery, GetContactsQueryVariables>(GetContactsDocument, options);
+      }
+export function useGetContactsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetContactsQuery, GetContactsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetContactsQuery, GetContactsQueryVariables>(GetContactsDocument, options);
+        }
+export type GetContactsQueryHookResult = ReturnType<typeof useGetContactsQuery>;
+export type GetContactsLazyQueryHookResult = ReturnType<typeof useGetContactsLazyQuery>;
+export type GetContactsQueryResult = Apollo.QueryResult<GetContactsQuery, GetContactsQueryVariables>;
 export const GetMessagesDocument = gql`
     query GetMessages($chatId: Int!, $limit: Int!, $cursor: String) {
   getMessages(chatId: $chatId, limit: $limit, cursor: $cursor) {
