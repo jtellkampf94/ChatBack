@@ -26,11 +26,10 @@ const TextContainer = styled.div`
   flex-direction: column;
   margin-left: 16px;
   justify-content: space-between;
-  width: 100%;
 `;
 
 const Name = styled.p`
-  font-size: 19px;
+  font-size: 16px;
   font-weight: 400;
 `;
 
@@ -43,12 +42,12 @@ const LatestMessage = styled.p`
 const TimeOfLatestMessage = styled.div`
   display: flex;
   justify-content: flex-end;
+  margin-left: auto;
   margin-top: 10px;
   align-self: start;
   font-size: 12px;
   color: ${({ theme }) => theme.globalTheme.greyMessageColor};
   font-weight: 300;
-  width: 75px;
 `;
 
 interface ChatProps {

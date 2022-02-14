@@ -14,4 +14,7 @@ export const globalTheme = {
   registerBackgroundGrey: "#f8f9fa",
   hoverGrey: "#f7f7f7",
   white: "#fff",
+  errorRed: "#c80201",
+  darkGreen: "#008069",
+  secondaryGreyFont: "#667781",
 };

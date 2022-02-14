@@ -44,30 +44,52 @@ export class ChatResolver {
   @Mutation(() => Chat)
   @UseMiddleware(isAuth)
   async createChat(
-    @Arg("userIds", () => [Int!]!) userIds: [number],
+    @Arg("userIds", () => [Int!]!) userIds: number[],
     @Arg("groupName", { nullable: true }) groupName: string,
     @Ctx() { req }: MyContext
-  ): Promise<Chat> {
+  ): Promise<Chat | null> {
     // TODO: turn into tansaction and check if group require group name
     const createdById = Number(req.session.userId);
-    const chat = await Chat.create({
-      createdById,
-      groupName,
-    }).save();
-
     userIds.push(createdById);
-    const chatMembers: Array<{ userId: number; chatId: number }> = userIds.map(
-      (userId) => ({ userId, chatId: chat.id })
-    );
 
-    await getConnection()
-      .createQueryBuilder()
-      .insert()
-      .into(ChatMember)
-      .values(chatMembers)
-      .execute();
+    console.log(userIds);
 
-    return chat;
+    if (userIds.length === 2) {
+      const firstUserId = userIds[0];
+      const secondUserId = userIds[1];
+
+      const doesChatExist = await getConnection()
+        .createQueryBuilder()
+        .select("chat")
+        .from(Chat, "chat")
+        .leftJoin("chat.chatMembers", "chatMember")
+        .where("chatMember.userId IN (:...userIds)", { userIds })
+        .getOne();
+
+      console.log(doesChatExist);
+
+      if (doesChatExist) return doesChatExist;
+    }
+
+    return null;
+
+    // const chat = await Chat.create({
+    //   createdById,
+    //   groupName,
+    // }).save();
+
+    // const chatMembers: Array<{ userId: number; chatId: number }> = userIds.map(
+    //   (userId) => ({ userId, chatId: chat.id })
+    // );
+
+    // await getConnection()
+    //   .createQueryBuilder()
+    //   .insert()
+    //   .into(ChatMember)
+    //   .values(chatMembers)
+    //   .execute();
+
+    // return chat;
   }
 
   @Query(() => [Chat])

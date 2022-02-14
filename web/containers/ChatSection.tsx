@@ -20,6 +20,7 @@ import { formatDate } from "../utils/dateFunctions";
 import ChatScreen from "../components/ChatScreen";
 import Message from "../components/Message";
 import ChatForm from "../components/ChatForm";
+import QueryResult from "../components/QueryResult";
 
 interface ChatSectionProps {
   chatId: number;
@@ -93,24 +94,26 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
         isGroupChat={!!chat.groupName}
         endOfMessageRef={endOfMessageRef}
       >
-        {data?.getMessages?.map((message) => {
-          const isUser = userId === Number(message.user.id);
-          return (
-            <Message
-              key={`messageId-${message.id}`}
-              isUser={isUser}
-              text={message.text}
-              sender={
-                isUser
-                  ? undefined
-                  : `${capitalizeFirstLetter(
-                      message.user.firstName
-                    )} ${capitalizeFirstLetter(message.user.lastName)}`
-              }
-              dateSent={formatDate(message.createdAt)}
-            />
-          );
-        })}
+        <QueryResult loading={loading} error={error}>
+          {data?.getMessages?.map((message) => {
+            const isUser = userId === Number(message.user.id);
+            return (
+              <Message
+                key={`messageId-${message.id}`}
+                isUser={isUser}
+                text={message.text}
+                sender={
+                  isUser
+                    ? undefined
+                    : `${capitalizeFirstLetter(
+                        message.user.firstName
+                      )} ${capitalizeFirstLetter(message.user.lastName)}`
+                }
+                dateSent={formatDate(message.createdAt)}
+              />
+            );
+          })}
+        </QueryResult>
       </ChatScreen>
 
       <ChatForm
