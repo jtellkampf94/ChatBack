@@ -7,7 +7,6 @@ import {
   useGetChatsQuery,
   useNewMessageSubscription,
   User,
-  NewMessageSubscription,
   NewMessageDocument,
 } from "../generated/graphql";
 import { isUserLoggedIn } from "../utils/isUserLoggedIn";
@@ -97,7 +96,10 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
       <Container>
         <SidebarContainer>
           {toggleSidebar ? (
-            <ContactsTab onClick={() => setToggleSidebar(!toggleSidebar)} />
+            <ContactsTab
+              selectChat={handleClick}
+              onClick={() => setToggleSidebar(!toggleSidebar)}
+            />
           ) : (
             <Sidebar onClick={() => setToggleSidebar(!toggleSidebar)}>
               <QueryResult loading={loading} error={error}>

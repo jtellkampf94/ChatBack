@@ -1,21 +1,5 @@
 query GetChats($limit: Int!, $cursor: String) {
   getChats {
-    id
-    groupAvatarUrl
-    groupName
-    updatedAt
-    members {
-      id
-      firstName
-      lastName
-    }
-    messages(limit: $limit, cursor: $cursor) {
-      id
-      text
-      createdAt
-      user {
-        id
-      }
-    }
+    ...ChatFragment
   }
 }

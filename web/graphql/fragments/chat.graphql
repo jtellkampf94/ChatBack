@@ -1,0 +1,19 @@
+fragment ChatFragment on Chat {
+  id
+  groupAvatarUrl
+  groupName
+  updatedAt
+  members {
+    id
+    firstName
+    lastName
+  }
+  messages(limit: $limit, cursor: $cursor) {
+    id
+    text
+    createdAt
+    user {
+      id
+    }
+  }
+}

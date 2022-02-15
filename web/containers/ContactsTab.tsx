@@ -8,7 +8,11 @@ import SearchBar from "../components/SearchBar";
 import QueryResult from "../components/QueryResult";
 import { globalTheme } from "../themes/globalTheme";
 import { capitalizeFirstLetter } from "../utils/capitalizeFirstLetter";
-import { useGetContactsQuery } from "../generated/graphql";
+import {
+  useGetContactsQuery,
+  useCreateChatMutation,
+  ChatFragmentFragmentDoc,
+} from "../generated/graphql";
 
 const Container = styled.div``;
 
@@ -68,10 +72,45 @@ const AddToGroupText = styled.p`
 
 interface ContactsTabProps {
   onClick: () => void;
+  selectChat: (selectedChatId: number) => void;
 }
 
-const ContactsTab: React.FC<ContactsTabProps> = ({ onClick }) => {
+const ContactsTab: React.FC<ContactsTabProps> = ({ onClick, selectChat }) => {
   const { data, loading, error } = useGetContactsQuery();
+  const [createChat] = useCreateChatMutation();
+
+  const handleClick = async (contactId: number) => {
+    await createChat({
+      variables: { userIds: [contactId], limit: 1 },
+      update: (cache, { data }) => {
+        if (!data) return cache;
+
+        const newChat = data.createChat;
+
+        cache.modify({
+          fields: {
+            getChats(existingChats = []) {
+              const isAlreadyInChat = existingChats.filter(
+                // @ts-ignore
+                (chat) => Number(chat.id) === Number(newChat.id)
+              );
+
+              if (isAlreadyInChat.length === 0) return existingChats;
+
+              const newChatRef = cache.writeFragment({
+                data: newChat,
+                fragment: ChatFragmentFragmentDoc,
+              });
+
+              return [...existingChats, newChatRef];
+            },
+          },
+        });
+        selectChat(Number(newChat.id));
+      },
+    });
+    onClick();
+  };
 
   return (
     <Container>
@@ -105,7 +144,7 @@ const ContactsTab: React.FC<ContactsTabProps> = ({ onClick }) => {
                 lastName={capitalizeFirstLetter(contact.lastName)}
                 about={contact.about}
                 profilePictureUrl={contact.profilePictureUrl}
-                onClick={() => {}}
+                onClick={() => handleClick(Number(contact.id))}
               />
             );
           })}

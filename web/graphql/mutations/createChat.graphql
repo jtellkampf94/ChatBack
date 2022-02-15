@@ -1,7 +1,10 @@
-mutation CreateChat($userIds: [Int!]!) {
-  createChat(userIds: $userIds) {
-    id
-    createdAt
-    updatedAt
+mutation CreateChat(
+  $userIds: [Int!]!
+  $groupName: String
+  $limit: Int!
+  $cursor: String
+) {
+  createChat(userIds: $userIds, groupName: $groupName) {
+    ...ChatFragment
   }
 }

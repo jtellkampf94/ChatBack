@@ -8,8 +8,10 @@ import {
   Query,
   FieldResolver,
   Root,
+  ObjectType,
+  Field,
 } from "type-graphql";
-import { getConnection } from "typeorm";
+import { getConnection, getManager } from "typeorm";
 
 import { isAuth } from "../../middleware/isAuth";
 import { MyContext } from "../../types";
@@ -47,49 +49,55 @@ export class ChatResolver {
     @Arg("userIds", () => [Int!]!) userIds: number[],
     @Arg("groupName", { nullable: true }) groupName: string,
     @Ctx() { req }: MyContext
-  ): Promise<Chat | null> {
-    // TODO: turn into tansaction and check if group require group name
+  ): Promise<Chat> {
     const createdById = Number(req.session.userId);
     userIds.push(createdById);
 
-    console.log(userIds);
+    if (userIds.length > 2 && !groupName)
+      throw new Error("group name required");
 
     if (userIds.length === 2) {
       const firstUserId = userIds[0];
       const secondUserId = userIds[1];
 
-      const doesChatExist = await getConnection()
-        .createQueryBuilder()
-        .select("chat")
-        .from(Chat, "chat")
-        .leftJoin("chat.chatMembers", "chatMember")
-        .where("chatMember.userId IN (:...userIds)", { userIds })
-        .getOne();
+      const chat: Chat[] = await getConnection().query(`
+        SELECT c.*
+          FROM public.chat c 
+            INNER JOIN public.chat_member m1 
+              ON m1."chatId" = c.id AND m1."userId" = ${firstUserId}
+            INNER JOIN public.chat_member m2 
+              ON m2."chatId" = c.id AND m2."userId" = ${secondUserId}
+          WHERE 
+            c."groupName" IS NULL
+        `);
 
-      console.log(doesChatExist);
-
-      if (doesChatExist) return doesChatExist;
+      if (chat.length === 1) return chat[0];
     }
 
-    return null;
+    const chat = await getManager().transaction(
+      async (transactionalEntityManager) => {
+        const chat = await transactionalEntityManager.save(
+          Chat.create({
+            createdById,
+            groupName,
+          })
+        );
 
-    // const chat = await Chat.create({
-    //   createdById,
-    //   groupName,
-    // }).save();
+        const chatMembers: Array<{ userId: number; chatId: number }> =
+          userIds.map((userId) => ({ userId, chatId: chat.id }));
 
-    // const chatMembers: Array<{ userId: number; chatId: number }> = userIds.map(
-    //   (userId) => ({ userId, chatId: chat.id })
-    // );
+        await transactionalEntityManager
+          .createQueryBuilder()
+          .insert()
+          .into(ChatMember)
+          .values(chatMembers)
+          .execute();
 
-    // await getConnection()
-    //   .createQueryBuilder()
-    //   .insert()
-    //   .into(ChatMember)
-    //   .values(chatMembers)
-    //   .execute();
+        return chat;
+      }
+    );
 
-    // return chat;
+    return chat;
   }
 
   @Query(() => [Chat])
