@@ -19,6 +19,7 @@ import Chat from "../components/Chat";
 import ChatPlaceholder from "../components/ChatPlaceholder";
 import QueryResult from "../components/QueryResult";
 import ContactsTab from "../containers/ContactsTab";
+import AddGroupParticipants from "../containers/AddGroupParticipants";
 
 const Container = styled.div`
   display: flex;
@@ -53,6 +54,7 @@ interface HomePageProps {
 const Home: NextPage<HomePageProps> = ({ currentUser }) => {
   const [chatId, setChatId] = useState<null | number>(null);
   const [toggleSidebar, setToggleSidebar] = useState(false);
+  const [tab, setTab] = useState(1);
   const { data, loading, error, subscribeToMore } = useGetChatsQuery({
     variables: { limit: 1 },
   });
@@ -86,6 +88,10 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
     setChatId(selectedChatId);
   };
 
+  const handleTabChange = (tabNumber: number) => {
+    setTab(tabNumber);
+  };
+
   return (
     <div>
       <Head>
@@ -95,13 +101,8 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
       </Head>
       <Container>
         <SidebarContainer>
-          {toggleSidebar ? (
-            <ContactsTab
-              selectChat={handleClick}
-              onClick={() => setToggleSidebar(!toggleSidebar)}
-            />
-          ) : (
-            <Sidebar onClick={() => setToggleSidebar(!toggleSidebar)}>
+          {tab === 1 && (
+            <Sidebar toContactsTab={() => handleTabChange(2)}>
               <QueryResult loading={loading} error={error}>
                 {data?.getChats.map((chat) => {
                   const selectedChatId = Number(chat.id);
@@ -129,6 +130,14 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
               </QueryResult>
             </Sidebar>
           )}
+          {tab === 2 && (
+            <ContactsTab
+              selectChat={handleClick}
+              backToSidebar={() => handleTabChange(1)}
+              toGroupParticipants={() => handleTabChange(3)}
+            />
+          )}
+          {tab === 3 && <AddGroupParticipants />}
         </SidebarContainer>
         <ChatWrapper>
           {chatId && data?.getChats ? (

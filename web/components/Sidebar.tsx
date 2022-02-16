@@ -56,10 +56,10 @@ const ChatContainer = styled.div`
 `;
 
 interface SidebarProps {
-  onClick: () => void;
+  toContactsTab: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ children, onClick }) => {
+const Sidebar: React.FC<SidebarProps> = ({ children, toContactsTab }) => {
   return (
     <Container>
       <Header>
@@ -71,7 +71,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children, onClick }) => {
         />
 
         <IconsContainer>
-          <IconButton onClick={onClick}>
+          <IconButton onClick={toContactsTab}>
             <ChatIcon style={{ fill: globalTheme.iconColor }} />
           </IconButton>
           <IconButton>
