@@ -25,11 +25,12 @@ const Container = styled.div`
   display: flex;
   height: 100vh;
   width: 100vw;
+  overflow: hidden;
 `;
 
 const SidebarContainer = styled.div`
-  width: 100%;
-  height: 100%;
+  /* width: 100%;
+  height: 100%; */
   flex: 40%;
   min-width: 330px;
   border-right: 1px solid ${({ theme }) => theme.globalTheme.greyLineColor};
@@ -39,8 +40,8 @@ const SidebarContainer = styled.div`
 `;
 
 const ChatWrapper = styled.div`
-  width: 100%;
-  height: 100%;
+  /* width: 100%;
+  height: 100%; */
   flex: 60%;
   ${({ theme }) => theme.homePageTheme.mediumScreen`
     flex: 65%;
@@ -53,7 +54,6 @@ interface HomePageProps {
 
 const Home: NextPage<HomePageProps> = ({ currentUser }) => {
   const [chatId, setChatId] = useState<null | number>(null);
-  const [toggleSidebar, setToggleSidebar] = useState(false);
   const [tab, setTab] = useState(1);
   const { data, loading, error, subscribeToMore } = useGetChatsQuery({
     variables: { limit: 1 },
@@ -137,7 +137,9 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
               toGroupParticipants={() => handleTabChange(3)}
             />
           )}
-          {tab === 3 && <AddGroupParticipants />}
+          {tab === 3 && (
+            <AddGroupParticipants toContactsTab={() => handleTabChange(2)} />
+          )}
         </SidebarContainer>
         <ChatWrapper>
           {chatId && data?.getChats ? (

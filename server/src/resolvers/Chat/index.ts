@@ -56,7 +56,7 @@ export class ChatResolver {
     if (userIds.length > 2 && !groupName)
       throw new Error("group name required");
 
-    if (userIds.length === 2) {
+    if (userIds.length === 2 && !groupName) {
       const firstUserId = userIds[0];
       const secondUserId = userIds[1];
 

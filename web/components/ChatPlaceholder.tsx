@@ -27,7 +27,7 @@ const TextContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: ${({ theme }) => theme.globalTheme.secondaryGreyFont}; ;
+  color: ${({ theme }) => theme.globalTheme.secondaryGreyFont};
 `;
 
 const Header = styled.h1`
