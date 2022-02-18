@@ -15,11 +15,13 @@ import { Message } from "./entities/Message";
 import { Chat } from "./entities/Chat";
 import { ChatMember } from "./entities/ChatMember";
 import { Contact } from "./entities/Contact";
+import { Image } from "./entities/Image";
 
 import { UserResolver } from "./resolvers/User";
 import { MessageResolver } from "./resolvers/Message";
 import { ChatResolver } from "./resolvers/Chat";
 import { ContactResolver } from "./resolvers/Contact";
+import { ImageResolver } from "./resolvers/Image";
 
 import { COOKIE_NAME } from "./constants";
 import { userLoader } from "./loaders/UserLoader";
@@ -36,7 +38,7 @@ const main = async () => {
     password: process.env.PG_PASSWORD,
     logging: true,
     synchronize: true,
-    entities: [User, Chat, ChatMember, Message, Contact],
+    entities: [User, Chat, ChatMember, Message, Contact, Image],
   });
 
   const app = express();
@@ -70,7 +72,13 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver, MessageResolver, ChatResolver, ContactResolver],
+      resolvers: [
+        UserResolver,
+        MessageResolver,
+        ChatResolver,
+        ContactResolver,
+        ImageResolver,
+      ],
       validate: false,
     }),
     subscriptions: {

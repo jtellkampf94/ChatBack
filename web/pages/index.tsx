@@ -8,6 +8,7 @@ import {
   useNewMessageSubscription,
   User,
   NewMessageDocument,
+  GetContactsQuery,
 } from "../generated/graphql";
 import { isUserLoggedIn } from "../utils/isUserLoggedIn";
 import { getUsersFullname } from "../utils/getUsersFullname";
@@ -20,6 +21,7 @@ import ChatPlaceholder from "../components/ChatPlaceholder";
 import QueryResult from "../components/QueryResult";
 import ContactsTab from "../containers/ContactsTab";
 import AddGroupParticipants from "../containers/AddGroupParticipants";
+import CreateGroup from "../containers/CreateGroup";
 
 const Container = styled.div`
   display: flex;
@@ -29,8 +31,6 @@ const Container = styled.div`
 `;
 
 const SidebarContainer = styled.div`
-  /* width: 100%;
-  height: 100%; */
   flex: 40%;
   min-width: 330px;
   border-right: 1px solid ${({ theme }) => theme.globalTheme.greyLineColor};
@@ -40,13 +40,13 @@ const SidebarContainer = styled.div`
 `;
 
 const ChatWrapper = styled.div`
-  /* width: 100%;
-  height: 100%; */
   flex: 60%;
   ${({ theme }) => theme.homePageTheme.mediumScreen`
     flex: 65%;
   `};
 `;
+
+export type ContactType = GetContactsQuery["getContacts"][0];
 
 interface HomePageProps {
   currentUser: User;
@@ -54,6 +54,7 @@ interface HomePageProps {
 
 const Home: NextPage<HomePageProps> = ({ currentUser }) => {
   const [chatId, setChatId] = useState<null | number>(null);
+  const [selectedContacts, setSelectedContacts] = useState<ContactType[]>([]);
   const [tab, setTab] = useState(1);
   const { data, loading, error, subscribeToMore } = useGetChatsQuery({
     variables: { limit: 1 },
@@ -138,7 +139,18 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
             />
           )}
           {tab === 3 && (
-            <AddGroupParticipants toContactsTab={() => handleTabChange(2)} />
+            <AddGroupParticipants
+              toContactsTab={() => handleTabChange(2)}
+              toCreateGroup={() => handleTabChange(4)}
+              selectedContacts={selectedContacts}
+              setSelectedContacts={setSelectedContacts}
+            />
+          )}
+          {tab === 4 && (
+            <CreateGroup
+              toGroupParticipants={() => handleTabChange(3)}
+              selectedContacts={selectedContacts}
+            />
           )}
         </SidebarContainer>
         <ChatWrapper>

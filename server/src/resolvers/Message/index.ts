@@ -18,7 +18,6 @@ import { isAuth } from "../../middleware/isAuth";
 import { MyContext } from "../../types";
 import { Message } from "../../entities/Message";
 import { ChatMember } from "../../entities/ChatMember";
-import { Chat } from "../../entities/Chat";
 import { User } from "../../entities/User";
 import { NEW_MESSAGE } from "../../constants";
 

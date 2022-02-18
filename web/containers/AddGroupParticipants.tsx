@@ -1,40 +1,38 @@
-import { useState, ChangeEvent } from "react";
-import styled from "styled-components";
+import { useState, ChangeEvent, Dispatch, SetStateAction } from "react";
 import { useApolloClient } from "@apollo/client";
 
+import ParticipantsContainer from "../components/ParticipantsContainer";
 import Header from "../components/Header";
 import ContactsContainer from "../components/ContactsContainer";
 import Contact from "../components/Contact";
 import ContactChip from "../components/ContactChip";
 import GroupParticipants from "../components/GroupParticipants";
 
-import { GetContactsDocument, GetContactsQuery } from "../generated/graphql";
+import { GetContactsDocument } from "../generated/graphql";
 import { capitalizeFirstLetter } from "../utils/capitalizeFirstLetter";
-
-const Container = styled.div`
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-`;
-
-type Contact = GetContactsQuery["getContacts"][0];
+import { ContactType } from "../pages";
 
 interface AddGroupParticipantsProps {
   toContactsTab: () => void;
+  toCreateGroup: () => void;
+  selectedContacts: ContactType[];
+  setSelectedContacts: Dispatch<SetStateAction<ContactType[]>>;
 }
 
 const AddGroupParticipants: React.FC<AddGroupParticipantsProps> = ({
   toContactsTab,
+  toCreateGroup,
+  selectedContacts,
+  setSelectedContacts,
 }) => {
-  const [selectedContacts, setSelectedContacts] = useState<Contact[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const client = useApolloClient();
   const { getContacts } = client.readQuery({
     query: GetContactsDocument,
   });
 
-  const filteredContacts = (searchTerm: string): Contact[] => {
-    return getContacts.filter((contact: Contact) => {
+  const filteredContacts = (searchTerm: string): ContactType[] => {
+    return getContacts.filter((contact: ContactType) => {
       if (!searchTerm) return contact;
       return (
         contact.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -43,7 +41,7 @@ const AddGroupParticipants: React.FC<AddGroupParticipantsProps> = ({
     });
   };
 
-  const handleSelectContact = (contact: Contact) => {
+  const handleSelectContact = (contact: ContactType) => {
     const isDuplicate = selectedContacts.find(
       (c) => Number(c.id) === Number(contact.id)
     );
@@ -64,7 +62,10 @@ const AddGroupParticipants: React.FC<AddGroupParticipantsProps> = ({
   };
 
   return (
-    <Container>
+    <ParticipantsContainer
+      showButton={selectedContacts.length > 0}
+      onClick={toCreateGroup}
+    >
       <Header onClick={toContactsTab} heading="Add group participants" />
       <GroupParticipants onChange={handleChange} value={searchTerm}>
         {selectedContacts.length > 0 &&
@@ -83,7 +84,7 @@ const AddGroupParticipants: React.FC<AddGroupParticipantsProps> = ({
           })}
       </GroupParticipants>
       <ContactsContainer>
-        {filteredContacts(searchTerm).map((contact: Contact) => {
+        {filteredContacts(searchTerm).map((contact: ContactType) => {
           return (
             <Contact
               key={`contactId-${contact.id}`}
@@ -96,7 +97,7 @@ const AddGroupParticipants: React.FC<AddGroupParticipantsProps> = ({
           );
         })}
       </ContactsContainer>
-    </Container>
+    </ParticipantsContainer>
   );
 };
 
