@@ -41,6 +41,12 @@ export type Contact = {
   user: User;
 };
 
+export type Image = {
+  __typename?: 'Image';
+  key: Scalars['String'];
+  presignedUrl: Scalars['String'];
+};
+
 export type LoginInput = {
   emailOrUsername: Scalars['String'];
   password: Scalars['String'];
@@ -114,6 +120,7 @@ export type Query = {
   getChats: Array<Chat>;
   getContacts: Array<User>;
   getMessages?: Maybe<Array<Message>>;
+  getPresignedUrl: Image;
   users: Array<User>;
 };
 
@@ -222,6 +229,11 @@ export type GetMessagesQueryVariables = Exact<{
 
 
 export type GetMessagesQuery = { __typename?: 'Query', getMessages?: Array<{ __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string } }> | null | undefined };
+
+export type GetPresignedUrlQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetPresignedUrlQuery = { __typename?: 'Query', getPresignedUrl: { __typename?: 'Image', presignedUrl: string, key: string } };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -581,6 +593,41 @@ export function useGetMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetMessagesQueryHookResult = ReturnType<typeof useGetMessagesQuery>;
 export type GetMessagesLazyQueryHookResult = ReturnType<typeof useGetMessagesLazyQuery>;
 export type GetMessagesQueryResult = Apollo.QueryResult<GetMessagesQuery, GetMessagesQueryVariables>;
+export const GetPresignedUrlDocument = gql`
+    query GetPresignedUrl {
+  getPresignedUrl {
+    presignedUrl
+    key
+  }
+}
+    `;
+
+/**
+ * __useGetPresignedUrlQuery__
+ *
+ * To run a query within a React component, call `useGetPresignedUrlQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPresignedUrlQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPresignedUrlQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetPresignedUrlQuery(baseOptions?: Apollo.QueryHookOptions<GetPresignedUrlQuery, GetPresignedUrlQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPresignedUrlQuery, GetPresignedUrlQueryVariables>(GetPresignedUrlDocument, options);
+      }
+export function useGetPresignedUrlLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPresignedUrlQuery, GetPresignedUrlQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPresignedUrlQuery, GetPresignedUrlQueryVariables>(GetPresignedUrlDocument, options);
+        }
+export type GetPresignedUrlQueryHookResult = ReturnType<typeof useGetPresignedUrlQuery>;
+export type GetPresignedUrlLazyQueryHookResult = ReturnType<typeof useGetPresignedUrlLazyQuery>;
+export type GetPresignedUrlQueryResult = Apollo.QueryResult<GetPresignedUrlQuery, GetPresignedUrlQueryVariables>;
 export const GetUsersDocument = gql`
     query GetUsers {
   users {
