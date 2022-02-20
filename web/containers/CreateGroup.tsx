@@ -1,11 +1,14 @@
-import { ChangeEvent, useState, FormEvent } from "react";
+import { ChangeEvent, useState, useEffect, FormEvent } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import AddAPhotoIcon from "@material-ui/icons/AddAPhoto";
 
 import { ContactType } from "../pages";
 import Header from "../components/Header";
-import { useGetPresignedUrlLazyQuery } from "../generated/graphql";
+import {
+  useGetPresignedUrlLazyQuery,
+  useCreateChatMutation,
+} from "../generated/graphql";
 
 const Container = styled.div`
   width: 100%;
@@ -72,30 +75,44 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
   selectedContacts,
 }) => {
   const [file, setFile] = useState<File | null>(null);
-  const [getPresignedUrl, { data, loading, error }] =
-    useGetPresignedUrlLazyQuery();
+  const [groupName, setGroupName] = useState("");
+  const [getPresignedUrl, { data }] = useGetPresignedUrlLazyQuery();
+  const [createChat] = useCreateChatMutation();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFile(e.target.files ? e.target.files[0] : null);
   };
 
+  const createGroup = async (groupAvatarUrl: string | null = null) => {
+    const userIds = selectedContacts.map((contact) => Number(contact.id));
+    await createChat({
+      variables: { groupName, userIds, limit: 1, groupAvatarUrl },
+    });
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    let groupAvatarUrl: null | string = null;
     if (file) {
       await getPresignedUrl();
-      if (data) {
+    } else {
+      createGroup();
+    }
+  };
+
+  useEffect(() => {
+    if (data && file) {
+      const createGroupWithAvatar = async () => {
         const { presignedUrl, key } = data.getPresignedUrl;
-        axios.put(presignedUrl, file, {
+        await axios.put(presignedUrl, file, {
           headers: { "Content-Type": file.type },
         });
-        console.log(
-          `https://jt-whatsapp-clone-bucket.s3.eu-west-2.amazonaws.com/${key}`
-        );
-      }
+        const groupAvatarUrl = `https://jt-whatsapp-clone-bucket.s3.eu-west-2.amazonaws.com/${key}`;
+        // createGroup(groupAvatarUrl)
+      };
+
+      createGroupWithAvatar();
     }
-    return;
-  };
+  }, [data]);
 
   return (
     <Container>
@@ -117,7 +134,7 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
             </ImageLabel>
           </ImageBackground>
         </ImageButtonContainer>
-        <button type="submit">submit</button>
+        {groupName && <button type="submit">submit</button>}
       </Form>
     </Container>
   );

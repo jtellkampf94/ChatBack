@@ -3,8 +3,13 @@ mutation CreateChat(
   $groupName: String
   $limit: Int!
   $cursor: String
+  $groupAvatarUrl: String
 ) {
-  createChat(userIds: $userIds, groupName: $groupName) {
+  createChat(
+    userIds: $userIds
+    groupName: $groupName
+    groupAvatarUrl: $groupAvatarUrl
+  ) {
     ...ChatFragment
   }
 }

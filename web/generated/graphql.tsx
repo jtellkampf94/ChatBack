@@ -77,6 +77,7 @@ export type Mutation = {
 
 
 export type MutationCreateChatArgs = {
+  groupAvatarUrl?: Maybe<Scalars['String']>;
   groupName?: Maybe<Scalars['String']>;
   userIds: Array<Scalars['Int']>;
 };
@@ -175,6 +176,7 @@ export type CreateChatMutationVariables = Exact<{
   groupName?: Maybe<Scalars['String']>;
   limit: Scalars['Int'];
   cursor?: Maybe<Scalars['String']>;
+  groupAvatarUrl?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -281,8 +283,12 @@ export const MessageFragmentFragmentDoc = gql`
 }
     `;
 export const CreateChatDocument = gql`
-    mutation CreateChat($userIds: [Int!]!, $groupName: String, $limit: Int!, $cursor: String) {
-  createChat(userIds: $userIds, groupName: $groupName) {
+    mutation CreateChat($userIds: [Int!]!, $groupName: String, $limit: Int!, $cursor: String, $groupAvatarUrl: String) {
+  createChat(
+    userIds: $userIds
+    groupName: $groupName
+    groupAvatarUrl: $groupAvatarUrl
+  ) {
     ...ChatFragment
   }
 }
@@ -306,6 +312,7 @@ export type CreateChatMutationFn = Apollo.MutationFunction<CreateChatMutation, C
  *      groupName: // value for 'groupName'
  *      limit: // value for 'limit'
  *      cursor: // value for 'cursor'
+ *      groupAvatarUrl: // value for 'groupAvatarUrl'
  *   },
  * });
  */

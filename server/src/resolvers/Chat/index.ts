@@ -48,6 +48,7 @@ export class ChatResolver {
   async createChat(
     @Arg("userIds", () => [Int!]!) userIds: number[],
     @Arg("groupName", { nullable: true }) groupName: string,
+    @Arg("groupAvatarUrl", { nullable: true }) groupAvatarUrl: string,
     @Ctx() { req }: MyContext
   ): Promise<Chat> {
     const createdById = Number(req.session.userId);
@@ -80,6 +81,7 @@ export class ChatResolver {
           Chat.create({
             createdById,
             groupName,
+            groupAvatarUrl,
           })
         );
 
