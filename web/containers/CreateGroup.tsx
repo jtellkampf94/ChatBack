@@ -8,6 +8,7 @@ import Header from "../components/Header";
 import {
   useGetPresignedUrlLazyQuery,
   useCreateChatMutation,
+  ChatFragmentFragmentDoc,
 } from "../generated/graphql";
 
 const Container = styled.div`
@@ -65,14 +66,24 @@ const IconCaption = styled.p`
   margin-top: 5px;
 `;
 
+const InputContainer = styled.div``;
+
+const Input = styled.input``;
+
+const Button = styled.button``;
+
 interface CreateGroupProps {
   toGroupParticipants: () => void;
   selectedContacts: ContactType[];
+  selectChat: (selectedChatId: number) => void;
+  backToSidebar: () => void;
 }
 
 const CreateGroup: React.FC<CreateGroupProps> = ({
   toGroupParticipants,
   selectedContacts,
+  selectChat,
+  backToSidebar,
 }) => {
   const [file, setFile] = useState<File | null>(null);
   const [groupName, setGroupName] = useState("");
@@ -87,7 +98,26 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
     const userIds = selectedContacts.map((contact) => Number(contact.id));
     await createChat({
       variables: { groupName, userIds, limit: 1, groupAvatarUrl },
+      update: (cache, { data }) => {
+        if (!data) return cache;
+
+        const newChat = data.createChat;
+        cache.modify({
+          fields: {
+            getChats(existingChats = []) {
+              const newChatRef = cache.writeFragment({
+                data: newChat,
+                fragment: ChatFragmentFragmentDoc,
+              });
+
+              return [...existingChats, newChatRef];
+            },
+          },
+        });
+        selectChat(Number(newChat.id));
+      },
     });
+    backToSidebar();
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -107,7 +137,7 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
           headers: { "Content-Type": file.type },
         });
         const groupAvatarUrl = `https://jt-whatsapp-clone-bucket.s3.eu-west-2.amazonaws.com/${key}`;
-        // createGroup(groupAvatarUrl)
+        createGroup(groupAvatarUrl);
       };
 
       createGroupWithAvatar();
@@ -134,7 +164,14 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
             </ImageLabel>
           </ImageBackground>
         </ImageButtonContainer>
-        {groupName && <button type="submit">submit</button>}
+        <InputContainer>
+          <Input
+            onChange={(e) => setGroupName(e.target.value)}
+            value={groupName}
+            type="text"
+          />
+        </InputContainer>
+        {groupName && <Button type="submit">Create Group</Button>}
       </Form>
     </Container>
   );

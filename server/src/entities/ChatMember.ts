@@ -18,7 +18,9 @@ export class ChatMember extends BaseEntity {
   @PrimaryColumn()
   userId!: number;
 
-  @ManyToOne(() => Chat, (chat) => chat.id)
+  @ManyToOne(() => Chat, (chat) => chat.id, {
+    onDelete: "CASCADE",
+  })
   chat!: Chat;
 
   @ManyToOne(() => User, (user) => user.id)

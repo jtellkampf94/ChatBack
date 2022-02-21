@@ -93,6 +93,8 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
     setTab(tabNumber);
   };
 
+  console.log(data?.getChats);
+
   return (
     <div>
       <Head>
@@ -150,11 +152,13 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
             <CreateGroup
               toGroupParticipants={() => handleTabChange(3)}
               selectedContacts={selectedContacts}
+              selectChat={handleClick}
+              backToSidebar={() => handleTabChange(1)}
             />
           )}
         </SidebarContainer>
         <ChatWrapper>
-          {chatId && data?.getChats ? (
+          {data?.getChats && chatId ? (
             <ChatSection
               chatId={chatId}
               chat={
