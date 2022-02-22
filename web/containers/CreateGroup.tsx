@@ -1,4 +1,11 @@
-import { ChangeEvent, useState, useEffect, FormEvent } from "react";
+import {
+  ChangeEvent,
+  useState,
+  useEffect,
+  FormEvent,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import styled from "styled-components";
 import axios from "axios";
 import AddAPhotoIcon from "@material-ui/icons/AddAPhoto";
@@ -77,6 +84,7 @@ interface CreateGroupProps {
   selectedContacts: ContactType[];
   selectChat: (selectedChatId: number) => void;
   backToSidebar: () => void;
+  setSelectedContacts: Dispatch<SetStateAction<ContactType[]>>;
 }
 
 const CreateGroup: React.FC<CreateGroupProps> = ({
@@ -84,6 +92,7 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
   selectedContacts,
   selectChat,
   backToSidebar,
+  setSelectedContacts,
 }) => {
   const [file, setFile] = useState<File | null>(null);
   const [groupName, setGroupName] = useState("");
@@ -98,11 +107,12 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
     const userIds = selectedContacts.map((contact) => Number(contact.id));
     await createChat({
       variables: { groupName, userIds, limit: 1, groupAvatarUrl },
-      update: (cache, { data }) => {
+      update: async (cache, { data }) => {
         if (!data) return cache;
 
         const newChat = data.createChat;
-        cache.modify({
+
+        await cache.modify({
           fields: {
             getChats(existingChats = []) {
               const newChatRef = cache.writeFragment({
@@ -110,7 +120,7 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
                 fragment: ChatFragmentFragmentDoc,
               });
 
-              return [...existingChats, newChatRef];
+              return [newChatRef, ...existingChats];
             },
           },
         });
@@ -118,6 +128,8 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
       },
     });
     backToSidebar();
+    setSelectedContacts([]);
+    setGroupName("");
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {

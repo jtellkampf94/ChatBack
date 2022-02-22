@@ -93,7 +93,9 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
     setTab(tabNumber);
   };
 
-  console.log(data?.getChats);
+  const selectedChat = data?.getChats.filter(
+    (chat) => Number(chat.id) === chatId
+  )[0];
 
   return (
     <div>
@@ -109,6 +111,7 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
               <QueryResult loading={loading} error={error}>
                 {data?.getChats.map((chat) => {
                   const selectedChatId = Number(chat.id);
+
                   return (
                     <Chat
                       key={`chatId-${chat.id}`}
@@ -154,16 +157,15 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
               selectedContacts={selectedContacts}
               selectChat={handleClick}
               backToSidebar={() => handleTabChange(1)}
+              setSelectedContacts={setSelectedContacts}
             />
           )}
         </SidebarContainer>
         <ChatWrapper>
-          {data?.getChats && chatId ? (
+          {chatId && selectedChat ? (
             <ChatSection
               chatId={chatId}
-              chat={
-                data.getChats.filter((chat) => Number(chat.id) === chatId)[0]
-              }
+              chat={selectedChat}
               userId={Number(currentUser.id)}
             />
           ) : (
