@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 import Contact from "../components/Contact";
+import Container from "../components/Container";
 import SearchBar from "../components/SearchBar";
 import QueryResult from "../components/QueryResult";
 import Header from "../components/Header";
@@ -12,8 +13,6 @@ import {
   useCreateChatMutation,
   ChatFragmentFragmentDoc,
 } from "../generated/graphql";
-
-const Container = styled.div``;
 
 interface ContactsTabProps {
   backToSidebar: () => void;

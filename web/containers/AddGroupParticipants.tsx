@@ -7,6 +7,7 @@ import ContactsContainer from "../components/ContactsContainer";
 import Contact from "../components/Contact";
 import ContactChip from "../components/ContactChip";
 import GroupParticipants from "../components/GroupParticipants";
+import NextButton from "../components/NextButton";
 
 import { GetContactsDocument } from "../generated/graphql";
 import { capitalizeFirstLetter } from "../utils/capitalizeFirstLetter";
@@ -62,10 +63,7 @@ const AddGroupParticipants: React.FC<AddGroupParticipantsProps> = ({
   };
 
   return (
-    <ParticipantsContainer
-      showButton={selectedContacts.length > 0}
-      onClick={toCreateGroup}
-    >
+    <ParticipantsContainer>
       <Header onClick={toContactsTab} heading="Add group participants" />
       <GroupParticipants onChange={handleChange} value={searchTerm}>
         {selectedContacts.length > 0 &&
@@ -97,6 +95,7 @@ const AddGroupParticipants: React.FC<AddGroupParticipantsProps> = ({
           );
         })}
       </ContactsContainer>
+      {selectedContacts.length > 0 && <NextButton onClick={toCreateGroup} />}
     </ParticipantsContainer>
   );
 };

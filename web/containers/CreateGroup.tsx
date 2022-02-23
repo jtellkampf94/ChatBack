@@ -6,78 +6,21 @@ import {
   Dispatch,
   SetStateAction,
 } from "react";
-import styled from "styled-components";
 import axios from "axios";
-import AddAPhotoIcon from "@material-ui/icons/AddAPhoto";
 
 import { ContactType } from "../pages";
-import Header from "../components/Header";
 import {
   useGetPresignedUrlLazyQuery,
   useCreateChatMutation,
   ChatFragmentFragmentDoc,
 } from "../generated/graphql";
-
-const Container = styled.div`
-  width: 100%;
-`;
-
-const Form = styled.form``;
-
-const ImageButtonContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 28px 32px;
-`;
-
-const ImageBackground = styled.div`
-  height: 200px;
-  width: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-`;
-
-const ImageLabel = styled.label`
-  height: 200px;
-  width: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background-color: #707e86;
-
-  &:hover {
-    cursor: pointer;
-    filter: brightness(105%);
-  }
-`;
-
-const ImageInput = styled.input`
-  display: none;
-`;
-
-const IconContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const IconCaption = styled.p`
-  font-weight: 300;
-  font-size: 12px;
-  color: #fff;
-  text-transform: uppercase;
-  margin-top: 5px;
-`;
-
-const InputContainer = styled.div``;
-
-const Input = styled.input``;
-
-const Button = styled.button``;
+import Header from "../components/Header";
+import NextButton from "../components/NextButton";
+import Container from "../components/Container";
+import CreateGroupForm from "../components/CreateGroupForm";
+import CreateGroupInput from "../components/CreateGroupInput";
+import CreateGroupImageButton from "../components/CreateGroupImageButton";
+import ImagePreview from "./ImagePreview";
 
 interface CreateGroupProps {
   toGroupParticipants: () => void;
@@ -95,13 +38,10 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
   setSelectedContacts,
 }) => {
   const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const [groupName, setGroupName] = useState("");
   const [getPresignedUrl, { data }] = useGetPresignedUrlLazyQuery();
   const [createChat] = useCreateChatMutation();
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFile(e.target.files ? e.target.files[0] : null);
-  };
 
   const createGroup = async (groupAvatarUrl: string | null = null) => {
     const userIds = selectedContacts.map((contact) => Number(contact.id));
@@ -132,6 +72,14 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
     setGroupName("");
   };
 
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setFile(e.target.files ? e.target.files[0] : null);
+  };
+
+  const handleTextChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setGroupName(e.target.value);
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (file) {
@@ -156,35 +104,28 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
     }
   }, [data]);
 
+  useEffect(() => {
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setPreview(null);
+    }
+  }, [file]);
+
   return (
     <Container>
       <Header heading="New group" onClick={toGroupParticipants} />
-      <Form onSubmit={handleSubmit}>
-        <ImageButtonContainer>
-          <ImageBackground>
-            <ImageLabel htmlFor="file-upload">
-              <ImageInput
-                id="file-upload"
-                type="file"
-                accept="image/*"
-                onChange={handleChange}
-              />
-              <IconContainer>
-                <AddAPhotoIcon style={{ fontSize: "32px", fill: "#fff" }} />
-                <IconCaption>Add group icon</IconCaption>
-              </IconContainer>
-            </ImageLabel>
-          </ImageBackground>
-        </ImageButtonContainer>
-        <InputContainer>
-          <Input
-            onChange={(e) => setGroupName(e.target.value)}
-            value={groupName}
-            type="text"
-          />
-        </InputContainer>
-        {groupName && <Button type="submit">Create Group</Button>}
-      </Form>
+      <CreateGroupForm onSubmit={handleSubmit}>
+        <CreateGroupImageButton onChange={handleFileChange} />
+        <CreateGroupInput onChange={handleTextChange} groupName={groupName} />
+
+        {groupName && <NextButton withoutLine />}
+        <ImagePreview imageUrl={""} />
+      </CreateGroupForm>
     </Container>
   );
 };
