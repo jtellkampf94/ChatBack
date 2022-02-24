@@ -20,7 +20,8 @@ import Container from "../components/Container";
 import CreateGroupForm from "../components/CreateGroupForm";
 import CreateGroupInput from "../components/CreateGroupInput";
 import CreateGroupImageButton from "../components/CreateGroupImageButton";
-import ImagePreview from "./ImagePreview";
+import ImageEditor from "./ImageEditor";
+import Modal from "./Modal";
 
 interface CreateGroupProps {
   toGroupParticipants: () => void;
@@ -124,7 +125,9 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
         <CreateGroupInput onChange={handleTextChange} groupName={groupName} />
 
         {groupName && <NextButton withoutLine />}
-        <ImagePreview imageUrl={""} />
+        <Modal open={true}>
+          <ImageEditor imageUrl={preview} />
+        </Modal>
       </CreateGroupForm>
     </Container>
   );
