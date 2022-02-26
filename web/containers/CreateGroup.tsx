@@ -40,6 +40,7 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
 }) => {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [croppedImage, setCroppedImage] = useState<Blob | null>(null);
   const [groupName, setGroupName] = useState("");
   const [getPresignedUrl, { data }] = useGetPresignedUrlLazyQuery();
   const [createChat] = useCreateChatMutation();
@@ -81,21 +82,32 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
     setGroupName(e.target.value);
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (file) {
+  const handleClosePreview = () => {
+    setPreview(null);
+  };
+
+  const submit = async () => {
+    setPreview(null);
+    if (groupName.length === 0) return;
+
+    if (croppedImage) {
       await getPresignedUrl();
     } else {
       createGroup();
     }
   };
 
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    submit();
+  };
+
   useEffect(() => {
-    if (data && file) {
+    if (data && croppedImage) {
       const createGroupWithAvatar = async () => {
         const { presignedUrl, key } = data.getPresignedUrl;
-        await axios.put(presignedUrl, file, {
-          headers: { "Content-Type": file.type },
+        await axios.put(presignedUrl, croppedImage, {
+          headers: { "Content-Type": croppedImage.type },
         });
         const groupAvatarUrl = `https://jt-whatsapp-clone-bucket.s3.eu-west-2.amazonaws.com/${key}`;
         createGroup(groupAvatarUrl);
@@ -121,12 +133,23 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
     <Container>
       <Header heading="New group" onClick={toGroupParticipants} />
       <CreateGroupForm onSubmit={handleSubmit}>
-        <CreateGroupImageButton onChange={handleFileChange} />
+        <CreateGroupImageButton
+          background={croppedImage ? URL.createObjectURL(croppedImage) : null}
+          onChange={handleFileChange}
+        />
         <CreateGroupInput onChange={handleTextChange} groupName={groupName} />
 
         {groupName && <NextButton withoutLine />}
-        <Modal open={true}>
-          <ImageEditor imageUrl={preview} />
+        <Modal open={!!preview}>
+          {preview && (
+            <ImageEditor
+              setCroppedImage={setCroppedImage}
+              imageUrl={preview}
+              closePreview={handleClosePreview}
+              changeFile={handleFileChange}
+              submit={submit}
+            />
+          )}
         </Modal>
       </CreateGroupForm>
     </Container>

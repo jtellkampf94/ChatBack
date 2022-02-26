@@ -9,13 +9,16 @@ const ImageButtonContainer = styled.div`
   padding: 28px 32px;
 `;
 
-const ImageBackground = styled.div`
+const ImageBackground = styled("div")<{ background: string | null }>`
   height: 200px;
   width: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
+  background: ${({ background }) =>
+    background ? `url(${background}) no-repeat ` : "#fff"};
+  background-size: cover;
 `;
 
 const ImageLabel = styled.label`
@@ -25,8 +28,7 @@ const ImageLabel = styled.label`
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background-color: #707e86;
-
+  background-color: rgba(112, 126, 134, 0.7);
   &:hover {
     cursor: pointer;
     filter: brightness(105%);
@@ -53,14 +55,16 @@ const IconCaption = styled.p`
 
 interface CreateGroupImageButtonProps {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  background: string | null;
 }
 
 const CreateGroupImageButton: React.FC<CreateGroupImageButtonProps> = ({
   onChange,
+  background,
 }) => {
   return (
     <ImageButtonContainer>
-      <ImageBackground>
+      <ImageBackground background={background}>
         <ImageLabel htmlFor="file-upload">
           <ImageInput
             id="file-upload"

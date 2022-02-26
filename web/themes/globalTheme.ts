@@ -17,4 +17,5 @@ export const globalTheme = {
   errorRed: "#c80201",
   darkGreen: "#008069",
   secondaryGreyFont: "#667781",
+  buttonGreen: "#00a884",
 };

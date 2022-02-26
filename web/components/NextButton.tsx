@@ -17,7 +17,7 @@ const Button = styled.button`
   border-radius: 50%;
   height: 50px;
   width: 50px;
-  background-color: #00a884;
+  background-color: ${({ theme }) => theme.globalTheme.buttonGreen};
   border: none;
   display: flex;
   align-items: center;
