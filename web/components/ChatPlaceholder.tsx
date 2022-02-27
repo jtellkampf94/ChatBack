@@ -11,7 +11,7 @@ const Container = styled.div`
   align-items: center;
   width: 100%;
   height: 100%;
-  background-color: #f8f8fa;
+  background-color: ${({ theme }) => theme.globalTheme.smokeGrey};
   border-bottom: 6px solid #25d366;
 `;
 

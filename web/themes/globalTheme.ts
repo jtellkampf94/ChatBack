@@ -18,4 +18,5 @@ export const globalTheme = {
   darkGreen: "#008069",
   secondaryGreyFont: "#667781",
   buttonGreen: "#00a884",
+  smokeGrey: "#f8f8fa",
 };
