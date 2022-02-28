@@ -5,6 +5,9 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 
 import { useLoginMutation } from "../generated/graphql";
+import WhatsAppLogo from "../assets/images/whats-app-logo.svg";
+import DownloadOnTheAppStoreLogo from "../components/DownloadOnTheAppStoreLogo";
+import GooglePlayDownloadLogo from "../components/GooglePlayDownloadLogo";
 
 const Container = styled.div`
   display: flex;
@@ -18,19 +21,42 @@ const HeaderSection = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  color: ${({ theme }) => theme.globalTheme.white};
   padding: 100px;
+  background-color: ${({ theme }) => theme.globalTheme.darkGreen};
 `;
 
-const Heading = styled.h1``;
+const Heading = styled.h1`
+  font-size: 32px;
+  font-weight: 600;
+  margin-top: 40px;
+`;
 
-const Subheading = styled.h4``;
+const Subheading = styled.h4`
+  font-size: 18px;
+  font-weight: 300;
+  margin-top: 10px;
+`;
 
-const HeaderSectionFooter = styled.div``;
+const HeaderSectionFooter = styled.div`
+  margin-top: 40px;
+`;
+
+const FooterText = styled.p`
+  font-size: 18px;
+  font-weight: 300;
+`;
+
+const IconsContainer = styled.div`
+  margin-top: 10px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+`;
 
 const LoginSection = styled.div`
   width: 45%;
   height: 100%;
-  background-color: ${({ theme }) => theme.globalTheme.darkGreen};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -45,11 +71,6 @@ const LoginContainer = styled.div`
   align-items: center;
   background-color: white;
   border-radius: 5px;
-`;
-
-const Logo = styled.img`
-  height: 50px;
-  width: 50px;
 `;
 
 const Login: React.FC = () => {
@@ -76,13 +97,21 @@ const Login: React.FC = () => {
       </Head>
 
       <HeaderSection>
-        <Logo src="http://assets.stickpng.com/images/580b57fcd9996e24bc43c543.png" />
-        <Heading>Simple. Secure. Reliable Messaging.</Heading>
+        <WhatsAppLogo />
+        <Heading>
+          Simple. Secure. <br /> Reliable Messaging.
+        </Heading>
         <Subheading>
           With WhatsApp web, you'll get fast, simple and secure messaging on
           your laptop or desktop.
         </Subheading>
-        <HeaderSectionFooter></HeaderSectionFooter>
+        <HeaderSectionFooter>
+          <FooterText>Get the app.</FooterText>
+          <IconsContainer>
+            <DownloadOnTheAppStoreLogo width="136px" height="40px" />
+            <GooglePlayDownloadLogo width={150} height={44} />
+          </IconsContainer>
+        </HeaderSectionFooter>
       </HeaderSection>
 
       <LoginSection>
