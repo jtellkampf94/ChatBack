@@ -1,11 +1,11 @@
-import { useState, Fragment, FormEvent } from "react";
-import { Button } from "@material-ui/core";
+import { useState, FormEvent } from "react";
 import styled from "styled-components";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
 import { useLoginMutation } from "../generated/graphql";
 import WhatsAppLogo from "../assets/images/whats-app-logo.svg";
+import LoginForm from "../containers/LoginForm";
 import DownloadOnTheAppStoreLogo from "../components/DownloadOnTheAppStoreLogo";
 import GooglePlayDownloadLogo from "../components/GooglePlayDownloadLogo";
 
@@ -45,10 +45,10 @@ const HeaderSectionFooter = styled.div`
 const FooterText = styled.p`
   font-size: 18px;
   font-weight: 300;
+  margin-bottom: 20px;
 `;
 
 const IconsContainer = styled.div`
-  margin-top: 10px;
   height: 50px;
   display: flex;
   align-items: center;
@@ -60,17 +60,6 @@ const LoginSection = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`;
-
-const LoginContainer = styled.div`
-  padding: 100px;
-  width: 300px;
-  height: 300px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: white;
-  border-radius: 5px;
 `;
 
 const Login: React.FC = () => {
@@ -115,33 +104,7 @@ const Login: React.FC = () => {
       </HeaderSection>
 
       <LoginSection>
-        <LoginContainer>
-          {loading ? (
-            "loading..."
-          ) : (
-            <Fragment>
-              <form onSubmit={handleSubmit}>
-                <input
-                  type="text"
-                  name="emailOrUsername"
-                  placeholder="Email Or Username"
-                  value={emailOrUsername}
-                  onChange={(e) => setEmailOrUsername(e.target.value)}
-                />
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <Button variant="outlined" type="submit" onClick={handleClick}>
-                  Sign in
-                </Button>
-              </form>
-            </Fragment>
-          )}
-        </LoginContainer>
+        <LoginForm />
       </LoginSection>
     </Container>
   );
