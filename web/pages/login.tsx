@@ -1,9 +1,6 @@
-import { useState, FormEvent } from "react";
 import styled from "styled-components";
 import Head from "next/head";
-import { useRouter } from "next/router";
 
-import { useLoginMutation } from "../generated/graphql";
 import WhatsAppLogo from "../assets/images/whats-app-logo.svg";
 import LoginForm from "../containers/LoginForm";
 import DownloadOnTheAppStoreLogo from "../components/DownloadOnTheAppStoreLogo";
@@ -63,22 +60,6 @@ const LoginSection = styled.div`
 `;
 
 const Login: React.FC = () => {
-  const [emailOrUsername, setEmailOrUsername] = useState("");
-  const [password, setPassword] = useState("");
-
-  const [login, { loading, data, error }] = useLoginMutation();
-  const router = useRouter();
-
-  const handleClick = () => {};
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    await login({
-      variables: { options: { emailOrUsername, password } },
-    });
-    router.push("/");
-  };
-
   return (
     <Container>
       <Head>
