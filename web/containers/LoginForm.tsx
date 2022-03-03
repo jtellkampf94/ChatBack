@@ -7,7 +7,7 @@ import Form from "../components/Form";
 import FormContainer from "../components/FormContainer";
 import SubmitButton from "../components/SubmitButton";
 import OrSection from "../components/OrSection";
-import SignUpSection from "../components/SignUpSection";
+import RerouteSection from "../components/RerouteSection";
 
 const LoginForm: React.FC = () => {
   const [login, { loading, data, error }] = useLoginMutation();
@@ -54,7 +54,7 @@ const LoginForm: React.FC = () => {
 
       <OrSection />
 
-      <SignUpSection />
+      <RerouteSection text="Don't have an account? Sign up" href="/register" />
     </FormContainer>
   );
 };

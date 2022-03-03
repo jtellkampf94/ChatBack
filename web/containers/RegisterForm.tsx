@@ -6,6 +6,8 @@ import FormContainer from "../components/FormContainer";
 import Form from "../components/Form";
 import Input from "../components/Input";
 import SubmitButton from "../components/SubmitButton";
+import OrSection from "../components/OrSection";
+import RerouteSection from "../components/RerouteSection";
 
 const Header = styled.div`
   background-color: ${({ theme }) => theme.globalTheme.darkGreen};
@@ -104,6 +106,10 @@ const RegisterForm: React.FC = () => {
           />
           <SubmitButton>Register</SubmitButton>
         </Form>
+
+        <OrSection />
+
+        <RerouteSection text="Have an account? Log in" href="/login" />
       </FormContainer>
     </Fragment>
   );

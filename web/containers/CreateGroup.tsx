@@ -64,6 +64,9 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
 
               return [newChatRef, ...existingChats];
             },
+            getPresignedUrl() {
+              return undefined;
+            },
           },
         });
         selectChat(Number(newChat.id));
@@ -104,6 +107,7 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
 
   useEffect(() => {
     if (data && croppedImage) {
+      console.log(data);
       const createGroupWithAvatar = async () => {
         const { presignedUrl, key } = data.getPresignedUrl;
         await axios.put(presignedUrl, croppedImage, {
