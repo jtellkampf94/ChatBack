@@ -18,8 +18,8 @@ import Header from "../components/Header";
 import NextButton from "../components/NextButton";
 import Container from "../components/Container";
 import CreateGroupForm from "../components/CreateGroupForm";
-import CreateGroupInput from "../components/CreateGroupInput";
-import CreateGroupImageButton from "../components/CreateGroupImageButton";
+import MemberInput from "../components/MemberInput";
+import ImageButton from "../components/ImageButton";
 import ImageEditor from "./ImageEditor";
 import Modal from "./Modal";
 
@@ -137,11 +137,17 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
     <Container>
       <Header heading="New group" onClick={toGroupParticipants} />
       <CreateGroupForm onSubmit={handleSubmit}>
-        <CreateGroupImageButton
+        <ImageButton
           background={croppedImage ? URL.createObjectURL(croppedImage) : null}
           onChange={handleFileChange}
         />
-        <CreateGroupInput onChange={handleTextChange} groupName={groupName} />
+        <MemberInput
+          onChange={handleTextChange}
+          type="text"
+          value={groupName}
+          name="groupName"
+          placeholder="Group Subject"
+        />
 
         {groupName && <NextButton withoutLine />}
         <Modal open={!!preview}>

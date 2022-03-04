@@ -53,15 +53,12 @@ const IconCaption = styled.p`
   margin-top: 5px;
 `;
 
-interface CreateGroupImageButtonProps {
+interface ImageButtonProps {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   background: string | null;
 }
 
-const CreateGroupImageButton: React.FC<CreateGroupImageButtonProps> = ({
-  onChange,
-  background,
-}) => {
+const ImageButton: React.FC<ImageButtonProps> = ({ onChange, background }) => {
   return (
     <ImageButtonContainer>
       <ImageBackground background={background}>
@@ -82,4 +79,4 @@ const CreateGroupImageButton: React.FC<CreateGroupImageButtonProps> = ({
   );
 };
 
-export default CreateGroupImageButton;
+export default ImageButton;

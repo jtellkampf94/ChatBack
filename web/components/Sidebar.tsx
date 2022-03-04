@@ -59,13 +59,19 @@ const ChatContainer = styled.div`
 
 interface SidebarProps {
   toContactsTab: () => void;
+  toEditProfileTab: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ children, toContactsTab }) => {
+const Sidebar: React.FC<SidebarProps> = ({
+  children,
+  toContactsTab,
+  toEditProfileTab,
+}) => {
   return (
     <Container>
       <Header>
         <UserAvatar
+          onClick={toEditProfileTab}
           style={{
             width: "44px",
             height: "44px",

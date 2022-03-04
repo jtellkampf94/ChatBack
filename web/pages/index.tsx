@@ -22,6 +22,7 @@ import QueryResult from "../components/QueryResult";
 import ContactsTab from "../containers/ContactsTab";
 import AddGroupParticipants from "../containers/AddGroupParticipants";
 import CreateGroup from "../containers/CreateGroup";
+import EditProfile from "../containers/EditProfile";
 
 const Container = styled.div`
   display: flex;
@@ -107,7 +108,10 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
       <Container>
         <SidebarContainer>
           {tab === 1 && (
-            <Sidebar toContactsTab={() => handleTabChange(2)}>
+            <Sidebar
+              toContactsTab={() => handleTabChange(2)}
+              toEditProfileTab={() => handleTabChange(5)}
+            >
               <QueryResult loading={loading} error={error}>
                 {data?.getChats.map((chat) => {
                   const selectedChatId = Number(chat.id);
@@ -159,6 +163,9 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
               backToSidebar={() => handleTabChange(1)}
               setSelectedContacts={setSelectedContacts}
             />
+          )}
+          {tab === 5 && (
+            <EditProfile backToSidebar={() => handleTabChange(1)} />
           )}
         </SidebarContainer>
         <ChatWrapper>

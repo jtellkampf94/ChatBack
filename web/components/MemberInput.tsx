@@ -5,9 +5,10 @@ const InputContainer = styled.div`
   margin-top: 24px;
   width: 100%;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
   margin-bottom: 52px;
+  padding: 0 10%;
 `;
 
 const Input = styled.input`
@@ -16,7 +17,7 @@ const Input = styled.input`
   border-bottom: 3px solid #00a884;
   font-size: 16px;
   height: 38px;
-  width: 80%;
+  width: 100%;
 
   &::placeholder {
     font-size: 16px;
@@ -24,25 +25,32 @@ const Input = styled.input`
   }
 `;
 
-interface CreateGroupInputProps {
-  groupName: string;
+const Label = styled.label`
+  color: #00a884;
+  font-size: 14px;
+`;
+
+interface MemberInputProps {
+  name: string;
+  placeholder: string;
+  type: "text" | "password" | "email";
+  value: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const CreateGroupInput: React.FC<CreateGroupInputProps> = ({
-  groupName,
+const MemberInput: React.FC<MemberInputProps> = ({
+  value,
   onChange,
+  placeholder,
+  type,
+  name,
 }) => {
   return (
     <InputContainer>
-      <Input
-        onChange={onChange}
-        value={groupName}
-        type="text"
-        placeholder="Group Subject"
-      />
+      <Label>{placeholder}</Label>
+      <Input onChange={onChange} value={value} type={type} name={name} />
     </InputContainer>
   );
 };
 
-export default CreateGroupInput;
+export default MemberInput;
