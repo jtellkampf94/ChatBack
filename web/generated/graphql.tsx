@@ -68,6 +68,7 @@ export type Mutation = {
   createChat: Chat;
   createContact: Contact;
   deleteContact: Scalars['Boolean'];
+  editProfile: User;
   exitChat: Scalars['Boolean'];
   login: User;
   logout: Scalars['Boolean'];
@@ -90,6 +91,15 @@ export type MutationCreateContactArgs = {
 
 export type MutationDeleteContactArgs = {
   contactId: Scalars['Int'];
+};
+
+
+export type MutationEditProfileArgs = {
+  about?: Maybe<Scalars['String']>;
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  profilePictureUrl?: Maybe<Scalars['String']>;
+  username: Scalars['String'];
 };
 
 
@@ -182,6 +192,17 @@ export type CreateChatMutationVariables = Exact<{
 
 export type CreateChatMutation = { __typename?: 'Mutation', createChat: { __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, user: { __typename?: 'User', id: string } }> | null | undefined } };
 
+export type EditProfileMutationVariables = Exact<{
+  profilePictureUrl?: Maybe<Scalars['String']>;
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  username: Scalars['String'];
+  about?: Maybe<Scalars['String']>;
+}>;
+
+
+export type EditProfileMutation = { __typename?: 'Mutation', editProfile: { __typename?: 'User', firstName: string, lastName: string, username: string, about?: string | null | undefined, profilePictureUrl?: string | null | undefined } };
+
 export type LoginMutationVariables = Exact<{
   options: LoginInput;
 }>;
@@ -205,11 +226,6 @@ export type SendMessageMutationVariables = Exact<{
 
 export type SendMessageMutation = { __typename?: 'Mutation', sendMessage: { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string } } };
 
-export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', id: string, email: string, username: string, firstName: string, lastName: string, updatedAt: any, createdAt: any, contacts?: Array<{ __typename?: 'User', id: string, profilePictureUrl?: string | null | undefined, firstName: string, lastName: string, createdAt: any }> | null | undefined, chats?: Array<{ __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, updatedAt: any, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any }> | null | undefined }> | null | undefined } | null | undefined };
-
 export type GetChatsQueryVariables = Exact<{
   limit: Scalars['Int'];
   cursor?: Maybe<Scalars['String']>;
@@ -222,6 +238,11 @@ export type GetContactsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetContactsQuery = { __typename?: 'Query', getContacts: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, about?: string | null | undefined, profilePictureUrl?: string | null | undefined }> };
+
+export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', username: string, firstName: string, lastName: string, about?: string | null | undefined, profilePictureUrl?: string | null | undefined } | null | undefined };
 
 export type GetMessagesQueryVariables = Exact<{
   chatId: Scalars['Int'];
@@ -323,6 +344,53 @@ export function useCreateChatMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateChatMutationHookResult = ReturnType<typeof useCreateChatMutation>;
 export type CreateChatMutationResult = Apollo.MutationResult<CreateChatMutation>;
 export type CreateChatMutationOptions = Apollo.BaseMutationOptions<CreateChatMutation, CreateChatMutationVariables>;
+export const EditProfileDocument = gql`
+    mutation EditProfile($profilePictureUrl: String, $firstName: String!, $lastName: String!, $username: String!, $about: String) {
+  editProfile(
+    profilePictureUrl: $profilePictureUrl
+    firstName: $firstName
+    lastName: $lastName
+    username: $username
+    about: $about
+  ) {
+    firstName
+    lastName
+    username
+    about
+    profilePictureUrl
+  }
+}
+    `;
+export type EditProfileMutationFn = Apollo.MutationFunction<EditProfileMutation, EditProfileMutationVariables>;
+
+/**
+ * __useEditProfileMutation__
+ *
+ * To run a mutation, you first call `useEditProfileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditProfileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editProfileMutation, { data, loading, error }] = useEditProfileMutation({
+ *   variables: {
+ *      profilePictureUrl: // value for 'profilePictureUrl'
+ *      firstName: // value for 'firstName'
+ *      lastName: // value for 'lastName'
+ *      username: // value for 'username'
+ *      about: // value for 'about'
+ *   },
+ * });
+ */
+export function useEditProfileMutation(baseOptions?: Apollo.MutationHookOptions<EditProfileMutation, EditProfileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditProfileMutation, EditProfileMutationVariables>(EditProfileDocument, options);
+      }
+export type EditProfileMutationHookResult = ReturnType<typeof useEditProfileMutation>;
+export type EditProfileMutationResult = Apollo.MutationResult<EditProfileMutation>;
+export type EditProfileMutationOptions = Apollo.BaseMutationOptions<EditProfileMutation, EditProfileMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($options: LoginInput!) {
   login(options: $options) {
@@ -432,63 +500,6 @@ export function useSendMessageMutation(baseOptions?: Apollo.MutationHookOptions<
 export type SendMessageMutationHookResult = ReturnType<typeof useSendMessageMutation>;
 export type SendMessageMutationResult = Apollo.MutationResult<SendMessageMutation>;
 export type SendMessageMutationOptions = Apollo.BaseMutationOptions<SendMessageMutation, SendMessageMutationVariables>;
-export const CurrentUserDocument = gql`
-    query CurrentUser {
-  currentUser {
-    id
-    email
-    username
-    firstName
-    lastName
-    updatedAt
-    createdAt
-    contacts {
-      id
-      profilePictureUrl
-      firstName
-      lastName
-      createdAt
-    }
-    chats {
-      id
-      groupAvatarUrl
-      updatedAt
-      messages(limit: 1) {
-        id
-        text
-        createdAt
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useCurrentUserQuery__
- *
- * To run a query within a React component, call `useCurrentUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useCurrentUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCurrentUserQuery({
- *   variables: {
- *   },
- * });
- */
-export function useCurrentUserQuery(baseOptions?: Apollo.QueryHookOptions<CurrentUserQuery, CurrentUserQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, options);
-      }
-export function useCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CurrentUserQuery, CurrentUserQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, options);
-        }
-export type CurrentUserQueryHookResult = ReturnType<typeof useCurrentUserQuery>;
-export type CurrentUserLazyQueryHookResult = ReturnType<typeof useCurrentUserLazyQuery>;
-export type CurrentUserQueryResult = Apollo.QueryResult<CurrentUserQuery, CurrentUserQueryVariables>;
 export const GetChatsDocument = gql`
     query GetChats($limit: Int!, $cursor: String) {
   getChats {
@@ -563,6 +574,44 @@ export function useGetContactsLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetContactsQueryHookResult = ReturnType<typeof useGetContactsQuery>;
 export type GetContactsLazyQueryHookResult = ReturnType<typeof useGetContactsLazyQuery>;
 export type GetContactsQueryResult = Apollo.QueryResult<GetContactsQuery, GetContactsQueryVariables>;
+export const GetCurrentUserDocument = gql`
+    query GetCurrentUser {
+  currentUser {
+    username
+    firstName
+    lastName
+    about
+    profilePictureUrl
+  }
+}
+    `;
+
+/**
+ * __useGetCurrentUserQuery__
+ *
+ * To run a query within a React component, call `useGetCurrentUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCurrentUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCurrentUserQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetCurrentUserQuery(baseOptions?: Apollo.QueryHookOptions<GetCurrentUserQuery, GetCurrentUserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCurrentUserQuery, GetCurrentUserQueryVariables>(GetCurrentUserDocument, options);
+      }
+export function useGetCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCurrentUserQuery, GetCurrentUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCurrentUserQuery, GetCurrentUserQueryVariables>(GetCurrentUserDocument, options);
+        }
+export type GetCurrentUserQueryHookResult = ReturnType<typeof useGetCurrentUserQuery>;
+export type GetCurrentUserLazyQueryHookResult = ReturnType<typeof useGetCurrentUserLazyQuery>;
+export type GetCurrentUserQueryResult = Apollo.QueryResult<GetCurrentUserQuery, GetCurrentUserQueryVariables>;
 export const GetMessagesDocument = gql`
     query GetMessages($chatId: Int!, $limit: Int!, $cursor: String) {
   getMessages(chatId: $chatId, limit: $limit, cursor: $cursor) {

@@ -1,0 +1,21 @@
+mutation EditProfile(
+  $profilePictureUrl: String
+  $firstName: String!
+  $lastName: String!
+  $username: String!
+  $about: String
+) {
+  editProfile(
+    profilePictureUrl: $profilePictureUrl
+    firstName: $firstName
+    lastName: $lastName
+    username: $username
+    about: $about
+  ) {
+    firstName
+    lastName
+    username
+    about
+    profilePictureUrl
+  }
+}

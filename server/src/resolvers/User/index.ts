@@ -79,6 +79,7 @@ export class UserResolver {
   }
 
   @Query(() => User, { nullable: true })
+  @UseMiddleware(isAuth)
   async currentUser(@Ctx() { req }: MyContext): Promise<User | null> {
     if (!req.session.userId) {
       return null;
@@ -129,6 +130,31 @@ export class UserResolver {
     if (!isPasswordCorrect) throw new Error("password incorrect");
 
     req.session.userId = user.id;
+
+    return user;
+  }
+
+  @Mutation(() => User)
+  @UseMiddleware(isAuth)
+  async editProfile(
+    @Arg("username") username: string,
+    @Arg("firstName") firstName: string,
+    @Arg("lastName") lastName: string,
+    @Arg("about", { nullable: true }) about: string,
+    @Arg("profilePictureUrl", { nullable: true }) profilePictureUrl: string,
+    @Ctx() { req }: MyContext
+  ): Promise<User> {
+    const user = await User.findOne(Number(req.session.userId));
+
+    if (!user) throw new Error("user not found");
+
+    user.username = username;
+    user.firstName = firstName;
+    user.lastName = lastName;
+    if (profilePictureUrl) user.profilePictureUrl = profilePictureUrl;
+    if (about) user.about = about;
+
+    await user.save();
 
     return user;
   }

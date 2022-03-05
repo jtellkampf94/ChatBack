@@ -43,8 +43,8 @@ export class User extends BaseEntity {
   profilePictureUrl?: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true, default: null })
-  about?: string;
+  @Column({ default: "Hi there! I am using WhatsApp." })
+  about: string;
 
   @Field(() => [User!], { nullable: true })
   contacts?: User[];
