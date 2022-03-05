@@ -56,9 +56,14 @@ const IconCaption = styled.p`
 interface ImageButtonProps {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   background: string | null;
+  placeholder: string;
 }
 
-const ImageButton: React.FC<ImageButtonProps> = ({ onChange, background }) => {
+const ImageButton: React.FC<ImageButtonProps> = ({
+  onChange,
+  placeholder,
+  background,
+}) => {
   return (
     <ImageButtonContainer>
       <ImageBackground background={background}>
@@ -71,7 +76,7 @@ const ImageButton: React.FC<ImageButtonProps> = ({ onChange, background }) => {
           />
           <IconContainer>
             <AddAPhotoIcon style={{ fontSize: "32px", fill: "#fff" }} />
-            <IconCaption>Add group icon</IconCaption>
+            <IconCaption>{placeholder}</IconCaption>
           </IconContainer>
         </ImageLabel>
       </ImageBackground>

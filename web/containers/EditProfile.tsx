@@ -10,6 +10,9 @@ import {
 import styled from "styled-components";
 import Header from "../components/Header";
 
+import { useImageCrop } from "../hooks/useImageCrop";
+import Modal from "./Modal";
+import ImageEditor from "./ImageEditor";
 import MemberInput from "../components/MemberInput";
 import ImageButton from "../components/ImageButton";
 import SubmitButton from "../components/SubmitButton";
@@ -43,9 +46,13 @@ interface EditProfileProps {
 }
 
 const EditProfile: React.FC<EditProfileProps> = ({ backToSidebar }) => {
-  const [croppedImage, setCroppedImage] = useState<Blob | null>(null);
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
+  const {
+    handleFileChange,
+    handleClosePreview,
+    croppedImage,
+    setCroppedImage,
+    preview,
+  } = useImageCrop();
   const [credentials, setCredentials] = useState({
     username: "",
     firstName: "",
@@ -60,25 +67,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ backToSidebar }) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
   };
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFile(e.target.files ? e.target.files[0] : null);
-  };
-
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
-
-  useEffect(() => {
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setPreview(null);
-    }
-  }, [file]);
 
   return (
     <Fragment>
@@ -87,9 +78,21 @@ const EditProfile: React.FC<EditProfileProps> = ({ backToSidebar }) => {
       <FormContainer>
         <EditForm onSubmit={handleSubmit}>
           <ImageButton
+            placeholder="Add profile image"
             background={croppedImage ? URL.createObjectURL(croppedImage) : null}
             onChange={handleFileChange}
           />
+
+          <Modal open={!!preview}>
+            {preview && (
+              <ImageEditor
+                setCroppedImage={setCroppedImage}
+                imageUrl={preview}
+                closePreview={handleClosePreview}
+                changeFile={handleFileChange}
+              />
+            )}
+          </Modal>
 
           <MemberInput
             onChange={handleChange}

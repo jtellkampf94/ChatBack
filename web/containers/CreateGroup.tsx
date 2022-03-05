@@ -14,6 +14,7 @@ import {
   useCreateChatMutation,
   ChatFragmentFragmentDoc,
 } from "../generated/graphql";
+import { useImageCrop } from "../hooks/useImageCrop";
 import Header from "../components/Header";
 import NextButton from "../components/NextButton";
 import Container from "../components/Container";
@@ -38,9 +39,13 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
   backToSidebar,
   setSelectedContacts,
 }) => {
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
-  const [croppedImage, setCroppedImage] = useState<Blob | null>(null);
+  const {
+    handleFileChange,
+    handleClosePreview,
+    croppedImage,
+    setCroppedImage,
+    preview,
+  } = useImageCrop();
   const [groupName, setGroupName] = useState("");
   const [getPresignedUrl, { data }] = useGetPresignedUrlLazyQuery();
   const [createChat] = useCreateChatMutation();
@@ -77,20 +82,12 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
     setGroupName("");
   };
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFile(e.target.files ? e.target.files[0] : null);
-  };
-
   const handleTextChange = (e: ChangeEvent<HTMLInputElement>) => {
     setGroupName(e.target.value);
   };
 
-  const handleClosePreview = () => {
-    setPreview(null);
-  };
-
-  const submit = async () => {
-    setPreview(null);
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (groupName.length === 0) return;
 
     if (croppedImage) {
@@ -100,14 +97,8 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
     }
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    submit();
-  };
-
   useEffect(() => {
     if (data && croppedImage) {
-      console.log(data);
       const createGroupWithAvatar = async () => {
         const { presignedUrl, key } = data.getPresignedUrl;
         await axios.put(presignedUrl, croppedImage, {
@@ -119,19 +110,9 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
 
       createGroupWithAvatar();
     }
-  }, [data]);
 
-  useEffect(() => {
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setPreview(null);
-    }
-  }, [file]);
+    return () => setCroppedImage(null);
+  }, [data]);
 
   return (
     <Container>
@@ -140,6 +121,7 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
         <ImageButton
           background={croppedImage ? URL.createObjectURL(croppedImage) : null}
           onChange={handleFileChange}
+          placeholder="Add group icon"
         />
         <MemberInput
           onChange={handleTextChange}
@@ -157,7 +139,6 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
               imageUrl={preview}
               closePreview={handleClosePreview}
               changeFile={handleFileChange}
-              submit={submit}
             />
           )}
         </Modal>

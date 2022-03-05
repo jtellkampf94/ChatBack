@@ -11,7 +11,7 @@ const Form = styled.form`
 `;
 
 interface CreateGroupFormProps {
-  onSubmit: (e: FormEvent<HTMLFormElement>) => void;
+  onSubmit: (e: FormEvent<HTMLFormElement>) => Promise<void>;
 }
 
 const CreateGroupForm: React.FC<CreateGroupFormProps> = ({

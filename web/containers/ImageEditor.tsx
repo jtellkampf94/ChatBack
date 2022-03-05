@@ -20,7 +20,6 @@ interface ImageEditorProps {
   closePreview: () => void;
   changeFile: (e: ChangeEvent<HTMLInputElement>) => void;
   setCroppedImage: Dispatch<SetStateAction<Blob | null>>;
-  submit: () => Promise<void>;
 }
 
 const ImageEditor: React.FC<ImageEditorProps> = ({
@@ -28,7 +27,6 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
   closePreview,
   changeFile,
   setCroppedImage,
-  submit,
 }) => {
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -46,7 +44,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
       if (croppedAreaPixels) {
         const croppedImage = await getCroppedImg(imageUrl, croppedAreaPixels);
         setCroppedImage(croppedImage);
-        submit();
+        closePreview();
       }
     } catch (error) {
       console.log(error);
