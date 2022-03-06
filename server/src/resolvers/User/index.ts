@@ -19,8 +19,9 @@ import { User } from "../../entities/User";
 import { Chat } from "../../entities/Chat";
 import { Contact } from "../../entities/Contact";
 import { ChatMember } from "../../entities/ChatMember";
-
 import { isAuth } from "../../middleware/isAuth";
+import { getAWSS3Key } from "../../utils/getAWSS3Key";
+import { s3 } from "../../config/amazonS3Config";
 
 @Resolver((of) => User)
 export class UserResolver {
@@ -151,7 +152,22 @@ export class UserResolver {
     user.username = username;
     user.firstName = firstName;
     user.lastName = lastName;
-    if (profilePictureUrl) user.profilePictureUrl = profilePictureUrl;
+
+    if (profilePictureUrl) {
+      if (user.profilePictureUrl) {
+        const key = getAWSS3Key(user.profilePictureUrl);
+
+        s3.deleteObject(
+          { Bucket: process.env.AWS_S3_BUCKET_NAME as string, Key: key },
+          (err, data) => {
+            if (err) console.log(err);
+          }
+        );
+      }
+
+      user.profilePictureUrl = profilePictureUrl;
+    }
+
     if (about) user.about = about;
 
     await user.save();

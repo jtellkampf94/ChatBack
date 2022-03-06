@@ -201,7 +201,7 @@ export type EditProfileMutationVariables = Exact<{
 }>;
 
 
-export type EditProfileMutation = { __typename?: 'Mutation', editProfile: { __typename?: 'User', firstName: string, lastName: string, username: string, about?: string | null | undefined, profilePictureUrl?: string | null | undefined } };
+export type EditProfileMutation = { __typename?: 'Mutation', editProfile: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, about?: string | null | undefined, profilePictureUrl?: string | null | undefined } };
 
 export type LoginMutationVariables = Exact<{
   options: LoginInput;
@@ -242,7 +242,7 @@ export type GetContactsQuery = { __typename?: 'Query', getContacts: Array<{ __ty
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', username: string, firstName: string, lastName: string, about?: string | null | undefined, profilePictureUrl?: string | null | undefined } | null | undefined };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string, about?: string | null | undefined, profilePictureUrl?: string | null | undefined } | null | undefined };
 
 export type GetMessagesQueryVariables = Exact<{
   chatId: Scalars['Int'];
@@ -353,6 +353,7 @@ export const EditProfileDocument = gql`
     username: $username
     about: $about
   ) {
+    id
     firstName
     lastName
     username
@@ -577,6 +578,7 @@ export type GetContactsQueryResult = Apollo.QueryResult<GetContactsQuery, GetCon
 export const GetCurrentUserDocument = gql`
     query GetCurrentUser {
   currentUser {
+    id
     username
     firstName
     lastName

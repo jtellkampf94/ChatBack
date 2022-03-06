@@ -22,7 +22,6 @@ import Modal from "./Modal";
 import ImageEditor from "./ImageEditor";
 import MemberInput from "../components/MemberInput";
 import ImageButton from "../components/ImageButton";
-import SubmitButton from "../components/SubmitButton";
 import QueryResult from "../components/QueryResult";
 
 const FormContainer = styled.div`
@@ -74,6 +73,7 @@ const Button = styled.button`
 `;
 
 interface Credentials {
+  id: string;
   username: string;
   firstName: string;
   lastName: string;
@@ -98,6 +98,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ backToSidebar }) => {
     preview,
   } = useImageCrop();
   const [credentials, setCredentials] = useState<Credentials>({
+    id: "",
     username: "",
     firstName: "",
     lastName: "",
@@ -117,13 +118,13 @@ const EditProfile: React.FC<EditProfileProps> = ({ backToSidebar }) => {
       update: async (cache, { data }) => {
         if (!data) return cache;
 
-        const updatedUser = data.editProfile;
+        const currentUser = data.editProfile;
 
         await cache.modify({
           fields: {
             currentUser(user) {
               const newUserRef = cache.writeQuery({
-                data: updatedUser,
+                data: { currentUser },
                 query: GetCurrentUserDocument,
               });
 
@@ -151,10 +152,11 @@ const EditProfile: React.FC<EditProfileProps> = ({ backToSidebar }) => {
 
   useEffect(() => {
     if (data?.currentUser) {
-      const { username, firstName, lastName, profilePictureUrl, about } =
+      const { id, username, firstName, lastName, profilePictureUrl, about } =
         data.currentUser;
 
       setCredentials({
+        id,
         username,
         firstName,
         lastName,

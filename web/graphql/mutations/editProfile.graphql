@@ -12,6 +12,7 @@ mutation EditProfile(
     username: $username
     about: $about
   ) {
+    id
     firstName
     lastName
     username

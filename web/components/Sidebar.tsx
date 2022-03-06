@@ -60,12 +60,14 @@ const ChatContainer = styled.div`
 interface SidebarProps {
   toContactsTab: () => void;
   toEditProfileTab: () => void;
+  profilePictureUrl: string | undefined;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
   children,
   toContactsTab,
   toEditProfileTab,
+  profilePictureUrl,
 }) => {
   return (
     <Container>
@@ -76,6 +78,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             width: "44px",
             height: "44px",
           }}
+          src={profilePictureUrl}
         />
 
         <IconsContainer>

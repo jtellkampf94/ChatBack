@@ -2,24 +2,17 @@ import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { gql } from "@apollo/client";
 
 import { createApolloClient } from "../pages/_app";
+import { GetCurrentUserDocument } from "../generated/graphql";
 
 export const CURRENT_USER_QUERY = gql`
   query GetCurrentUser {
     currentUser {
       id
-      email
       username
       firstName
       lastName
-      updatedAt
-      createdAt
-      contacts {
-        id
-        profilePictureUrl
-        firstName
-        lastName
-        createdAt
-      }
+      about
+      profilePictureUrl
     }
   }
 `;
@@ -40,7 +33,7 @@ export const isUserLoggedIn: GetServerSideProps = async ({
   });
 
   const result = await createApolloClient({ cookie }).query({
-    query: CURRENT_USER_QUERY,
+    query: GetCurrentUserDocument,
   });
 
   if (!result.data.currentUser) {
