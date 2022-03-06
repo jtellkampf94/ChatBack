@@ -1,19 +1,11 @@
-import {
-  ChangeEvent,
-  useState,
-  useEffect,
-  FormEvent,
-  Dispatch,
-  SetStateAction,
-  Fragment,
-} from "react";
+import { ChangeEvent, useState, useEffect, FormEvent, Fragment } from "react";
 import styled from "styled-components";
 import Header from "../components/Header";
 import axios from "axios";
+import { useApolloClient } from "@apollo/client";
 
 import { useImageCrop } from "../hooks/useImageCrop";
 import {
-  useGetCurrentUserQuery,
   useEditProfileMutation,
   GetCurrentUserDocument,
   useGetPresignedUrlLazyQuery,
@@ -22,7 +14,6 @@ import Modal from "./Modal";
 import ImageEditor from "./ImageEditor";
 import MemberInput from "../components/MemberInput";
 import ImageButton from "../components/ImageButton";
-import QueryResult from "../components/QueryResult";
 
 const FormContainer = styled.div`
   width: 100%;
@@ -86,7 +77,6 @@ interface EditProfileProps {
 }
 
 const EditProfile: React.FC<EditProfileProps> = ({ backToSidebar }) => {
-  const { data, loading, error } = useGetCurrentUserQuery();
   const [getPresignedUrl, { data: presignedUrlData }] =
     useGetPresignedUrlLazyQuery();
   const [editProfile] = useEditProfileMutation();
@@ -97,13 +87,13 @@ const EditProfile: React.FC<EditProfileProps> = ({ backToSidebar }) => {
     setCroppedImage,
     preview,
   } = useImageCrop();
+
+  const client = useApolloClient();
+  const { currentUser: cachedCurrentUser } = client.readQuery({
+    query: GetCurrentUserDocument,
+  });
   const [credentials, setCredentials] = useState<Credentials>({
-    id: "",
-    username: "",
-    firstName: "",
-    lastName: "",
-    profilePictureUrl: null,
-    about: "",
+    ...cachedCurrentUser,
   });
   const { username, firstName, lastName, profilePictureUrl, about } =
     credentials;
@@ -120,16 +110,13 @@ const EditProfile: React.FC<EditProfileProps> = ({ backToSidebar }) => {
 
         const currentUser = data.editProfile;
 
-        await cache.modify({
-          fields: {
-            currentUser(user) {
-              const newUserRef = cache.writeQuery({
-                data: { currentUser },
-                query: GetCurrentUserDocument,
-              });
+        cache.writeQuery({
+          data: { currentUser },
+          query: GetCurrentUserDocument,
+        });
 
-              return newUserRef;
-            },
+        cache.modify({
+          fields: {
             getPresignedUrl() {
               return undefined;
             },
@@ -151,22 +138,6 @@ const EditProfile: React.FC<EditProfileProps> = ({ backToSidebar }) => {
   };
 
   useEffect(() => {
-    if (data?.currentUser) {
-      const { id, username, firstName, lastName, profilePictureUrl, about } =
-        data.currentUser;
-
-      setCredentials({
-        id,
-        username,
-        firstName,
-        lastName,
-        profilePictureUrl,
-        about,
-      });
-    }
-  }, [data]);
-
-  useEffect(() => {
     if (croppedImage && presignedUrlData) {
       const updateProfileWithAvatar = async () => {
         const { presignedUrl, key } = presignedUrlData.getPresignedUrl;
@@ -186,66 +157,64 @@ const EditProfile: React.FC<EditProfileProps> = ({ backToSidebar }) => {
   return (
     <Fragment>
       <Header heading="Edit Profile" onClick={backToSidebar} />
-      <QueryResult loading={loading} error={error}>
-        <FormContainer>
-          <EditForm onSubmit={handleSubmit}>
-            <ImageButton
-              placeholder="Add profile image"
-              background={
-                croppedImage
-                  ? URL.createObjectURL(croppedImage)
-                  : profilePictureUrl
-                  ? profilePictureUrl
-                  : null
-              }
-              onChange={handleFileChange}
-            />
+      <FormContainer>
+        <EditForm onSubmit={handleSubmit}>
+          <ImageButton
+            placeholder="Add profile image"
+            background={
+              croppedImage
+                ? URL.createObjectURL(croppedImage)
+                : profilePictureUrl
+                ? profilePictureUrl
+                : null
+            }
+            onChange={handleFileChange}
+          />
 
-            <Modal open={!!preview}>
-              {preview && (
-                <ImageEditor
-                  setCroppedImage={setCroppedImage}
-                  imageUrl={preview}
-                  closePreview={handleClosePreview}
-                  changeFile={handleFileChange}
-                />
-              )}
-            </Modal>
+          <Modal open={!!preview}>
+            {preview && (
+              <ImageEditor
+                setCroppedImage={setCroppedImage}
+                imageUrl={preview}
+                closePreview={handleClosePreview}
+                changeFile={handleFileChange}
+              />
+            )}
+          </Modal>
 
-            <MemberInput
-              onChange={handleChange}
-              type="text"
-              value={username}
-              name="username"
-              placeholder="Username"
-            />
-            <MemberInput
-              onChange={handleChange}
-              type="text"
-              value={firstName}
-              name="firstName"
-              placeholder="First name"
-            />
-            <MemberInput
-              onChange={handleChange}
-              type="text"
-              value={lastName}
-              name="lastName"
-              placeholder="Last name"
-            />
-            <MemberInput
-              onChange={handleChange}
-              type="text"
-              value={about ? about : ""}
-              name="about"
-              placeholder="About"
-            />
-            <ButtonContainer>
-              <Button type="submit">Update profile</Button>
-            </ButtonContainer>
-          </EditForm>
-        </FormContainer>
-      </QueryResult>
+          <MemberInput
+            onChange={handleChange}
+            type="text"
+            value={username}
+            name="username"
+            placeholder="Username"
+          />
+          <MemberInput
+            onChange={handleChange}
+            type="text"
+            value={firstName}
+            name="firstName"
+            placeholder="First name"
+          />
+          <MemberInput
+            onChange={handleChange}
+            type="text"
+            value={lastName}
+            name="lastName"
+            placeholder="Last name"
+          />
+          <MemberInput
+            onChange={handleChange}
+            type="text"
+            value={about ? about : ""}
+            name="about"
+            placeholder="About"
+          />
+          <ButtonContainer>
+            <Button type="submit">Update profile</Button>
+          </ButtonContainer>
+        </EditForm>
+      </FormContainer>
     </Fragment>
   );
 };

@@ -1,21 +1,7 @@
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { gql } from "@apollo/client";
 
 import { createApolloClient } from "../pages/_app";
 import { GetCurrentUserDocument } from "../generated/graphql";
-
-export const CURRENT_USER_QUERY = gql`
-  query GetCurrentUser {
-    currentUser {
-      id
-      username
-      firstName
-      lastName
-      about
-      profilePictureUrl
-    }
-  }
-`;
 
 export const isUserLoggedIn: GetServerSideProps = async ({
   req,
@@ -41,9 +27,5 @@ export const isUserLoggedIn: GetServerSideProps = async ({
     res.end();
   }
 
-  return {
-    props: {
-      currentUser: result.data.currentUser,
-    },
-  };
+  return { props: {} };
 };
