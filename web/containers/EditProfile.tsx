@@ -1,5 +1,4 @@
 import { ChangeEvent, useState, useEffect, FormEvent, Fragment } from "react";
-import styled from "styled-components";
 import Header from "../components/Header";
 import axios from "axios";
 import { useApolloClient } from "@apollo/client";
@@ -14,54 +13,9 @@ import Modal from "./Modal";
 import ImageEditor from "./ImageEditor";
 import MemberInput from "../components/MemberInput";
 import ImageButton from "../components/ImageButton";
-
-const FormContainer = styled.div`
-  width: 100%;
-  height: calc(100vh - 108px);
-  overflow-y: scroll;
-
-  &::-webkit-scrollbar {
-    width: 6px !important;
-    height: 6px !important;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
-  }
-
-  &::-webkit-scrollbar-track {
-    background: hsla(0, 0%, 100%, 0.1);
-  }
-`;
-
-const EditForm = styled.form`
-  width: 100%;
-  height: 100%;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 0 40px 0;
-  width: 100%;
-`;
-
-const Button = styled.button`
-  background-color: #25d366;
-  font-size: 14px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.globalTheme.white};
-  outline: none;
-  border-radius: 3px;
-  border: none;
-  height: 34px;
-  width: 130px;
-  &:hover {
-    cursor: pointer;
-    filter: brightness(105%);
-  }
-`;
+import EditProfileFormContainer from "../components/EditProfileFromContainer";
+import Form from "../components/Form";
+import EditProfileSubmitButton from "../components/EditProfileSubmitButton";
 
 interface Credentials {
   id: string;
@@ -157,8 +111,8 @@ const EditProfile: React.FC<EditProfileProps> = ({ backToSidebar }) => {
   return (
     <Fragment>
       <Header heading="Edit Profile" onClick={backToSidebar} />
-      <FormContainer>
-        <EditForm onSubmit={handleSubmit}>
+      <EditProfileFormContainer>
+        <Form onSubmit={handleSubmit}>
           <ImageButton
             placeholder="Add profile image"
             background={
@@ -210,11 +164,10 @@ const EditProfile: React.FC<EditProfileProps> = ({ backToSidebar }) => {
             name="about"
             placeholder="About"
           />
-          <ButtonContainer>
-            <Button type="submit">Update profile</Button>
-          </ButtonContainer>
-        </EditForm>
-      </FormContainer>
+
+          <EditProfileSubmitButton>Update profile</EditProfileSubmitButton>
+        </Form>
+      </EditProfileFormContainer>
     </Fragment>
   );
 };
