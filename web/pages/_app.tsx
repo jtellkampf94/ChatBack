@@ -45,7 +45,24 @@ export const createApolloClient = (headers?: Record<string, string>) => {
   }
 
   return new ApolloClient({
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+      typePolicies: {
+        Query: {
+          fields: {
+            getMessages: {
+              keyArgs: ["chatId"],
+              //@ts-ignore
+              merge(existing = [], incoming, { args: { cursor } }) {
+                console.log(incoming);
+                if (cursor) return [...existing, ...incoming];
+
+                return [...incoming];
+              },
+            },
+          },
+        },
+      },
+    }),
     link: splitLink,
   });
 };
