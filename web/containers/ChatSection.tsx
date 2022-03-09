@@ -6,14 +6,12 @@ import {
   Fragment,
   ChangeEvent,
 } from "react";
-import { useApolloClient } from "@apollo/client";
 
 import {
   useSendMessageMutation,
   useGetMessagesQuery,
   GetChatsQuery,
   NewMessageDocument,
-  GetMessagesDocument,
 } from "../generated/graphql";
 import { getUsersFullname } from "../utils/getUsersFullname";
 import { capitalizeFirstLetter } from "../utils/capitalizeFirstLetter";
@@ -31,7 +29,6 @@ interface ChatSectionProps {
 }
 
 const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
-  const client = useApolloClient();
   const endOfMessageRef = useRef<null | HTMLDivElement>(null);
   const [messageText, setMessageText] = useState("");
   const [limit, setLimit] = useState(1);
@@ -50,12 +47,17 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
         //@ts-ignore
         const newMessage = subscriptionData.data.newMessage;
         const newMessageChatId = Number(newMessage.chatId);
-        if (prev.getMessages && chatId === newMessageChatId) {
-          return { getMessages: [newMessage, ...prev.getMessages] };
+        if (prev.getMessages?.messages && chatId === newMessageChatId) {
+          return {
+            getMessages: {
+              messages: [newMessage, ...prev.getMessages.messages],
+              hasMore: prev.getMessages.hasMore,
+            },
+          };
         }
 
-        if (!prev.getMessages && chatId === newMessageChatId) {
-          return { getMessages: [newMessage] };
+        if (!prev.getMessages?.messages && chatId === newMessageChatId) {
+          return { getMessages: { messages: [newMessage], hasMore: false } };
         }
 
         return prev;
@@ -87,11 +89,16 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
   };
 
   const handleFetchMore = () => {
-    const { getMessages } = client.readQuery({ query: GetMessagesDocument });
-    const lastMessage = getMessages[getMessages.length - 1];
-    console.log(getMessages[getMessages.length - 1]);
-
-    fetchMore({ variables: { limit, cursor: lastMessage.createdAt } });
+    if (data?.getMessages) {
+      fetchMore({
+        variables: {
+          limit,
+          cursor:
+            data.getMessages.messages[data.getMessages.messages.length - 1]
+              .createdAt,
+        },
+      });
+    }
   };
 
   return (
@@ -106,7 +113,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
         endOfMessageRef={endOfMessageRef}
       >
         <QueryResult loading={loading} error={error}>
-          {data?.getMessages?.map((message) => {
+          {data?.getMessages?.messages.map((message) => {
             const isUser = userId === Number(message.user.id);
             return (
               <Message
@@ -125,7 +132,9 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
             );
           })}
         </QueryResult>
-        <button onClick={handleFetchMore}>more</button>
+        {data?.getMessages?.hasMore && (
+          <button onClick={handleFetchMore}>more</button>
+        )}
       </ChatScreen>
 
       <ChatForm

@@ -11,6 +11,8 @@ import {
   FieldResolver,
   PubSub,
   PubSubEngine,
+  ObjectType,
+  Field,
 } from "type-graphql";
 import { getConnection } from "typeorm";
 
@@ -20,6 +22,15 @@ import { Message } from "../../entities/Message";
 import { ChatMember } from "../../entities/ChatMember";
 import { User } from "../../entities/User";
 import { NEW_MESSAGE } from "../../constants";
+
+@ObjectType()
+export class PaginatedMessages {
+  @Field(() => [Message])
+  messages: Message[];
+
+  @Field()
+  hasMore: boolean;
+}
 
 @Resolver((of) => Message)
 export class MessageResolver {
@@ -71,13 +82,13 @@ export class MessageResolver {
   }
 
   @UseMiddleware(isAuth)
-  @Query(() => [Message], { nullable: true })
+  @Query(() => PaginatedMessages, { nullable: true })
   async getMessages(
     @Arg("chatId", () => Int) chatId: number,
     @Arg("cursor", { nullable: true }) cursor: string,
     @Arg("limit", () => Int) limit: number,
     @Ctx() { req }: MyContext
-  ): Promise<Message[]> {
+  ): Promise<PaginatedMessages> {
     const chatMember = await ChatMember.findOne({
       where: { chatId, userId: Number(req.session.userId) },
     });
@@ -85,12 +96,20 @@ export class MessageResolver {
     if (!chatMember)
       throw new Error("you are not authorized to view messages of this chat");
 
-    return await getConnection().query(`
+    const realLimit = Math.min(20, limit);
+    const realLimitPlusOne = realLimit + 1;
+
+    const messages = await getConnection().query(`
       SELECT m.*
       FROM public.message m
       WHERE "chatId" = ${chatId}
       ${cursor ? `AND "createdAt" < '${cursor}'::timestamp` : ""}  
       ORDER BY "createdAt" DESC
-      LIMIT ${limit + 1}`);
+      LIMIT ${realLimitPlusOne}`);
+
+    return {
+      messages: messages.slice(0, realLimit),
+      hasMore: messages.length === realLimitPlusOne,
+    };
   }
 }

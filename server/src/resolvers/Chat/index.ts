@@ -17,8 +17,8 @@ import { isAuth } from "../../middleware/isAuth";
 import { MyContext } from "../../types";
 import { Chat } from "../../entities/Chat";
 import { ChatMember } from "../../entities/ChatMember";
-import { Message } from "../../entities/Message";
 import { User } from "../../entities/User";
+import { Message } from "../../entities/Message";
 
 @Resolver((of) => Chat)
 export class ChatResolver {

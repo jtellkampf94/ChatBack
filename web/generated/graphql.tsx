@@ -124,13 +124,19 @@ export type MutationSendMessageArgs = {
   text: Scalars['String'];
 };
 
+export type PaginatedMessages = {
+  __typename?: 'PaginatedMessages';
+  hasMore: Scalars['Boolean'];
+  messages: Array<Message>;
+};
+
 export type Query = {
   __typename?: 'Query';
   currentUser?: Maybe<User>;
   getChat: Chat;
   getChats: Array<Chat>;
   getContacts: Array<User>;
-  getMessages?: Maybe<Array<Message>>;
+  getMessages?: Maybe<PaginatedMessages>;
   getPresignedUrl: Image;
   users: Array<User>;
 };
@@ -251,7 +257,7 @@ export type GetMessagesQueryVariables = Exact<{
 }>;
 
 
-export type GetMessagesQuery = { __typename?: 'Query', getMessages?: Array<{ __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string } }> | null | undefined };
+export type GetMessagesQuery = { __typename?: 'Query', getMessages?: { __typename?: 'PaginatedMessages', hasMore: boolean, messages: Array<{ __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string } }> } | null | undefined };
 
 export type GetPresignedUrlQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -617,7 +623,10 @@ export type GetCurrentUserQueryResult = Apollo.QueryResult<GetCurrentUserQuery, 
 export const GetMessagesDocument = gql`
     query GetMessages($chatId: Int!, $limit: Int!, $cursor: String) {
   getMessages(chatId: $chatId, limit: $limit, cursor: $cursor) {
-    ...MessageFragment
+    hasMore
+    messages {
+      ...MessageFragment
+    }
   }
 }
     ${MessageFragmentFragmentDoc}`;

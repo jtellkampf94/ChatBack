@@ -13,6 +13,7 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { WebSocketLink } from "@apollo/client/link/ws";
 
 import { Theme } from "../themes";
+import { PaginatedMessages } from "../generated/graphql";
 
 export const createApolloClient = (headers?: Record<string, string>) => {
   const httpLink = new HttpLink({
@@ -51,12 +52,20 @@ export const createApolloClient = (headers?: Record<string, string>) => {
           fields: {
             getMessages: {
               keyArgs: ["chatId"],
-              //@ts-ignore
-              merge(existing = [], incoming, { args: { cursor } }) {
-                console.log(incoming);
-                if (cursor) return [...existing, ...incoming];
+              merge(
+                //@ts-ignore
+                existing: PaginatedMessages = [],
+                incoming: PaginatedMessages,
+                //@ts-ignore
+                { args: { cursor } }
+              ) {
+                if (cursor)
+                  return {
+                    messages: [...existing.messages, ...incoming.messages],
+                    hasMore: incoming.hasMore,
+                  };
 
-                return [...incoming];
+                return incoming;
               },
             },
           },
