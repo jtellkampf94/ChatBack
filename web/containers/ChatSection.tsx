@@ -6,6 +6,7 @@ import {
   Fragment,
   ChangeEvent,
 } from "react";
+import { Waypoint } from "react-waypoint";
 
 import {
   useSendMessageMutation,
@@ -21,6 +22,7 @@ import ChatScreen from "../components/ChatScreen";
 import Message from "../components/Message";
 import ChatForm from "../components/ChatForm";
 import QueryResult from "../components/QueryResult";
+import Spinner from "../components/Spinner";
 
 interface ChatSectionProps {
   chatId: number;
@@ -31,11 +33,12 @@ interface ChatSectionProps {
 const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
   const endOfMessageRef = useRef<null | HTMLDivElement>(null);
   const [messageText, setMessageText] = useState("");
-  const [limit, setLimit] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [sendMessage] = useSendMessageMutation();
-  const { loading, error, data, subscribeToMore, fetchMore } =
+  const { loading, error, data, subscribeToMore, fetchMore, networkStatus } =
     useGetMessagesQuery({
       variables: { chatId, limit },
+      notifyOnNetworkStatusChange: true,
     });
 
   const subscribe = (chatId: number) =>
@@ -90,6 +93,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
 
   const handleFetchMore = () => {
     if (data?.getMessages) {
+      console.log("rannnn");
       fetchMore({
         variables: {
           limit,
@@ -112,29 +116,27 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
         isGroupChat={!!chat.groupName}
         endOfMessageRef={endOfMessageRef}
       >
-        <QueryResult loading={loading} error={error}>
-          {data?.getMessages?.messages.map((message) => {
-            const isUser = userId === Number(message.user.id);
-            return (
-              <Message
-                key={`messageId-${message.id}`}
-                isUser={isUser}
-                text={message.text}
-                sender={
-                  isUser
-                    ? undefined
-                    : `${capitalizeFirstLetter(
-                        message.user.firstName
-                      )} ${capitalizeFirstLetter(message.user.lastName)}`
-                }
-                dateSent={formatDate(message.createdAt)}
-              />
-            );
-          })}
-        </QueryResult>
-        {data?.getMessages?.hasMore && (
-          <button onClick={handleFetchMore}>more</button>
-        )}
+        {data?.getMessages?.messages.map((message) => {
+          const isUser = userId === Number(message.user.id);
+          return (
+            <Message
+              key={`messageId-${message.id}`}
+              isUser={isUser}
+              text={message.text}
+              sender={
+                isUser
+                  ? undefined
+                  : `${capitalizeFirstLetter(
+                      message.user.firstName
+                    )} ${capitalizeFirstLetter(message.user.lastName)}`
+              }
+              dateSent={formatDate(message.createdAt)}
+            />
+          );
+        })}
+
+        {loading && <Spinner small />}
+        <Waypoint onEnter={handleFetchMore} />
       </ChatScreen>
 
       <ChatForm

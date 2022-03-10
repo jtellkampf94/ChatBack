@@ -1,6 +1,6 @@
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 
-import { createApolloClient } from "../pages/_app";
+import { createApolloClient } from "./createApolloClient";
 import { GetCurrentUserDocument } from "../generated/graphql";
 
 export const isUserLoggedIn: GetServerSideProps = async ({
