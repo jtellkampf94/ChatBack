@@ -183,7 +183,7 @@ export type User = {
   username: Scalars['String'];
 };
 
-export type ChatFragmentFragment = { __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, user: { __typename?: 'User', id: string } }> | null | undefined };
+export type ChatFragmentFragment = { __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, user: { __typename?: 'User', id: string } }> | null | undefined };
 
 export type MessageFragmentFragment = { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string } };
 
@@ -196,7 +196,7 @@ export type CreateChatMutationVariables = Exact<{
 }>;
 
 
-export type CreateChatMutation = { __typename?: 'Mutation', createChat: { __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, user: { __typename?: 'User', id: string } }> | null | undefined } };
+export type CreateChatMutation = { __typename?: 'Mutation', createChat: { __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, user: { __typename?: 'User', id: string } }> | null | undefined } };
 
 export type EditProfileMutationVariables = Exact<{
   profilePictureUrl?: Maybe<Scalars['String']>;
@@ -238,7 +238,7 @@ export type GetChatsQueryVariables = Exact<{
 }>;
 
 
-export type GetChatsQuery = { __typename?: 'Query', getChats: Array<{ __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, user: { __typename?: 'User', id: string } }> | null | undefined }> };
+export type GetChatsQuery = { __typename?: 'Query', getChats: Array<{ __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, user: { __typename?: 'User', id: string } }> | null | undefined }> };
 
 export type GetContactsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -284,6 +284,7 @@ export const ChatFragmentFragmentDoc = gql`
     id
     firstName
     lastName
+    profilePictureUrl
   }
   messages(limit: $limit, cursor: $cursor) {
     id

@@ -99,6 +99,14 @@ const Sidebar: React.FC<SidebarProps> = ({
                       : getUsersFullname(chat.members, Number(currentUser.id))
                   }
                   isGroupChat={!!chat.groupName}
+                  groupAvatarUrl={
+                    chat.groupAvatarUrl ? chat.groupAvatarUrl : undefined
+                  }
+                  profilePictureUrl={
+                    chat.members[0].profilePictureUrl
+                      ? chat.members[0].profilePictureUrl
+                      : undefined
+                  }
                   latestMessage={chat.messages?.[0].text}
                   timeOfLatestMessage={formatDate(chat.messages?.[0].createdAt)}
                 />

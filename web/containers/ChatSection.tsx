@@ -112,6 +112,12 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
             : getUsersFullname(chat.members, userId)
         }
         isGroupChat={!!chat.groupName}
+        profilePictureUrl={
+          chat.members[0].profilePictureUrl
+            ? chat.members[0].profilePictureUrl
+            : undefined
+        }
+        groupAvatarUrl={chat.groupAvatarUrl ? chat.groupAvatarUrl : undefined}
         endOfMessageRef={endOfMessageRef}
       >
         {data?.getMessages?.messages.map((message) => {

@@ -68,12 +68,16 @@ interface ChatScreenProps {
   name: string;
   isGroupChat: boolean;
   endOfMessageRef: MutableRefObject<HTMLDivElement | null>;
+  groupAvatarUrl?: string;
+  profilePictureUrl?: string;
 }
 
 const ChatScreen: React.FC<ChatScreenProps> = ({
   name,
   isGroupChat,
   endOfMessageRef,
+  groupAvatarUrl,
+  profilePictureUrl,
   children,
 }) => {
   return (
@@ -86,6 +90,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({
                 width: "44px",
                 height: "44px",
               }}
+              src={profilePictureUrl}
             />
           ) : (
             <UserAvatar
@@ -93,6 +98,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({
                 width: "44px",
                 height: "44px",
               }}
+              src={groupAvatarUrl}
             >
               <GroupIcon style={{ width: "34px", height: "34px" }} />
             </UserAvatar>

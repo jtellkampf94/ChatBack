@@ -61,11 +61,17 @@ const ContactsTab: React.FC<ContactsTabProps> = ({
     backToSidebar();
   };
 
+  const handleToGroupParticipants = () => {
+    if (data?.getContacts) {
+      toGroupParticipants();
+    }
+  };
+
   return (
     <Container>
       <Header onClick={backToSidebar} heading="New Chat" />
       <SearchBar placeholder="Search in contacts" />
-      <AddToGroup onClick={toGroupParticipants} />
+      <AddToGroup onClick={handleToGroupParticipants} />
 
       <ContactsContainer>
         <QueryResult loading={loading} error={error}>

@@ -77,6 +77,11 @@ const AddGroupParticipants: React.FC<AddGroupParticipantsProps> = ({
                 name={`${capitalizeFirstLetter(
                   contact.firstName
                 )} ${capitalizeFirstLetter(contact.lastName)}`}
+                profilePictureUrl={
+                  contact.profilePictureUrl
+                    ? contact.profilePictureUrl
+                    : undefined
+                }
               />
             );
           })}

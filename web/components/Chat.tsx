@@ -55,6 +55,8 @@ interface ChatProps {
   onClick: () => void;
   name: string;
   isGroupChat: boolean;
+  groupAvatarUrl?: string;
+  profilePictureUrl?: string;
   latestMessage: string | undefined;
   timeOfLatestMessage: string | JSX.Element | undefined;
 }
@@ -66,15 +68,20 @@ const Chat: React.FC<ChatProps> = ({
   isGroupChat,
   latestMessage,
   timeOfLatestMessage,
+  groupAvatarUrl,
+  profilePictureUrl,
 }) => {
   return (
     <Container highlighted={isHighlighted} onClick={onClick}>
       {isGroupChat ? (
-        <Avatar style={{ width: "52px", height: "52px" }}>
+        <Avatar style={{ width: "52px", height: "52px" }} src={groupAvatarUrl}>
           <GroupIcon style={{ width: "40px", height: "40px" }} />
         </Avatar>
       ) : (
-        <Avatar style={{ width: "52px", height: "52px" }} />
+        <Avatar
+          style={{ width: "52px", height: "52px" }}
+          src={profilePictureUrl}
+        />
       )}
       <TextContainer>
         <Name>{name}</Name>
