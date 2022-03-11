@@ -21,7 +21,6 @@ import { formatDate } from "../utils/dateFunctions";
 import ChatScreen from "../components/ChatScreen";
 import Message from "../components/Message";
 import ChatForm from "../components/ChatForm";
-import QueryResult from "../components/QueryResult";
 import Spinner from "../components/Spinner";
 
 interface ChatSectionProps {
@@ -93,7 +92,6 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
 
   const handleFetchMore = () => {
     if (data?.getMessages) {
-      console.log("rannnn");
       fetchMore({
         variables: {
           limit,
@@ -134,9 +132,9 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
             />
           );
         })}
-
-        {loading && <Spinner small />}
-        <Waypoint onEnter={handleFetchMore} />
+        {loading && data?.getMessages && <Spinner small />}
+        {loading && !data?.getMessages && <Spinner />}
+        {data?.getMessages?.hasMore && <Waypoint onEnter={handleFetchMore} />}
       </ChatScreen>
 
       <ChatForm
