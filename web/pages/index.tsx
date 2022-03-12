@@ -2,6 +2,7 @@ import type { NextPage } from "next";
 import { useState, Fragment } from "react";
 import Head from "next/head";
 import styled from "styled-components";
+import { TransitionGroup, CSSTransition } from "react-transition-group";
 
 import {
   useNewMessageSubscription,
@@ -78,33 +79,41 @@ const Home: NextPage = () => {
         <QueryResult error={error} loading={loading}>
           {data?.currentUser && (
             <Fragment>
-              <SidebarContainer>
-                {tab === 1 && (
-                  <Sidebar
-                    currentUser={data.currentUser}
-                    toContactsTab={() => handleTabChange(2)}
-                    toEditProfileTab={() => handleTabChange(5)}
-                    handleClick={handleClick}
-                    chatId={chatId}
-                    handleSetChat={handleSetChat}
-                  />
-                )}
-                {tab === 2 && (
+              {/* <TransitionGroup component={SidebarContainer}> */}
+              {tab === 1 && (
+                <CSSTransition classNames="Transition">
+                  {/* <Sidebar
+                      currentUser={data.currentUser}
+                      toContactsTab={() => handleTabChange(2)}
+                      toEditProfileTab={() => handleTabChange(5)}
+                      handleClick={handleClick}
+                      chatId={chatId}
+                      handleSetChat={handleSetChat}
+                    /> */}
+                  <div></div>
+                </CSSTransition>
+              )}
+              {tab === 2 && (
+                <CSSTransition classNames="Transition">
                   <ContactsTab
                     selectChat={handleClick}
                     backToSidebar={() => handleTabChange(1)}
                     toGroupParticipants={() => handleTabChange(3)}
                   />
-                )}
-                {tab === 3 && (
+                </CSSTransition>
+              )}
+              {tab === 3 && (
+                <CSSTransition>
                   <AddGroupParticipants
                     toContactsTab={() => handleTabChange(2)}
                     toCreateGroup={() => handleTabChange(4)}
                     selectedContacts={selectedContacts}
                     setSelectedContacts={setSelectedContacts}
                   />
-                )}
-                {tab === 4 && (
+                </CSSTransition>
+              )}
+              {tab === 4 && (
+                <CSSTransition>
                   <CreateGroup
                     toGroupParticipants={() => handleTabChange(3)}
                     selectedContacts={selectedContacts}
@@ -112,11 +121,15 @@ const Home: NextPage = () => {
                     backToSidebar={() => handleTabChange(1)}
                     setSelectedContacts={setSelectedContacts}
                   />
-                )}
-                {tab === 5 && (
+                </CSSTransition>
+              )}
+              {tab === 5 && (
+                <CSSTransition>
                   <EditProfile backToSidebar={() => handleTabChange(1)} />
-                )}
-              </SidebarContainer>
+                </CSSTransition>
+              )}
+              {/* </TransitionGroup> */}
+
               <ChatWrapper>
                 {chatId && selectedChat ? (
                   <ChatSection
