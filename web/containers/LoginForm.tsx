@@ -49,7 +49,7 @@ const LoginForm: React.FC = () => {
           onChange={handleChange}
           placeholder="Password"
         />
-        <SubmitButton>Log In</SubmitButton>
+        <SubmitButton loading={loading}>Log In</SubmitButton>
       </Form>
 
       <OrSection />

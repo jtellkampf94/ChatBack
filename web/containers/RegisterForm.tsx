@@ -1,6 +1,8 @@
 import { FormEvent, ChangeEvent, useState, Fragment } from "react";
 import styled from "styled-components";
+import { useRouter } from "next/router";
 
+import { useRegisterMutation } from "../generated/graphql";
 import WhatsAppLogo from "../assets/images/whats-app-logo.svg";
 import FormContainer from "../components/FormContainer";
 import Form from "../components/Form";
@@ -22,6 +24,8 @@ const Header = styled.div`
 `;
 
 const RegisterForm: React.FC = () => {
+  const router = useRouter();
+  const [register, { data, loading, error }] = useRegisterMutation();
   const [credentials, setCredentials] = useState({
     username: "",
     email: "",
@@ -47,6 +51,8 @@ const RegisterForm: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    await register({ variables: { options: credentials } });
+    router.push("/");
   };
 
   return (
@@ -104,7 +110,7 @@ const RegisterForm: React.FC = () => {
             onChange={handleChange}
             placeholder="Confirm password"
           />
-          <SubmitButton>Register</SubmitButton>
+          <SubmitButton loading={loading}>Register</SubmitButton>
         </Form>
 
         <OrSection />

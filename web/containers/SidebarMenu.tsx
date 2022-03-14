@@ -5,13 +5,8 @@ import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { globalTheme } from "../themes/globalTheme";
 import SidebarMenuContainer from "../components/SidebarMenuContainer";
 import DropdownContent from "../components/DropdownContent";
-import DropdownItem from "../components/DropdownItem";
 
-interface SidebarMenuProps {
-  toSearchUsers: () => void;
-}
-
-const SidebarMenu: React.FC<SidebarMenuProps> = ({ toSearchUsers }) => {
+const SidebarMenu: React.FC = ({ children }) => {
   const [openDropdown, setOpenDrpopdown] = useState(false);
   return (
     <SidebarMenuContainer>
@@ -19,10 +14,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ toSearchUsers }) => {
         <MoreVertIcon style={{ fill: globalTheme.iconColor }} />
       </IconButton>
 
-      <DropdownContent dropdownIn={openDropdown}>
-        <DropdownItem onClick={toSearchUsers}>Search users</DropdownItem>
-        <DropdownItem onClick={() => {}}>Log out</DropdownItem>
-      </DropdownContent>
+      <DropdownContent dropdownIn={openDropdown}>{children}</DropdownContent>
     </SidebarMenuContainer>
   );
 };

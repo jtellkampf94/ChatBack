@@ -18,14 +18,19 @@ export const isUserLoggedIn: GetServerSideProps = async ({
     cookie = cookie + newCookie;
   });
 
-  const result = await createApolloClient({ cookie }).query({
-    query: GetCurrentUserDocument,
-  });
+  try {
+    const result = await createApolloClient({ cookie }).query({
+      query: GetCurrentUserDocument,
+    });
 
-  if (!result.data.currentUser) {
+    if (!result.data.currentUser) {
+      res.writeHead(301, { Location: "/login" });
+      res.end();
+    }
+    return { props: {} };
+  } catch (e) {
     res.writeHead(301, { Location: "/login" });
     res.end();
+    return { props: {} };
   }
-
-  return { props: {} };
 };

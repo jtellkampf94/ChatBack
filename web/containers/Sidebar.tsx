@@ -13,6 +13,7 @@ import QueryResult from "../components/QueryResult";
 import SidebarContainer from "../components/SidebarContainer";
 import SidebarHeader from "../components/SidebarHeader";
 import SidebarChatContainer from "../components/SidebarChatContainer";
+import DropdownItem from "../components/DropdownItem";
 import { getUsersFullname } from "../utils/getUsersFullname";
 import { formatDate } from "../utils/dateFunctions";
 
@@ -23,6 +24,7 @@ interface SidebarProps {
   currentUser: GetCurrentUserQuery["currentUser"];
   handleClick: (selectedChatId: number) => void;
   handleSetChat: (chat: GetChatsQuery["getChats"][0]) => void;
+  handleLogout: () => Promise<void>;
   chatId: number | null;
 }
 
@@ -32,6 +34,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   toSearchUsers,
   currentUser,
   handleSetChat,
+  handleLogout,
   chatId,
   handleClick,
 }) => {
@@ -82,7 +85,10 @@ const Sidebar: React.FC<SidebarProps> = ({
         onAvatarClick={toEditProfileTab}
         onContactsClick={toContactsTab}
       >
-        <SidebarMenu toSearchUsers={toSearchUsers} />
+        <SidebarMenu>
+          <DropdownItem onClick={toSearchUsers}>Search users</DropdownItem>
+          <DropdownItem onClick={handleLogout}>Log out</DropdownItem>
+        </SidebarMenu>
       </SidebarHeader>
 
       <SearchBar placeholder="Search in chats" />

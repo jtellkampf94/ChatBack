@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import { useState, Fragment } from "react";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import styled from "styled-components";
 
 import {
@@ -8,6 +9,7 @@ import {
   GetContactsQuery,
   useGetCurrentUserQuery,
   GetChatsQuery,
+  useLogoutMutation,
 } from "../generated/graphql";
 import { isUserLoggedIn } from "../utils/isUserLoggedIn";
 
@@ -49,6 +51,7 @@ const ChatWrapper = styled.div`
 export type ContactType = GetContactsQuery["getContacts"][0];
 
 const Home: NextPage = () => {
+  const router = useRouter();
   const { data, loading, error } = useGetCurrentUserQuery();
   const [chatId, setChatId] = useState<null | number>(null);
   const [selectedContacts, setSelectedContacts] = useState<ContactType[]>([]);
@@ -56,6 +59,10 @@ const Home: NextPage = () => {
     useState<GetChatsQuery["getChats"][0]>();
   const [tab, setTab] = useState(1);
 
+  const [
+    logout,
+    { data: logoutData, loading: logoutLoading, error: logoutError },
+  ] = useLogoutMutation();
   useNewMessageSubscription();
 
   const handleClick = (selectedChatId: number) => {
@@ -70,6 +77,11 @@ const Home: NextPage = () => {
     setSelectedChat(chat);
   };
 
+  const handleLogout = async () => {
+    await logout();
+    router.push("/login");
+  };
+
   return (
     <div>
       <Head>
@@ -78,7 +90,10 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Container>
-        <QueryResult error={error} loading={loading}>
+        <QueryResult
+          error={error || logoutError}
+          loading={loading || logoutLoading}
+        >
           {data?.currentUser && (
             <Fragment>
               <SidebarContainer>
@@ -91,6 +106,7 @@ const Home: NextPage = () => {
                     handleClick={handleClick}
                     chatId={chatId}
                     handleSetChat={handleSetChat}
+                    handleLogout={handleLogout}
                   />
                 </TabContainer>
 

@@ -10,7 +10,7 @@ const Item = styled.div`
 `;
 
 interface DropdownItemProps {
-  onClick: () => void | (() => Promise<void>);
+  onClick: (() => void) | (() => Promise<void>);
 }
 
 const DropdownItem: React.FC<DropdownItemProps> = ({ children, onClick }) => {
