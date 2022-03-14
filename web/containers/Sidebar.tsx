@@ -6,6 +6,7 @@ import {
   GetCurrentUserQuery,
   GetChatsQuery,
 } from "../generated/graphql";
+import SidebarMenu from "../containers/SidebarMenu";
 import SearchBar from "../components/SearchBar";
 import Chat from "../components/Chat";
 import QueryResult from "../components/QueryResult";
@@ -18,6 +19,7 @@ import { formatDate } from "../utils/dateFunctions";
 interface SidebarProps {
   toContactsTab: () => void;
   toEditProfileTab: () => void;
+  toSearchUsers: () => void;
   currentUser: GetCurrentUserQuery["currentUser"];
   handleClick: (selectedChatId: number) => void;
   handleSetChat: (chat: GetChatsQuery["getChats"][0]) => void;
@@ -27,6 +29,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({
   toContactsTab,
   toEditProfileTab,
+  toSearchUsers,
   currentUser,
   handleSetChat,
   chatId,
@@ -78,7 +81,9 @@ const Sidebar: React.FC<SidebarProps> = ({
         }
         onAvatarClick={toEditProfileTab}
         onContactsClick={toContactsTab}
-      />
+      >
+        <SidebarMenu toSearchUsers={toSearchUsers} />
+      </SidebarHeader>
 
       <SearchBar placeholder="Search in chats" />
 

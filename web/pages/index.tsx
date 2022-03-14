@@ -20,6 +20,7 @@ import AddGroupParticipants from "../containers/AddGroupParticipants";
 import CreateGroup from "../containers/CreateGroup";
 import EditProfile from "../containers/EditProfile";
 import TabContainer from "../components/TabContainer";
+import SearchUsers from "../containers/SearchUsers";
 
 const Container = styled.div`
   display: flex;
@@ -86,6 +87,7 @@ const Home: NextPage = () => {
                     currentUser={data.currentUser}
                     toContactsTab={() => handleTabChange(2)}
                     toEditProfileTab={() => handleTabChange(5)}
+                    toSearchUsers={() => handleTabChange(6)}
                     handleClick={handleClick}
                     chatId={chatId}
                     handleSetChat={handleSetChat}
@@ -121,6 +123,10 @@ const Home: NextPage = () => {
 
                 <TabContainer tabIn={tab === 5}>
                   <EditProfile backToSidebar={() => handleTabChange(1)} />
+                </TabContainer>
+
+                <TabContainer tabIn={tab === 6}>
+                  <SearchUsers backToSidebar={() => handleTabChange(1)} />
                 </TabContainer>
               </SidebarContainer>
 

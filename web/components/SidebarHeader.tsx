@@ -40,6 +40,7 @@ const SidebarHeader: React.FC<SidebarHeaderProps> = ({
   onAvatarClick,
   profilePictureUrl,
   onContactsClick,
+  children,
 }) => {
   return (
     <Header>
@@ -56,9 +57,10 @@ const SidebarHeader: React.FC<SidebarHeaderProps> = ({
         <IconButton onClick={onContactsClick}>
           <ChatIcon style={{ fill: globalTheme.iconColor }} />
         </IconButton>
-        <IconButton>
+        {children}
+        {/* <IconButton>
           <MoreVertIcon style={{ fill: globalTheme.iconColor }} />
-        </IconButton>
+        </IconButton> */}
       </IconsContainer>
     </Header>
   );

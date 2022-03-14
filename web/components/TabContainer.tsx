@@ -8,21 +8,21 @@ const Container = styled.div`
 
   &.tab-enter {
     transform: translateX(-100%);
+    transition: transform 200ms ease-in;
   }
 
   &.tab-enter-active {
     transform: translateX(0%);
-    transition: transform 200ms ease-in;
   }
 
   &.tab-exit {
     transform: translateX(0%);
     z-index: -1;
+    transition: transform 200ms ease-in;
   }
 
   &.tab-exit-active {
     transform: translateX(100%);
-    transition: transform 200ms ease-in;
     z-index: -1;
   }
 `;
