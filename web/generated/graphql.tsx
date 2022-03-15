@@ -65,8 +65,8 @@ export type Message = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addToContacts: Contact;
   createChat: Chat;
-  createContact: Contact;
   deleteContact: Scalars['Boolean'];
   editProfile: User;
   exitChat: Scalars['Boolean'];
@@ -77,15 +77,15 @@ export type Mutation = {
 };
 
 
+export type MutationAddToContactsArgs = {
+  contactId: Scalars['Int'];
+};
+
+
 export type MutationCreateChatArgs = {
   groupAvatarUrl?: Maybe<Scalars['String']>;
   groupName?: Maybe<Scalars['String']>;
   userIds: Array<Scalars['Int']>;
-};
-
-
-export type MutationCreateContactArgs = {
-  contactId: Scalars['Int'];
 };
 
 
@@ -200,6 +200,13 @@ export type User = {
 export type ChatFragmentFragment = { __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, user: { __typename?: 'User', id: string } }> | null | undefined };
 
 export type MessageFragmentFragment = { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string } };
+
+export type AddToContactsMutationVariables = Exact<{
+  contactId: Scalars['Int'];
+}>;
+
+
+export type AddToContactsMutation = { __typename?: 'Mutation', addToContacts: { __typename?: 'Contact', contact: { __typename?: 'User', id: string, firstName: string, lastName: string, about?: string | null | undefined, profilePictureUrl?: string | null | undefined } } };
 
 export type CreateChatMutationVariables = Exact<{
   userIds: Array<Scalars['Int']> | Scalars['Int'];
@@ -338,6 +345,45 @@ export const MessageFragmentFragmentDoc = gql`
   }
 }
     `;
+export const AddToContactsDocument = gql`
+    mutation AddToContacts($contactId: Int!) {
+  addToContacts(contactId: $contactId) {
+    contact {
+      id
+      firstName
+      lastName
+      about
+      profilePictureUrl
+    }
+  }
+}
+    `;
+export type AddToContactsMutationFn = Apollo.MutationFunction<AddToContactsMutation, AddToContactsMutationVariables>;
+
+/**
+ * __useAddToContactsMutation__
+ *
+ * To run a mutation, you first call `useAddToContactsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddToContactsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addToContactsMutation, { data, loading, error }] = useAddToContactsMutation({
+ *   variables: {
+ *      contactId: // value for 'contactId'
+ *   },
+ * });
+ */
+export function useAddToContactsMutation(baseOptions?: Apollo.MutationHookOptions<AddToContactsMutation, AddToContactsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddToContactsMutation, AddToContactsMutationVariables>(AddToContactsDocument, options);
+      }
+export type AddToContactsMutationHookResult = ReturnType<typeof useAddToContactsMutation>;
+export type AddToContactsMutationResult = Apollo.MutationResult<AddToContactsMutation>;
+export type AddToContactsMutationOptions = Apollo.BaseMutationOptions<AddToContactsMutation, AddToContactsMutationVariables>;
 export const CreateChatDocument = gql`
     mutation CreateChat($userIds: [Int!]!, $groupName: String, $limit: Int!, $cursor: String, $groupAvatarUrl: String) {
   createChat(

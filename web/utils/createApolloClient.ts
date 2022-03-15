@@ -8,7 +8,7 @@ import {
 import { getMainDefinition } from "@apollo/client/utilities";
 import { WebSocketLink } from "@apollo/client/link/ws";
 
-import { PaginatedMessages } from "../generated/graphql";
+import { PaginatedMessages, PaginatedUsers } from "../generated/graphql";
 
 export const createApolloClient = (headers?: Record<string, string>) => {
   const httpLink = new HttpLink({
@@ -60,6 +60,24 @@ export const createApolloClient = (headers?: Record<string, string>) => {
                     hasMore: incoming.hasMore,
                   };
 
+                return incoming;
+              },
+            },
+            searchUsers: {
+              keyArgs: ["searchTerm"],
+              merge(
+                //@ts-ignore
+                existing: PaginatedUsers = [],
+                incoming: PaginatedUsers,
+                //@ts-ignore
+                { args: { page } }
+              ) {
+                if (page > 0) {
+                  return {
+                    users: [...existing.users, ...incoming.users],
+                    hasMore: incoming.hasMore,
+                  };
+                }
                 return incoming;
               },
             },

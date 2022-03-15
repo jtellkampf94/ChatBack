@@ -1,0 +1,11 @@
+mutation AddToContacts($contactId: Int!) {
+  addToContacts(contactId: $contactId) {
+    contact {
+      id
+      firstName
+      lastName
+      about
+      profilePictureUrl
+    }
+  }
+}

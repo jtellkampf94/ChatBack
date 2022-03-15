@@ -18,7 +18,7 @@ import { User } from "../../entities/User";
 export class ContactResolver {
   @Mutation(() => Contact)
   @UseMiddleware(isAuth)
-  createContact(
+  addToContacts(
     @Arg("contactId", () => Int) contactId: number,
     @Ctx() { req }: MyContext
   ): Promise<Contact> {
