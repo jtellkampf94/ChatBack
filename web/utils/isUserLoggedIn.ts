@@ -27,6 +27,7 @@ export const isUserLoggedIn: GetServerSideProps = async ({
       res.writeHead(301, { Location: "/login" });
       res.end();
     }
+
     return { props: {} };
   } catch (e) {
     res.writeHead(301, { Location: "/login" });

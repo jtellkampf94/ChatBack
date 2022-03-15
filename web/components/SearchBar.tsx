@@ -1,3 +1,4 @@
+import { ChangeEvent } from "react";
 import styled from "styled-components";
 import SearchIcon from "@material-ui/icons/Search";
 
@@ -38,14 +39,26 @@ const SearchInput = styled.input`
 
 interface SearchBarProps {
   placeholder: string;
+  onChange:
+    | ((e: ChangeEvent<HTMLInputElement>) => void)
+    | ((e: ChangeEvent<HTMLInputElement>) => Promise<void>);
+  value: string;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ placeholder }) => {
+const SearchBar: React.FC<SearchBarProps> = ({
+  placeholder,
+  onChange,
+  value,
+}) => {
   return (
     <Container>
       <Search>
         <SearchIcon fontSize="small" style={{ fill: globalTheme.iconColor }} />
-        <SearchInput placeholder={placeholder} />
+        <SearchInput
+          onChange={onChange}
+          value={value}
+          placeholder={placeholder}
+        />
       </Search>
     </Container>
   );

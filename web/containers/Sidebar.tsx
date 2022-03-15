@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState, ChangeEvent } from "react";
 
 import {
   useGetChatsQuery,
@@ -41,6 +41,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const { data, loading, error, subscribeToMore } = useGetChatsQuery({
     variables: { limit: 1 },
   });
+  const [searchTerm, setSearchTerm] = useState("");
 
   const subscribe = () =>
     subscribeToMore({
@@ -74,6 +75,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
   }, [chatId]);
 
+  const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {};
+
   return (
     <SidebarContainer>
       <SidebarHeader
@@ -91,7 +94,11 @@ const Sidebar: React.FC<SidebarProps> = ({
         </SidebarMenu>
       </SidebarHeader>
 
-      <SearchBar placeholder="Search in chats" />
+      <SearchBar
+        value={searchTerm}
+        onChange={handleChange}
+        placeholder="Search in chats"
+      />
 
       <SidebarChatContainer>
         <QueryResult loading={loading} error={error}>

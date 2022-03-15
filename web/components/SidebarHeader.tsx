@@ -58,9 +58,6 @@ const SidebarHeader: React.FC<SidebarHeaderProps> = ({
           <ChatIcon style={{ fill: globalTheme.iconColor }} />
         </IconButton>
         {children}
-        {/* <IconButton>
-          <MoreVertIcon style={{ fill: globalTheme.iconColor }} />
-        </IconButton> */}
       </IconsContainer>
     </Header>
   );

@@ -130,6 +130,12 @@ export type PaginatedMessages = {
   messages: Array<Message>;
 };
 
+export type PaginatedUsers = {
+  __typename?: 'PaginatedUsers';
+  hasMore: Scalars['Boolean'];
+  users: Array<User>;
+};
+
 export type Query = {
   __typename?: 'Query';
   currentUser?: Maybe<User>;
@@ -138,6 +144,7 @@ export type Query = {
   getContacts: Array<User>;
   getMessages?: Maybe<PaginatedMessages>;
   getPresignedUrl: Image;
+  searchUsers: PaginatedUsers;
   users: Array<User>;
 };
 
@@ -151,6 +158,13 @@ export type QueryGetMessagesArgs = {
   chatId: Scalars['Int'];
   cursor?: Maybe<Scalars['String']>;
   limit: Scalars['Int'];
+};
+
+
+export type QuerySearchUsersArgs = {
+  limit: Scalars['Int'];
+  page: Scalars['Int'];
+  searchTerm: Scalars['String'];
 };
 
 export type RegisterInput = {
@@ -268,6 +282,15 @@ export type GetPresignedUrlQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetPresignedUrlQuery = { __typename?: 'Query', getPresignedUrl: { __typename?: 'Image', presignedUrl: string, key: string } };
+
+export type SearchUsersQueryVariables = Exact<{
+  searchTerm: Scalars['String'];
+  limit: Scalars['Int'];
+  page: Scalars['Int'];
+}>;
+
+
+export type SearchUsersQuery = { __typename?: 'Query', searchUsers: { __typename?: 'PaginatedUsers', hasMore: boolean, users: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, username: string, profilePictureUrl?: string | null | undefined }> } };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -731,6 +754,50 @@ export function useGetPresignedUrlLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetPresignedUrlQueryHookResult = ReturnType<typeof useGetPresignedUrlQuery>;
 export type GetPresignedUrlLazyQueryHookResult = ReturnType<typeof useGetPresignedUrlLazyQuery>;
 export type GetPresignedUrlQueryResult = Apollo.QueryResult<GetPresignedUrlQuery, GetPresignedUrlQueryVariables>;
+export const SearchUsersDocument = gql`
+    query SearchUsers($searchTerm: String!, $limit: Int!, $page: Int!) {
+  searchUsers(searchTerm: $searchTerm, limit: $limit, page: $page) {
+    hasMore
+    users {
+      id
+      firstName
+      lastName
+      username
+      profilePictureUrl
+    }
+  }
+}
+    `;
+
+/**
+ * __useSearchUsersQuery__
+ *
+ * To run a query within a React component, call `useSearchUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchUsersQuery({
+ *   variables: {
+ *      searchTerm: // value for 'searchTerm'
+ *      limit: // value for 'limit'
+ *      page: // value for 'page'
+ *   },
+ * });
+ */
+export function useSearchUsersQuery(baseOptions: Apollo.QueryHookOptions<SearchUsersQuery, SearchUsersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchUsersQuery, SearchUsersQueryVariables>(SearchUsersDocument, options);
+      }
+export function useSearchUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchUsersQuery, SearchUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchUsersQuery, SearchUsersQueryVariables>(SearchUsersDocument, options);
+        }
+export type SearchUsersQueryHookResult = ReturnType<typeof useSearchUsersQuery>;
+export type SearchUsersLazyQueryHookResult = ReturnType<typeof useSearchUsersLazyQuery>;
+export type SearchUsersQueryResult = Apollo.QueryResult<SearchUsersQuery, SearchUsersQueryVariables>;
 export const GetUsersDocument = gql`
     query GetUsers {
   users {

@@ -7,6 +7,9 @@ import {
   Root,
   UseMiddleware,
   FieldResolver,
+  Int,
+  ObjectType,
+  Field,
 } from "type-graphql";
 import { getRepository } from "typeorm";
 import bcrypt from "bcryptjs";
@@ -22,6 +25,15 @@ import { ChatMember } from "../../entities/ChatMember";
 import { isAuth } from "../../middleware/isAuth";
 import { getAWSS3Key } from "../../utils/getAWSS3Key";
 import { s3 } from "../../config/amazonS3Config";
+
+@ObjectType()
+export class PaginatedUsers {
+  @Field(() => [User])
+  users: User[];
+
+  @Field()
+  hasMore: boolean;
+}
 
 @Resolver((of) => User)
 export class UserResolver {
@@ -173,6 +185,35 @@ export class UserResolver {
     await user.save();
 
     return user;
+  }
+
+  @Query(() => PaginatedUsers)
+  @UseMiddleware(isAuth)
+  async searchUsers(
+    @Arg("searchTerm") searchTerm: string,
+    @Arg("limit", () => Int) limit: number,
+    @Arg("page", () => Int) page: number
+  ): Promise<PaginatedUsers> {
+    const limitPlusOne = limit + 1;
+    const offset = limit * page;
+    const users = await getRepository(User)
+      .createQueryBuilder("user")
+      .where("user.username iLike :username", {
+        username: `%${searchTerm}%`,
+      })
+      .orWhere("user.firstName iLike :firstName", {
+        firstName: `%${searchTerm}%`,
+      })
+      .orWhere("user.lastName iLike :lastName", { lastName: `%${searchTerm}%` })
+      .orderBy("user.username", "ASC")
+      .limit(limitPlusOne)
+      .offset(offset)
+      .getMany();
+
+    return {
+      users: users.slice(0, limit),
+      hasMore: users.length === limitPlusOne,
+    };
   }
 
   @Mutation(() => Boolean)

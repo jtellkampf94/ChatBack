@@ -1,0 +1,12 @@
+query SearchUsers($searchTerm: String!, $limit: Int!, $page: Int!) {
+  searchUsers(searchTerm: $searchTerm, limit: $limit, page: $page) {
+    hasMore
+    users {
+      id
+      firstName
+      lastName
+      username
+      profilePictureUrl
+    }
+  }
+}
