@@ -11,7 +11,6 @@ const Container = styled.div`
   background-color: ${({ theme }) => theme.globalTheme.white};
 
   &:hover {
-    cursor: pointer;
     background-color: ${({ theme }) => theme.globalTheme.hoverGrey};
   }
 `;
@@ -20,7 +19,6 @@ const TextContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-left: 16px;
-  /* justify-content: space-between; */
 `;
 
 const Username = styled.p`
@@ -33,19 +31,20 @@ const Name = styled.p`
   color: ${({ theme }) => theme.globalTheme.secondaryGreyFont};
 `;
 
-const Button = styled.button`
+const Button = styled("button")<{ isContact: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
   margin-left: auto;
   font-size: 14px;
-  background-color: #00a884;
+  background-color: ${(props) => (props.isContact ? "#25d366" : "#00a884")};
   color: ${({ theme }) => theme.globalTheme.white};
   font-weight: 600;
   outline: none;
   border-radius: 3px;
   border: none;
   padding: 10px 15px;
+  width: 75px;
 
   &:hover {
     cursor: pointer;
@@ -57,14 +56,18 @@ interface UserProps {
   name: string;
   username: string;
   profilePictureUrl?: string;
-  onClick: () => Promise<void>;
+  addContact: () => Promise<void>;
+  removeContact: () => Promise<void>;
+  isContact: boolean;
 }
 
 const User: React.FC<UserProps> = ({
   name,
   username,
   profilePictureUrl,
-  onClick,
+  addContact,
+  removeContact,
+  isContact,
 }) => {
   return (
     <Container>
@@ -76,7 +79,15 @@ const User: React.FC<UserProps> = ({
         <Username>{username}</Username>
         <Name>{name}</Name>
       </TextContainer>
-      <Button onClick={onClick}>Add </Button>
+      {isContact ? (
+        <Button isContact={isContact} onClick={removeContact}>
+          Added
+        </Button>
+      ) : (
+        <Button isContact={isContact} onClick={addContact}>
+          Add
+        </Button>
+      )}
     </Container>
   );
 };

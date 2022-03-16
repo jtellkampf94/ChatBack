@@ -6,6 +6,8 @@ import {
   UseMiddleware,
   Query,
   Int,
+  FieldResolver,
+  Root,
 } from "type-graphql";
 import { getConnection } from "typeorm";
 
@@ -14,8 +16,24 @@ import { MyContext } from "../../types";
 import { Contact } from "../../entities/Contact";
 import { User } from "../../entities/User";
 
-@Resolver()
+@Resolver((of) => Contact)
 export class ContactResolver {
+  @FieldResolver(() => User)
+  contact(
+    @Root() contact: Contact,
+    @Ctx() { userLoader }: MyContext
+  ): Promise<User> {
+    return userLoader.load(contact.contactId);
+  }
+
+  @FieldResolver(() => User)
+  user(
+    @Root() contact: Contact,
+    @Ctx() { userLoader }: MyContext
+  ): Promise<User> {
+    return userLoader.load(contact.userId);
+  }
+
   @Mutation(() => Contact)
   @UseMiddleware(isAuth)
   addToContacts(

@@ -1,3 +1,4 @@
+import { useState, ChangeEvent } from "react";
 import styled from "styled-components";
 
 import Contact from "../components/Contact";
@@ -6,7 +7,7 @@ import SearchBar from "../components/SearchBar";
 import QueryResult from "../components/QueryResult";
 import Header from "../components/Header";
 import AddToGroup from "../components/AddToGroup";
-import ContactsContainer from "../components/ContactsContainer";
+import ContactsListContainer from "../components/ContactsListContainer";
 import { capitalizeFirstLetter } from "../utils/capitalizeFirstLetter";
 import {
   useGetContactsQuery,
@@ -25,8 +26,13 @@ const ContactsTab: React.FC<ContactsTabProps> = ({
   selectChat,
   toGroupParticipants,
 }) => {
+  const [searchTerm, setSearchTerm] = useState("");
   const { data, loading, error } = useGetContactsQuery();
   const [createChat] = useCreateChatMutation();
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
 
   const handleClick = async (contactId: number) => {
     await createChat({
@@ -70,10 +76,14 @@ const ContactsTab: React.FC<ContactsTabProps> = ({
   return (
     <Container>
       <Header onClick={backToSidebar} heading="New Chat" />
-      <SearchBar placeholder="Search in contacts" />
+      <SearchBar
+        value={searchTerm}
+        onChange={handleChange}
+        placeholder="Search in contacts"
+      />
       <AddToGroup onClick={handleToGroupParticipants} />
 
-      <ContactsContainer>
+      <ContactsListContainer>
         <QueryResult loading={loading} error={error}>
           {data?.getContacts.map((contact) => {
             return (
@@ -88,7 +98,7 @@ const ContactsTab: React.FC<ContactsTabProps> = ({
             );
           })}
         </QueryResult>
-      </ContactsContainer>
+      </ContactsListContainer>
     </Container>
   );
 };
