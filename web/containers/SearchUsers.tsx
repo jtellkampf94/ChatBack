@@ -5,6 +5,8 @@ import {
   useSearchUsersLazyQuery,
   useGetContactsQuery,
   useAddToContactsMutation,
+  useRemoveFromContactsMutation,
+  GetContactsQuery,
   GetContactsDocument,
 } from "../generated/graphql";
 import { capitalizeFirstLetter } from "../utils/capitalizeFirstLetter";
@@ -29,6 +31,7 @@ const SearchUsers: React.FC<SearchUsersProps> = ({ backToSidebar }) => {
     useSearchUsersLazyQuery();
   const { data: contactsData } = useGetContactsQuery();
   const [addContact] = useAddToContactsMutation();
+  const [removeFromContacts] = useRemoveFromContactsMutation();
 
   const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -48,10 +51,10 @@ const SearchUsers: React.FC<SearchUsersProps> = ({ backToSidebar }) => {
   const handleAddToContacts = async (contactId: number) => {
     await addContact({
       variables: { contactId },
-      update: async (cache, { data }) => {
+      update: (cache, { data }) => {
         if (!data) return cache;
 
-        const contact = await data.addToContacts.contact;
+        const contact = data.addToContacts.contact;
         cache.modify({
           fields: {
             getContacts(existingCachedContacts = []) {
@@ -75,7 +78,29 @@ const SearchUsers: React.FC<SearchUsersProps> = ({ backToSidebar }) => {
     });
   };
 
-  const handleRemoveFromContacts = async (contactId: number) => {};
+  const handleRemoveFromContacts = async (contactId: number) => {
+    await removeFromContacts({
+      variables: { contactId },
+      update(cache, { data }) {
+        if (!data) return cache;
+
+        cache.modify({
+          fields: {
+            getContacts(existingContacts) {
+              const { getContacts } = client.readQuery({
+                query: GetContactsDocument,
+              });
+
+              return getContacts.filter(
+                (contact: GetContactsQuery["getContacts"][0]) =>
+                  Number(contact.id) !== contactId
+              );
+            },
+          },
+        });
+      },
+    });
+  };
 
   return (
     <Container>

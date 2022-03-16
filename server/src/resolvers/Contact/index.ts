@@ -67,7 +67,7 @@ export class ContactResolver {
 
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
-  async deleteContact(
+  async removeFromContacts(
     @Arg("contactId", () => Int) contactId: number,
     @Ctx() { req }: MyContext
   ): Promise<boolean> {

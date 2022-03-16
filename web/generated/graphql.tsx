@@ -67,12 +67,12 @@ export type Mutation = {
   __typename?: 'Mutation';
   addToContacts: Contact;
   createChat: Chat;
-  deleteContact: Scalars['Boolean'];
   editProfile: User;
   exitChat: Scalars['Boolean'];
   login: User;
   logout: Scalars['Boolean'];
   register: User;
+  removeFromContacts: Scalars['Boolean'];
   sendMessage: Message;
 };
 
@@ -86,11 +86,6 @@ export type MutationCreateChatArgs = {
   groupAvatarUrl?: Maybe<Scalars['String']>;
   groupName?: Maybe<Scalars['String']>;
   userIds: Array<Scalars['Int']>;
-};
-
-
-export type MutationDeleteContactArgs = {
-  contactId: Scalars['Int'];
 };
 
 
@@ -115,6 +110,11 @@ export type MutationLoginArgs = {
 
 export type MutationRegisterArgs = {
   options: RegisterInput;
+};
+
+
+export type MutationRemoveFromContactsArgs = {
+  contactId: Scalars['Int'];
 };
 
 
@@ -248,6 +248,13 @@ export type RegisterMutationVariables = Exact<{
 
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'User', id: string, email: string, username: string, updatedAt: any, createdAt: any } };
+
+export type RemoveFromContactsMutationVariables = Exact<{
+  contactId: Scalars['Int'];
+}>;
+
+
+export type RemoveFromContactsMutation = { __typename?: 'Mutation', removeFromContacts: boolean };
 
 export type SendMessageMutationVariables = Exact<{
   chatId: Scalars['Int'];
@@ -577,6 +584,37 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const RemoveFromContactsDocument = gql`
+    mutation RemoveFromContacts($contactId: Int!) {
+  removeFromContacts(contactId: $contactId)
+}
+    `;
+export type RemoveFromContactsMutationFn = Apollo.MutationFunction<RemoveFromContactsMutation, RemoveFromContactsMutationVariables>;
+
+/**
+ * __useRemoveFromContactsMutation__
+ *
+ * To run a mutation, you first call `useRemoveFromContactsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveFromContactsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeFromContactsMutation, { data, loading, error }] = useRemoveFromContactsMutation({
+ *   variables: {
+ *      contactId: // value for 'contactId'
+ *   },
+ * });
+ */
+export function useRemoveFromContactsMutation(baseOptions?: Apollo.MutationHookOptions<RemoveFromContactsMutation, RemoveFromContactsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveFromContactsMutation, RemoveFromContactsMutationVariables>(RemoveFromContactsDocument, options);
+      }
+export type RemoveFromContactsMutationHookResult = ReturnType<typeof useRemoveFromContactsMutation>;
+export type RemoveFromContactsMutationResult = Apollo.MutationResult<RemoveFromContactsMutation>;
+export type RemoveFromContactsMutationOptions = Apollo.BaseMutationOptions<RemoveFromContactsMutation, RemoveFromContactsMutationVariables>;
 export const SendMessageDocument = gql`
     mutation SendMessage($chatId: Int!, $text: String!, $imageUrl: String) {
   sendMessage(chatId: $chatId, text: $text, imageUrl: $imageUrl) {

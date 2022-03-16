@@ -1,0 +1,3 @@
+mutation RemoveFromContacts($contactId: Int!) {
+  removeFromContacts(contactId: $contactId)
+}
