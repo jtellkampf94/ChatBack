@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Head from "next/head";
+import { useMediaQuery } from "react-responsive";
 
 import WhatsAppLogo from "../assets/images/whats-app-logo.svg";
 import LoginForm from "../containers/LoginForm";
@@ -55,34 +56,42 @@ const LoginSection = styled.div`
   width: 45%;
   height: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  @media screen and (max-width: 880px) {
+    width: 100%;
+    background-color: ${({ theme }) => theme.globalTheme.smokeGrey};
+  }
 `;
 
 const Login: React.FC = () => {
+  const isSmallScreen = useMediaQuery({ query: "(max-width: 880px)" });
   return (
     <Container>
       <Head>
         <title>Login</title>
       </Head>
 
-      <HeaderSection>
-        <WhatsAppLogo />
-        <Heading>
-          Simple. Secure. <br /> Reliable Messaging.
-        </Heading>
-        <Subheading>
-          With WhatsApp web, you'll get fast, simple and secure messaging on
-          your laptop or desktop.
-        </Subheading>
-        <HeaderSectionFooter>
-          <FooterText>Get the app.</FooterText>
-          <IconsContainer>
-            <DownloadOnTheAppStoreLogo width="136px" height="40px" />
-            <GooglePlayDownloadLogo width={150} height={44} />
-          </IconsContainer>
-        </HeaderSectionFooter>
-      </HeaderSection>
+      {!isSmallScreen && (
+        <HeaderSection>
+          <WhatsAppLogo />
+          <Heading>
+            Simple. Secure. <br /> Reliable Messaging.
+          </Heading>
+          <Subheading>
+            With WhatsApp web, you'll get fast, simple and secure messaging on
+            your laptop or desktop.
+          </Subheading>
+          <HeaderSectionFooter>
+            <FooterText>Get the app.</FooterText>
+            <IconsContainer>
+              <DownloadOnTheAppStoreLogo width="136px" height="40px" />
+              <GooglePlayDownloadLogo width={150} height={44} />
+            </IconsContainer>
+          </HeaderSectionFooter>
+        </HeaderSection>
+      )}
 
       <LoginSection>
         <LoginForm />

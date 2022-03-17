@@ -1,27 +1,14 @@
 import { FormEvent, ChangeEvent, useState, Fragment } from "react";
-import styled from "styled-components";
 import { useRouter } from "next/router";
 
 import { useRegisterMutation } from "../generated/graphql";
-import WhatsAppLogo from "../assets/images/whats-app-logo.svg";
 import FormContainer from "../components/FormContainer";
 import Form from "../components/Form";
 import Input from "../components/Input";
 import SubmitButton from "../components/SubmitButton";
 import OrSection from "../components/OrSection";
 import RerouteSection from "../components/RerouteSection";
-
-const Header = styled.div`
-  background-color: ${({ theme }) => theme.globalTheme.darkGreen};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 350px;
-  border-top: 1px solid ${({ theme }) => theme.globalTheme.greyLineColor};
-  border-left: 1px solid ${({ theme }) => theme.globalTheme.greyLineColor};
-  border-right: 1px solid ${({ theme }) => theme.globalTheme.greyLineColor};
-  height: 80px;
-`;
+import FormHeader from "../components/FormHeader";
 
 const RegisterForm: React.FC = () => {
   const router = useRouter();
@@ -57,9 +44,8 @@ const RegisterForm: React.FC = () => {
 
   return (
     <Fragment>
-      <Header>
-        <WhatsAppLogo />
-      </Header>
+      <FormHeader />
+
       <FormContainer>
         <Form onSubmit={handleSubmit}>
           <Input

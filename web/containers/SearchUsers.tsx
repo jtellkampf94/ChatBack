@@ -8,6 +8,7 @@ import {
   useRemoveFromContactsMutation,
   GetContactsQuery,
   GetContactsDocument,
+  GetCurrentUserDocument,
 } from "../generated/graphql";
 import { capitalizeFirstLetter } from "../utils/capitalizeFirstLetter";
 import { sortAlphabetically } from "../utils/sortAlphabetically";
@@ -16,6 +17,7 @@ import Header from "../components/Header";
 import SearchBar from "../components/SearchBar";
 import QueryResult from "../components/QueryResult";
 import User from "../components/User";
+import UserButtons from "../components/UserButtons";
 import SearchUsersContainer from "../components/SearchUsersContainer";
 
 interface SearchUsersProps {
@@ -24,6 +26,7 @@ interface SearchUsersProps {
 
 const SearchUsers: React.FC<SearchUsersProps> = ({ backToSidebar }) => {
   const client = useApolloClient();
+  const { currentUser } = client.readQuery({ query: GetCurrentUserDocument });
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(5);
@@ -124,16 +127,20 @@ const SearchUsers: React.FC<SearchUsersProps> = ({ backToSidebar }) => {
                   profilePictureUrl={
                     user.profilePictureUrl ? user.profilePictureUrl : undefined
                   }
-                  addContact={() => handleAddToContacts(Number(user.id))}
-                  removeContact={() =>
-                    handleRemoveFromContacts(Number(user.id))
-                  }
-                  isContact={
-                    !!contactsData.getContacts.find(
-                      (contact) => Number(contact.id) === Number(user.id)
-                    )
-                  }
-                />
+                >
+                  <UserButtons
+                    addContact={() => handleAddToContacts(Number(user.id))}
+                    removeContact={() =>
+                      handleRemoveFromContacts(Number(user.id))
+                    }
+                    isContact={
+                      !!contactsData.getContacts.find(
+                        (contact) => Number(contact.id) === Number(user.id)
+                      )
+                    }
+                    isCurrentUser={Number(user.id) === Number(currentUser.id)}
+                  />
+                </User>
               );
             })}
         </QueryResult>

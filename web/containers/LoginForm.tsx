@@ -1,5 +1,6 @@
-import { useState, FormEvent, ChangeEvent } from "react";
+import { useState, FormEvent, ChangeEvent, Fragment } from "react";
 import { useRouter } from "next/router";
+import { useMediaQuery } from "react-responsive";
 
 import { useLoginMutation } from "../generated/graphql";
 import Input from "../components/Input";
@@ -8,8 +9,10 @@ import FormContainer from "../components/FormContainer";
 import SubmitButton from "../components/SubmitButton";
 import OrSection from "../components/OrSection";
 import RerouteSection from "../components/RerouteSection";
+import FormHeader from "../components/FormHeader";
 
 const LoginForm: React.FC = () => {
+  const isSmallScreen = useMediaQuery({ query: "(max-width: 880px)" });
   const [login, { loading, data, error }] = useLoginMutation();
   const [credentials, setCredentials] = useState({
     emailOrUsername: "",
@@ -31,31 +34,37 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <FormContainer>
-      <Form onSubmit={handleSubmit}>
-        <Input
-          isActive={!!emailOrUsername}
-          type="text"
-          name="emailOrUsername"
-          value={emailOrUsername}
-          onChange={handleChange}
-          placeholder="Email address or username"
-        />
-        <Input
-          isActive={!!password}
-          type="password"
-          name="password"
-          value={password}
-          onChange={handleChange}
-          placeholder="Password"
-        />
-        <SubmitButton loading={loading}>Log In</SubmitButton>
-      </Form>
+    <Fragment>
+      {isSmallScreen && <FormHeader />}
+      <FormContainer>
+        <Form onSubmit={handleSubmit}>
+          <Input
+            isActive={!!emailOrUsername}
+            type="text"
+            name="emailOrUsername"
+            value={emailOrUsername}
+            onChange={handleChange}
+            placeholder="Email address or username"
+          />
+          <Input
+            isActive={!!password}
+            type="password"
+            name="password"
+            value={password}
+            onChange={handleChange}
+            placeholder="Password"
+          />
+          <SubmitButton loading={loading}>Log In</SubmitButton>
+        </Form>
 
-      <OrSection />
+        <OrSection />
 
-      <RerouteSection text="Don't have an account? Sign up" href="/register" />
-    </FormContainer>
+        <RerouteSection
+          text="Don't have an account? Sign up"
+          href="/register"
+        />
+      </FormContainer>
+    </Fragment>
   );
 };
 

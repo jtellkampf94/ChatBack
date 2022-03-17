@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, MouseEventHandler, MouseEvent } from "react";
 import styled from "styled-components";
 import AddAPhotoIcon from "@material-ui/icons/AddAPhoto";
 
@@ -64,6 +64,13 @@ const ImageButton: React.FC<ImageButtonProps> = ({
   placeholder,
   background,
 }) => {
+  const handleClick = (
+    e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>
+  ) => {
+    //@ts-ignore
+    e.target.value = "";
+  };
+
   return (
     <ImageButtonContainer>
       <ImageBackground background={background}>
@@ -73,6 +80,7 @@ const ImageButton: React.FC<ImageButtonProps> = ({
             type="file"
             accept="image/*"
             onChange={onChange}
+            onClick={handleClick}
           />
           <IconContainer>
             <AddAPhotoIcon style={{ fontSize: "32px", fill: "#fff" }} />
