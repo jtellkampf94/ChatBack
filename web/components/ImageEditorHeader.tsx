@@ -51,12 +51,12 @@ const Input = styled.input`
   display: none;
 `;
 
-interface ImagEditorHeaderProps {
+interface ImageEditorHeaderProps {
   close: () => void;
   changeFile: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const ImagEditorHeader: React.FC<ImagEditorHeaderProps> = ({
+const ImageEditorHeader: React.FC<ImageEditorHeaderProps> = ({
   close,
   changeFile,
 }) => {
@@ -87,4 +87,4 @@ const ImagEditorHeader: React.FC<ImagEditorHeaderProps> = ({
   );
 };
 
-export default ImagEditorHeader;
+export default ImageEditorHeader;

@@ -1,4 +1,4 @@
-import { ChangeEvent, MouseEventHandler, MouseEvent } from "react";
+import { ChangeEvent, MouseEvent } from "react";
 import styled from "styled-components";
 import AddAPhotoIcon from "@material-ui/icons/AddAPhoto";
 

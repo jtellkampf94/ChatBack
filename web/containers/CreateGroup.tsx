@@ -104,7 +104,7 @@ const CreateGroup: React.FC<CreateGroupProps> = ({
         await axios.put(presignedUrl, croppedImage, {
           headers: { "Content-Type": croppedImage.type },
         });
-        const groupAvatarUrl = `https://jt-whatsapp-clone-bucket.s3.eu-west-2.amazonaws.com/${key}`;
+        const groupAvatarUrl = `${process.env.AWS_S3_URL}/${key}`;
         createGroup(groupAvatarUrl);
       };
 

@@ -43,6 +43,7 @@ const SidebarContainer = styled.div`
 
 const ChatWrapper = styled.div`
   flex: 60%;
+  position: relative;
   ${({ theme }) => theme.homePageTheme.mediumScreen`
     flex: 65%;
   `};

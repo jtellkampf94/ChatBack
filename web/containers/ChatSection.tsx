@@ -2,14 +2,13 @@ import {
   useRef,
   useState,
   useEffect,
-  FormEvent,
   Fragment,
   ChangeEvent,
+  FormEvent,
 } from "react";
 import { Waypoint } from "react-waypoint";
 
 import {
-  useSendMessageMutation,
   useGetMessagesQuery,
   GetChatsQuery,
   NewMessageDocument,
@@ -20,8 +19,9 @@ import { formatDate } from "../utils/dateFunctions";
 
 import ChatScreen from "../components/ChatScreen";
 import Message from "../components/Message";
-import ChatForm from "../components/ChatForm";
+import ChatForm from "./ChatForm";
 import Spinner from "../components/Spinner";
+import MessageWithImageForm from "./MessageWithImageForm";
 
 interface ChatSectionProps {
   chatId: number;
@@ -33,8 +33,8 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
   const endOfMessageRef = useRef<null | HTMLDivElement>(null);
   const [messageText, setMessageText] = useState("");
   const [limit, setLimit] = useState(10);
-  const [sendMessage] = useSendMessageMutation();
-  const { loading, error, data, subscribeToMore, fetchMore, networkStatus } =
+  const [preview, setPreview] = useState<string | null>(null);
+  const { loading, error, data, subscribeToMore, fetchMore } =
     useGetMessagesQuery({
       variables: { chatId, limit },
       notifyOnNetworkStatusChange: true,
@@ -77,17 +77,6 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
       behavior: "smooth",
       block: "start",
     });
-  };
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setMessageText(e.target.value);
-  };
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    await sendMessage({ variables: { chatId, text: messageText } });
-    setMessageText("");
-    scrollToBottom();
   };
 
   const handleFetchMore = () => {
@@ -144,9 +133,18 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
       </ChatScreen>
 
       <ChatForm
-        onSubmit={handleSubmit}
-        onChange={handleChange}
-        value={messageText}
+        chatId={chatId}
+        setPreview={setPreview}
+        setMessageText={setMessageText}
+        messageText={messageText}
+        scrollToBottom={scrollToBottom}
+      />
+
+      <MessageWithImageForm
+        chatId={chatId}
+        setMessageText={setMessageText}
+        messageText={messageText}
+        scrollToBottom={scrollToBottom}
       />
     </Fragment>
   );

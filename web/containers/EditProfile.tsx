@@ -98,7 +98,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ backToSidebar }) => {
         await axios.put(presignedUrl, croppedImage, {
           headers: { "Content-Type": croppedImage.type },
         });
-        const profilePictureUrl = `https://jt-whatsapp-clone-bucket.s3.eu-west-2.amazonaws.com/${key}`;
+        const profilePictureUrl = `${process.env.AWS_S3_URL}/${key}`;
         updateProfile(profilePictureUrl);
       };
 
