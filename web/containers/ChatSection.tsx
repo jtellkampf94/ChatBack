@@ -132,20 +132,23 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
         {data?.getMessages?.hasMore && <Waypoint onEnter={handleFetchMore} />}
       </ChatScreen>
 
-      <ChatForm
-        chatId={chatId}
-        setPreview={setPreview}
-        setMessageText={setMessageText}
-        messageText={messageText}
-        scrollToBottom={scrollToBottom}
-      />
-
-      <MessageWithImageForm
-        chatId={chatId}
-        setMessageText={setMessageText}
-        messageText={messageText}
-        scrollToBottom={scrollToBottom}
-      />
+      {!preview ? (
+        <ChatForm
+          chatId={chatId}
+          setPreview={setPreview}
+          setMessageText={setMessageText}
+          messageText={messageText}
+          scrollToBottom={scrollToBottom}
+        />
+      ) : (
+        <MessageWithImageForm
+          chatId={chatId}
+          setMessageText={setMessageText}
+          messageText={messageText}
+          scrollToBottom={scrollToBottom}
+          preview={preview}
+        />
+      )}
     </Fragment>
   );
 };
