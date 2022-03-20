@@ -5,6 +5,7 @@ import {
   Dispatch,
   SetStateAction,
   useCallback,
+  useEffect,
 } from "react";
 import styled from "styled-components";
 import axios from "axios";
@@ -173,24 +174,13 @@ const MessageWithImageForm: React.FC<MessageWithImageFormProps> = ({
       e.preventDefault();
       try {
         if (croppedAreaPixels) {
-          const croppedImage = await getCroppedImg(preview, croppedAreaPixels);
+          const croppedImage = await getCroppedImg(
+            preview,
+            croppedAreaPixels,
+            rotation
+          );
           setCroppedImage(croppedImage);
           await getPresignedUrl();
-          console.log(croppedImage, data);
-          if (data && croppedImage) {
-            console.log(data);
-            const { presignedUrl, key } = data.getPresignedUrl;
-            await axios.put(presignedUrl, croppedImage, {
-              headers: { "Content-Type": croppedImage.type },
-            });
-            const imageUrl = `${process.env.NEXT_PUBLIC_AWS_S3_URL}/${key}`;
-            await sendMessage({
-              variables: { chatId, text: messageText, imageUrl },
-            });
-            setMessageText("");
-            close();
-            scrollToBottom();
-          }
         }
       } catch (error) {
         console.log(error);
@@ -202,6 +192,35 @@ const MessageWithImageForm: React.FC<MessageWithImageFormProps> = ({
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setMessageText(e.target.value);
   };
+
+  useEffect(() => {
+    const sendMessageWithImage = async () => {
+      if (data && croppedImage) {
+        const { presignedUrl, key } = data.getPresignedUrl;
+        await axios.put(presignedUrl, croppedImage, {
+          headers: { "Content-Type": croppedImage.type },
+        });
+        const imageUrl = `${process.env.NEXT_PUBLIC_AWS_S3_URL}/${key}`;
+        await sendMessage({
+          variables: { chatId, text: messageText, imageUrl },
+          update: async (cache, { data }) => {
+            cache.modify({
+              fields: {
+                getPresignedUrl() {
+                  return undefined;
+                },
+              },
+            });
+          },
+        });
+        setMessageText("");
+        close();
+        scrollToBottom();
+      }
+    };
+
+    if (data && croppedImage) sendMessageWithImage();
+  }, [data]);
 
   return (
     <Container>
