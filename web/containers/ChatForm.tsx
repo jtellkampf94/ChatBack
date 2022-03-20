@@ -50,7 +50,6 @@ const ChatForm: React.FC<ChatFormProps> = ({
   }, [file]);
 
   const handleClick = () => {
-    console.log(fileInputRef?.current);
     fileInputRef?.current?.click();
   };
 

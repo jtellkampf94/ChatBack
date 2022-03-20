@@ -1,6 +1,5 @@
 import { ChangeEvent, useRef, RefObject } from "react";
 import styled from "styled-components";
-import { ButtonGroup, Button } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 
 const Header = styled.header`

@@ -92,6 +92,10 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
     }
   };
 
+  const handleClosePreview = () => {
+    setPreview(null);
+  };
+
   return (
     <Fragment>
       <ChatScreen
@@ -147,6 +151,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
           messageText={messageText}
           scrollToBottom={scrollToBottom}
           preview={preview}
+          close={handleClosePreview}
         />
       )}
     </Fragment>
