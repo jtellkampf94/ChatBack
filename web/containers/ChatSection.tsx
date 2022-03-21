@@ -1,11 +1,4 @@
-import {
-  useRef,
-  useState,
-  useEffect,
-  Fragment,
-  ChangeEvent,
-  FormEvent,
-} from "react";
+import { useRef, useState, useEffect, Fragment } from "react";
 import { Waypoint } from "react-waypoint";
 
 import {
