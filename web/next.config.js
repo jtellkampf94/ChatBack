@@ -9,4 +9,7 @@ module.exports = {
     return config;
   },
   reactStrictMode: true,
+  images: {
+    domains: ["jt-whatsapp-clone-bucket.s3.eu-west-2.amazonaws.com"],
+  },
 };

@@ -121,6 +121,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
                     )} ${capitalizeFirstLetter(message.user.lastName)}`
               }
               dateSent={formatDate(message.createdAt)}
+              imageUrl={message.imageUrl ? message.imageUrl : undefined}
             />
           );
         })}

@@ -14,6 +14,7 @@ const Container = styled("div")<{ isUser: boolean }>`
   border-radius: 7.5px;
   padding: 8px 9px;
   width: fit-content;
+  max-width: 290px;
   margin: 10px 0;
   align-self: ${(props) => (props.isUser ? "flex-end" : "flex-start")};
 
@@ -46,6 +47,13 @@ const DateSent = styled.p`
   color: ${({ theme }) => theme.globalTheme.greyMessageColor};
 `;
 
+const Img = styled.img`
+  object-fit: cover;
+  max-width: 280px;
+  max-height: 230px;
+  border-radius: 5px;
+`;
+
 interface MessageProps {
   status?: "sending" | "sent" | "delivered" | "read";
   isUser: boolean;
@@ -53,6 +61,7 @@ interface MessageProps {
   sender?: string;
   color?: string;
   dateSent?: string | JSX.Element;
+  imageUrl?: string;
 }
 
 const Message: React.FC<MessageProps> = ({
@@ -62,6 +71,7 @@ const Message: React.FC<MessageProps> = ({
   sender,
   color,
   dateSent,
+  imageUrl,
 }) => {
   const renderIcon = () => {
     const grey = globalTheme.greyCheck;
@@ -90,7 +100,9 @@ const Message: React.FC<MessageProps> = ({
   return (
     <Container isUser={isUser}>
       {sender && <Header color={color}>{sender}</Header>}
+      {imageUrl && <Img src={imageUrl} />}
       <Text>{text}</Text>
+
       <MessageFooter>
         <DateSent>{dateSent}</DateSent>
         {renderIcon()}
