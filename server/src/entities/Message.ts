@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID } from "type-graphql";
+import { ObjectType, Field, ID, registerEnumType } from "type-graphql";
 import {
   Entity,
   Column,
@@ -10,6 +10,17 @@ import {
 
 import { Chat } from "./Chat";
 import { User } from "./User";
+
+export enum Status {
+  SENDING = "SENDING",
+  SENT = "SENT",
+  DELIVERED = "DELIVERED",
+  READ = "READ",
+}
+
+registerEnumType(Status, {
+  name: "Status",
+});
 
 @ObjectType()
 @Entity()
@@ -46,4 +57,8 @@ export class Message extends BaseEntity {
   @Field(() => Date)
   @CreateDateColumn()
   createdAt!: Date;
+
+  @Field(() => Status)
+  @Column()
+  status!: Status;
 }

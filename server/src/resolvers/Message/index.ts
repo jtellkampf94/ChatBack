@@ -18,10 +18,10 @@ import { getConnection } from "typeorm";
 
 import { isAuth } from "../../middleware/isAuth";
 import { MyContext } from "../../types";
-import { Message } from "../../entities/Message";
+import { Message, Status } from "../../entities/Message";
 import { ChatMember } from "../../entities/ChatMember";
 import { User } from "../../entities/User";
-import { NEW_MESSAGE } from "../../constants";
+import { NEW_MESSAGE, NEW_MESSAGE_STATUS } from "../../constants";
 
 @ObjectType()
 export class PaginatedMessages {
@@ -43,7 +43,7 @@ export class MessageResolver {
   }
 
   @Subscription(() => Message, {
-    topics: NEW_MESSAGE,
+    topics: [NEW_MESSAGE, NEW_MESSAGE_STATUS],
     filter: async ({ payload, context: { connection } }) => {
       const userId = Number(connection.context.req.session.userId);
 
@@ -74,9 +74,39 @@ export class MessageResolver {
       chatId,
       userId: Number(req.session.userId),
       imageUrl: imageUrl ? imageUrl : undefined,
+      status: Status.SENT,
     }).save();
 
     await pubSub.publish(NEW_MESSAGE, message);
+
+    return message;
+  }
+
+  @UseMiddleware(isAuth)
+  @Mutation(() => Message)
+  async changeMessageStatus(
+    @Arg("messageId", () => Int) messageId: number,
+    @Arg("status") status: Status,
+    @Arg("chatId", () => Int) chatId: number,
+    @Ctx() { req }: MyContext,
+    @PubSub() pubSub: PubSubEngine
+  ): Promise<Message> {
+    const isChatMember = await ChatMember.findOne({
+      chatId,
+      userId: Number(req.session.userId),
+    });
+
+    if (!isChatMember) throw new Error("not authorized");
+
+    const message = await Message.findOne(messageId);
+
+    if (!message) throw new Error("message doesn't exist");
+
+    message.status = status;
+
+    await message.save();
+
+    await pubSub.publish(NEW_MESSAGE_STATUS, message);
 
     return message;
   }
