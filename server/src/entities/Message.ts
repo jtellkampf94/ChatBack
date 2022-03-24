@@ -12,7 +12,6 @@ import { Chat } from "./Chat";
 import { User } from "./User";
 
 export enum Status {
-  SENDING = "SENDING",
   SENT = "SENT",
   DELIVERED = "DELIVERED",
   READ = "READ",

@@ -5,6 +5,8 @@ import {
   useGetMessagesQuery,
   GetChatsQuery,
   NewMessageDocument,
+  useChangeMessageStatusMutation,
+  Status,
 } from "../generated/graphql";
 import { getUsersFullname } from "../utils/getUsersFullname";
 import { capitalizeFirstLetter } from "../utils/capitalizeFirstLetter";
@@ -42,17 +44,23 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
         //@ts-ignore
         const newMessage = subscriptionData.data.newMessage;
         const newMessageChatId = Number(newMessage.chatId);
-        if (prev.getMessages?.messages && chatId === newMessageChatId) {
-          return {
-            getMessages: {
-              messages: [newMessage, ...prev.getMessages.messages],
-              hasMore: prev.getMessages.hasMore,
-            },
-          };
-        }
 
-        if (!prev.getMessages?.messages && chatId === newMessageChatId) {
-          return { getMessages: { messages: [newMessage], hasMore: false } };
+        if (chatId === newMessageChatId) {
+          if (newMessage.status === Status.SENT) {
+            useChangeMessageStatusMutation();
+          }
+          if (prev.getMessages?.messages) {
+            return {
+              getMessages: {
+                messages: [newMessage, ...prev.getMessages.messages],
+                hasMore: prev.getMessages.hasMore,
+              },
+            };
+          }
+
+          if (!prev.getMessages?.messages) {
+            return { getMessages: { messages: [newMessage], hasMore: false } };
+          }
         }
 
         return prev;

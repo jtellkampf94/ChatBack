@@ -4,6 +4,7 @@ fragment MessageFragment on Message {
   imageUrl
   chatId
   createdAt
+  status
   user {
     id
     firstName

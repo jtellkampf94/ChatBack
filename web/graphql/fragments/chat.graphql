@@ -13,6 +13,7 @@ fragment ChatFragment on Chat {
     id
     text
     createdAt
+    status
     user {
       id
     }

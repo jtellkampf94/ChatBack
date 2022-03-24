@@ -59,6 +59,7 @@ export type Message = {
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   imageUrl?: Maybe<Scalars['String']>;
+  status: Status;
   text: Scalars['String'];
   user: User;
 };
@@ -66,6 +67,7 @@ export type Message = {
 export type Mutation = {
   __typename?: 'Mutation';
   addToContacts: Contact;
+  changeMessageStatus: Message;
   createChat: Chat;
   editProfile: User;
   exitChat: Scalars['Boolean'];
@@ -79,6 +81,13 @@ export type Mutation = {
 
 export type MutationAddToContactsArgs = {
   contactId: Scalars['Int'];
+};
+
+
+export type MutationChangeMessageStatusArgs = {
+  chatId: Scalars['Int'];
+  messageId: Scalars['Int'];
+  status: Status;
 };
 
 
@@ -176,6 +185,12 @@ export type RegisterInput = {
   username: Scalars['String'];
 };
 
+export enum Status {
+  Delivered = 'DELIVERED',
+  Read = 'READ',
+  Sent = 'SENT'
+}
+
 export type Subscription = {
   __typename?: 'Subscription';
   newMessage: Message;
@@ -197,9 +212,9 @@ export type User = {
   username: Scalars['String'];
 };
 
-export type ChatFragmentFragment = { __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, user: { __typename?: 'User', id: string } }> | null | undefined };
+export type ChatFragmentFragment = { __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, status: Status, user: { __typename?: 'User', id: string } }> | null | undefined };
 
-export type MessageFragmentFragment = { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string } };
+export type MessageFragmentFragment = { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, status: Status, user: { __typename?: 'User', id: string, firstName: string, lastName: string } };
 
 export type AddToContactsMutationVariables = Exact<{
   contactId: Scalars['Int'];
@@ -217,7 +232,7 @@ export type CreateChatMutationVariables = Exact<{
 }>;
 
 
-export type CreateChatMutation = { __typename?: 'Mutation', createChat: { __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, user: { __typename?: 'User', id: string } }> | null | undefined } };
+export type CreateChatMutation = { __typename?: 'Mutation', createChat: { __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, status: Status, user: { __typename?: 'User', id: string } }> | null | undefined } };
 
 export type EditProfileMutationVariables = Exact<{
   profilePictureUrl?: Maybe<Scalars['String']>;
@@ -263,7 +278,7 @@ export type SendMessageMutationVariables = Exact<{
 }>;
 
 
-export type SendMessageMutation = { __typename?: 'Mutation', sendMessage: { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string } } };
+export type SendMessageMutation = { __typename?: 'Mutation', sendMessage: { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, status: Status, user: { __typename?: 'User', id: string, firstName: string, lastName: string } } };
 
 export type GetChatsQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -271,7 +286,7 @@ export type GetChatsQueryVariables = Exact<{
 }>;
 
 
-export type GetChatsQuery = { __typename?: 'Query', getChats: Array<{ __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, user: { __typename?: 'User', id: string } }> | null | undefined }> };
+export type GetChatsQuery = { __typename?: 'Query', getChats: Array<{ __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, status: Status, user: { __typename?: 'User', id: string } }> | null | undefined }> };
 
 export type GetContactsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -290,7 +305,7 @@ export type GetMessagesQueryVariables = Exact<{
 }>;
 
 
-export type GetMessagesQuery = { __typename?: 'Query', getMessages?: { __typename?: 'PaginatedMessages', hasMore: boolean, messages: Array<{ __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string } }> } | null | undefined };
+export type GetMessagesQuery = { __typename?: 'Query', getMessages?: { __typename?: 'PaginatedMessages', hasMore: boolean, messages: Array<{ __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, status: Status, user: { __typename?: 'User', id: string, firstName: string, lastName: string } }> } | null | undefined };
 
 export type GetPresignedUrlQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -314,7 +329,7 @@ export type GetUsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 
 export type NewMessageSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type NewMessageSubscription = { __typename?: 'Subscription', newMessage: { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string } } };
+export type NewMessageSubscription = { __typename?: 'Subscription', newMessage: { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, status: Status, user: { __typename?: 'User', id: string, firstName: string, lastName: string } } };
 
 export const ChatFragmentFragmentDoc = gql`
     fragment ChatFragment on Chat {
@@ -332,6 +347,7 @@ export const ChatFragmentFragmentDoc = gql`
     id
     text
     createdAt
+    status
     user {
       id
     }
@@ -345,6 +361,7 @@ export const MessageFragmentFragmentDoc = gql`
   imageUrl
   chatId
   createdAt
+  status
   user {
     id
     firstName

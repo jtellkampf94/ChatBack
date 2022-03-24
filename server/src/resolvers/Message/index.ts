@@ -86,7 +86,7 @@ export class MessageResolver {
   @Mutation(() => Message)
   async changeMessageStatus(
     @Arg("messageId", () => Int) messageId: number,
-    @Arg("status") status: Status,
+    @Arg("status", () => Status) status: Status,
     @Arg("chatId", () => Int) chatId: number,
     @Ctx() { req }: MyContext,
     @PubSub() pubSub: PubSubEngine
