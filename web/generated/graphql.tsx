@@ -223,6 +223,15 @@ export type AddToContactsMutationVariables = Exact<{
 
 export type AddToContactsMutation = { __typename?: 'Mutation', addToContacts: { __typename?: 'Contact', contact: { __typename?: 'User', id: string, firstName: string, lastName: string, about?: string | null | undefined, profilePictureUrl?: string | null | undefined } } };
 
+export type ChangeMessageStatusMutationVariables = Exact<{
+  messageId: Scalars['Int'];
+  status: Status;
+  chatId: Scalars['Int'];
+}>;
+
+
+export type ChangeMessageStatusMutation = { __typename?: 'Mutation', changeMessageStatus: { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, status: Status, user: { __typename?: 'User', id: string, firstName: string, lastName: string } } };
+
 export type CreateChatMutationVariables = Exact<{
   userIds: Array<Scalars['Int']> | Scalars['Int'];
   groupName?: Maybe<Scalars['String']>;
@@ -408,6 +417,41 @@ export function useAddToContactsMutation(baseOptions?: Apollo.MutationHookOption
 export type AddToContactsMutationHookResult = ReturnType<typeof useAddToContactsMutation>;
 export type AddToContactsMutationResult = Apollo.MutationResult<AddToContactsMutation>;
 export type AddToContactsMutationOptions = Apollo.BaseMutationOptions<AddToContactsMutation, AddToContactsMutationVariables>;
+export const ChangeMessageStatusDocument = gql`
+    mutation ChangeMessageStatus($messageId: Int!, $status: Status!, $chatId: Int!) {
+  changeMessageStatus(messageId: $messageId, status: $status, chatId: $chatId) {
+    ...MessageFragment
+  }
+}
+    ${MessageFragmentFragmentDoc}`;
+export type ChangeMessageStatusMutationFn = Apollo.MutationFunction<ChangeMessageStatusMutation, ChangeMessageStatusMutationVariables>;
+
+/**
+ * __useChangeMessageStatusMutation__
+ *
+ * To run a mutation, you first call `useChangeMessageStatusMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChangeMessageStatusMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [changeMessageStatusMutation, { data, loading, error }] = useChangeMessageStatusMutation({
+ *   variables: {
+ *      messageId: // value for 'messageId'
+ *      status: // value for 'status'
+ *      chatId: // value for 'chatId'
+ *   },
+ * });
+ */
+export function useChangeMessageStatusMutation(baseOptions?: Apollo.MutationHookOptions<ChangeMessageStatusMutation, ChangeMessageStatusMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ChangeMessageStatusMutation, ChangeMessageStatusMutationVariables>(ChangeMessageStatusDocument, options);
+      }
+export type ChangeMessageStatusMutationHookResult = ReturnType<typeof useChangeMessageStatusMutation>;
+export type ChangeMessageStatusMutationResult = Apollo.MutationResult<ChangeMessageStatusMutation>;
+export type ChangeMessageStatusMutationOptions = Apollo.BaseMutationOptions<ChangeMessageStatusMutation, ChangeMessageStatusMutationVariables>;
 export const CreateChatDocument = gql`
     mutation CreateChat($userIds: [Int!]!, $groupName: String, $limit: Int!, $cursor: String, $groupAvatarUrl: String) {
   createChat(

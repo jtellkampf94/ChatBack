@@ -57,7 +57,7 @@ export class Message extends BaseEntity {
   @CreateDateColumn()
   createdAt!: Date;
 
-  @Field(() => Status)
+  @Field(type => Status)
   @Column()
   status!: Status;
 }

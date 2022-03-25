@@ -1,8 +1,9 @@
 import styled from "styled-components";
 import DoneIcon from "@material-ui/icons/Done";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
-import AccessTimeIcon from "@material-ui/icons/AccessTime";
 import { globalTheme } from "../themes/globalTheme";
+
+import { Status } from "../generated/graphql";
 
 const Container = styled("div")<{ isUser: boolean }>`
   background-color: ${(props) =>
@@ -55,7 +56,7 @@ const Img = styled.img`
 `;
 
 interface MessageProps {
-  status?: "sending" | "sent" | "delivered" | "read";
+  status?: Status;
   isUser: boolean;
   text: string;
   sender?: string;
@@ -78,22 +79,16 @@ const Message: React.FC<MessageProps> = ({
     const blue = globalTheme.readBlueCheck;
     const size = { width: "16px", height: "16px" };
 
-    if (status) {
-      if (status === "sending") {
-        return <AccessTimeIcon style={{ fill: grey, ...size }} />;
-      }
+    if (status === Status.Sent) {
+      return <DoneIcon style={{ fill: grey, ...size }} />;
+    }
 
-      if (status === "sent") {
-        return <DoneIcon style={{ fill: grey, ...size }} />;
-      }
-
-      if (status === "delivered" || status === "read") {
-        return (
-          <DoneAllIcon
-            style={{ fill: status === "delivered" ? grey : blue, ...size }}
-          />
-        );
-      }
+    if (status === Status.Delivered || status === Status.Read) {
+      return (
+        <DoneAllIcon
+          style={{ fill: status === Status.Delivered ? grey : blue, ...size }}
+        />
+      );
     }
   };
 

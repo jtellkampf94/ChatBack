@@ -34,6 +34,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
       variables: { chatId, limit },
       notifyOnNetworkStatusChange: true,
     });
+  const [changeMessageStatus] = useChangeMessageStatusMutation();
 
   const subscribe = (chatId: number) =>
     subscribeToMore({
@@ -46,8 +47,17 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
         const newMessageChatId = Number(newMessage.chatId);
 
         if (chatId === newMessageChatId) {
-          if (newMessage.status === Status.SENT) {
-            useChangeMessageStatusMutation();
+          if (
+            newMessage.status === Status.Sent &&
+            Number(newMessage.user.id) !== userId
+          ) {
+            changeMessageStatus({
+              variables: {
+                chatId,
+                messageId: Number(newMessage.id),
+                status: Status.Delivered,
+              },
+            });
           }
           if (prev.getMessages?.messages) {
             return {
@@ -129,6 +139,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
                     )} ${capitalizeFirstLetter(message.user.lastName)}`
               }
               dateSent={formatDate(message.createdAt)}
+              status={message.status}
               imageUrl={message.imageUrl ? message.imageUrl : undefined}
             />
           );
