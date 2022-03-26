@@ -14,7 +14,7 @@ import {
   ObjectType,
   Field,
 } from "type-graphql";
-import { getConnection } from "typeorm";
+import { getConnection, getRepository, Not } from "typeorm";
 
 import { isAuth } from "../../middleware/isAuth";
 import { MyContext } from "../../types";
@@ -141,5 +141,42 @@ export class MessageResolver {
       messages: messages.slice(0, realLimit),
       hasMore: messages.length === realLimitPlusOne,
     };
+  }
+
+  @UseMiddleware(isAuth)
+  @Mutation(() => Boolean)
+  async changeMessagesStatus(
+    @Arg("chatIds", () => [Int]) chatIds: number[],
+    @Arg("from", () => Status) from: Status,
+    @Arg("to", () => Status) to: Status,
+    @Ctx() { req }: MyContext,
+    @PubSub() pubSub: PubSubEngine
+  ): Promise<Boolean> {
+    const messages = await getRepository(Message)
+      .createQueryBuilder("message")
+      .where(`message."chatId" IN(:...chatIds)`, { chatIds })
+      .andWhere(`message."userId" != :userId`, {
+        userId: Number(req.session.userId),
+      })
+      .andWhere("message.status = :status", { status: from })
+      .getMany();
+
+    messages.forEach(async (message) => {
+      message.status = to;
+      await pubSub.publish(NEW_MESSAGE_STATUS, message);
+    });
+
+    await getRepository(Message)
+      .createQueryBuilder("message")
+      .update(Message)
+      .set({ status: to })
+      .where(`message."chatId" IN(:...chatIds)`, { chatIds })
+      .andWhere(`message."userId" != :userId`, {
+        userId: Number(req.session.userId),
+      })
+      .andWhere("message.status = :status", { status: from })
+      .execute();
+
+    return true;
   }
 }

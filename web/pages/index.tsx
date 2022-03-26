@@ -1,8 +1,9 @@
 import type { NextPage } from "next";
-import { useState, Fragment } from "react";
+import { useState, Fragment, useEffect } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import styled from "styled-components";
+import { useApolloClient } from "@apollo/client";
 
 import {
   useNewMessageSubscription,
@@ -10,6 +11,10 @@ import {
   useGetCurrentUserQuery,
   GetChatsQuery,
   useLogoutMutation,
+  GetChatsDocument,
+  useGetChatLazyQuery,
+  useChangeMessageStatusMutation,
+  Status,
 } from "../generated/graphql";
 import { isUserLoggedIn } from "../utils/isUserLoggedIn";
 
@@ -52,6 +57,7 @@ const ChatWrapper = styled.div`
 export type ContactType = GetContactsQuery["getContacts"][0];
 
 const Home: NextPage = () => {
+  const client = useApolloClient();
   const router = useRouter();
   const { data, loading, error } = useGetCurrentUserQuery();
   const [chatId, setChatId] = useState<null | number>(null);
@@ -59,12 +65,74 @@ const Home: NextPage = () => {
   const [selectedChat, setSelectedChat] =
     useState<GetChatsQuery["getChats"][0]>();
   const [tab, setTab] = useState(1);
-
+  const [getChatQuery, { data: newChatData }] = useGetChatLazyQuery();
+  const [changeMessageStatus] = useChangeMessageStatusMutation();
   const [
     logout,
     { data: logoutData, loading: logoutLoading, error: logoutError },
   ] = useLogoutMutation();
-  useNewMessageSubscription();
+
+  useNewMessageSubscription({
+    onSubscriptionData: ({ client, subscriptionData }) => {
+      if (subscriptionData?.data?.newMessage && data?.currentUser) {
+        const newMessage = subscriptionData.data.newMessage;
+
+        if (
+          newMessage.status === Status.Sent &&
+          Number(data.currentUser.id) !== Number(newMessage.user.id)
+        ) {
+          changeMessageStatus({
+            variables: {
+              messageId: Number(newMessage.id),
+              status: Status.Delivered,
+              chatId: Number(newMessage.chatId),
+            },
+          });
+        }
+
+        const chatData = client.readQuery({
+          query: GetChatsDocument,
+        });
+
+        if (chatData) {
+          const getChats = chatData.getChats;
+          const chatIsNotInCache =
+            getChats.filter(
+              (chat: GetChatsQuery["getChats"][0]) =>
+                Number(chat.id) === Number(newMessage.chatId)
+            ).length === 0;
+
+          if (!getChats || chatIsNotInCache) {
+            getChatQuery({
+              variables: {
+                chatId: subscriptionData?.data?.newMessage.chatId,
+                limit: 1,
+              },
+            });
+          }
+        }
+      }
+    },
+  });
+
+  useEffect(() => {
+    if (newChatData) {
+      const { getChats } = client.readQuery({ query: GetChatsDocument });
+
+      const chatIsNotInCache =
+        getChats.filter(
+          (chat: GetChatsQuery["getChats"][0]) =>
+            Number(chat.id) === Number(newChatData.getChat.id)
+        ).length === 0;
+
+      if (chatIsNotInCache) {
+        client.writeQuery({
+          query: GetChatsDocument,
+          data: { getChats: [newChatData.getChat, ...getChats] },
+        });
+      }
+    }
+  }, [newChatData]);
 
   const handleClick = (selectedChatId: number) => {
     setChatId(selectedChatId);

@@ -29,7 +29,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
   const [messageText, setMessageText] = useState("");
   const [limit, setLimit] = useState(10);
   const [preview, setPreview] = useState<string | null>(null);
-  const { loading, error, data, subscribeToMore, fetchMore } =
+  const { loading, error, refetch, data, subscribeToMore, fetchMore } =
     useGetMessagesQuery({
       variables: { chatId, limit },
       notifyOnNetworkStatusChange: true,
@@ -48,24 +48,43 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
 
         if (chatId === newMessageChatId) {
           if (
-            newMessage.status === Status.Sent &&
+            (newMessage.status === Status.Sent ||
+              newMessage.status === Status.Delivered) &&
             Number(newMessage.user.id) !== userId
           ) {
             changeMessageStatus({
               variables: {
                 chatId,
                 messageId: Number(newMessage.id),
-                status: Status.Delivered,
+                status: Status.Read,
               },
             });
           }
+
           if (prev.getMessages?.messages) {
-            return {
-              getMessages: {
-                messages: [newMessage, ...prev.getMessages.messages],
-                hasMore: prev.getMessages.hasMore,
-              },
-            };
+            if (
+              prev.getMessages.messages.filter(
+                (message) => Number(message.id) === Number(newMessage.id)
+              ).length === 0
+            ) {
+              return {
+                getMessages: {
+                  messages: [newMessage, ...prev.getMessages.messages],
+                  hasMore: prev.getMessages.hasMore,
+                },
+              };
+            } else {
+              return {
+                getMessages: {
+                  messages: prev.getMessages.messages.map((message) => {
+                    if (Number(message.id) === Number(newMessage.id))
+                      return newMessage;
+                    return message;
+                  }),
+                  hasMore: prev.getMessages.hasMore,
+                },
+              };
+            }
           }
 
           if (!prev.getMessages?.messages) {
@@ -78,6 +97,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
     });
 
   useEffect(() => {
+    refetch();
     const unsubscribe = subscribe(chatId);
 
     return () => unsubscribe();

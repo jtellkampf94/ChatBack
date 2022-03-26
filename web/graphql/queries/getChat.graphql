@@ -1,0 +1,5 @@
+query GetChat($chatId: Int!, $limit: Int!, $cursor: String) {
+  getChat(chatId: $chatId) {
+    ...ChatFragment
+  }
+}

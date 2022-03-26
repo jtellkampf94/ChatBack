@@ -1,0 +1,3 @@
+mutation ChangeMessagesStatus($chatIds: [Int!]!, $from: Status!, $to: Status!) {
+  changeMessagesStatus(chatIds: $chatIds, from: $from, to: $to)
+}

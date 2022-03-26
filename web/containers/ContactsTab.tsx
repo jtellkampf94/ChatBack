@@ -50,7 +50,7 @@ const ContactsTab: React.FC<ContactsTabProps> = ({
                 (chat) => Number(chat.id) === Number(newChat.id)
               );
 
-              if (isAlreadyInChat.length === 0) return existingChats;
+              if (isAlreadyInChat.length === 1) return existingChats;
 
               const newChatRef = cache.writeFragment({
                 data: newChat,
