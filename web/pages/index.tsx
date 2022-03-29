@@ -13,8 +13,6 @@ import {
   useLogoutMutation,
   GetChatsDocument,
   useGetChatLazyQuery,
-  useChangeMessageStatusMutation,
-  Status,
 } from "../generated/graphql";
 import { isUserLoggedIn } from "../utils/isUserLoggedIn";
 
@@ -66,7 +64,6 @@ const Home: NextPage = () => {
     useState<GetChatsQuery["getChats"][0]>();
   const [tab, setTab] = useState(1);
   const [getChatQuery, { data: newChatData }] = useGetChatLazyQuery();
-  const [changeMessageStatus] = useChangeMessageStatusMutation();
   const [
     logout,
     { data: logoutData, loading: logoutLoading, error: logoutError },
@@ -76,19 +73,6 @@ const Home: NextPage = () => {
     onSubscriptionData: ({ client, subscriptionData }) => {
       if (subscriptionData?.data?.newMessage && data?.currentUser) {
         const newMessage = subscriptionData.data.newMessage;
-
-        if (
-          newMessage.status === Status.Sent &&
-          Number(data.currentUser.id) !== Number(newMessage.user.id)
-        ) {
-          changeMessageStatus({
-            variables: {
-              messageId: Number(newMessage.id),
-              status: Status.Delivered,
-              chatId: Number(newMessage.chatId),
-            },
-          });
-        }
 
         const chatData = client.readQuery({
           query: GetChatsDocument,

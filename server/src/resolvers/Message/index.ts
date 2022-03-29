@@ -14,14 +14,14 @@ import {
   ObjectType,
   Field,
 } from "type-graphql";
-import { getConnection, getRepository, Not } from "typeorm";
+import { getConnection } from "typeorm";
 
 import { isAuth } from "../../middleware/isAuth";
 import { MyContext } from "../../types";
-import { Message, Status } from "../../entities/Message";
+import { Message } from "../../entities/Message";
 import { ChatMember } from "../../entities/ChatMember";
 import { User } from "../../entities/User";
-import { NEW_MESSAGE, NEW_MESSAGE_STATUS } from "../../constants";
+import { NEW_MESSAGE } from "../../constants";
 
 @ObjectType()
 export class PaginatedMessages {
@@ -43,7 +43,7 @@ export class MessageResolver {
   }
 
   @Subscription(() => Message, {
-    topics: [NEW_MESSAGE, NEW_MESSAGE_STATUS],
+    topics: NEW_MESSAGE,
     filter: async ({ payload, context: { connection } }) => {
       const userId = Number(connection.context.req.session.userId);
 
@@ -74,39 +74,9 @@ export class MessageResolver {
       chatId,
       userId: Number(req.session.userId),
       imageUrl: imageUrl ? imageUrl : undefined,
-      status: Status.SENT,
     }).save();
 
     await pubSub.publish(NEW_MESSAGE, message);
-
-    return message;
-  }
-
-  @UseMiddleware(isAuth)
-  @Mutation(() => Message)
-  async changeMessageStatus(
-    @Arg("messageId", () => Int) messageId: number,
-    @Arg("status", () => Status) status: Status,
-    @Arg("chatId", () => Int) chatId: number,
-    @Ctx() { req }: MyContext,
-    @PubSub() pubSub: PubSubEngine
-  ): Promise<Message> {
-    const isChatMember = await ChatMember.findOne({
-      chatId,
-      userId: Number(req.session.userId),
-    });
-
-    if (!isChatMember) throw new Error("not authorized");
-
-    const message = await Message.findOne(messageId);
-
-    if (!message) throw new Error("message doesn't exist");
-
-    message.status = status;
-
-    await message.save();
-
-    await pubSub.publish(NEW_MESSAGE_STATUS, message);
 
     return message;
   }
@@ -141,42 +111,5 @@ export class MessageResolver {
       messages: messages.slice(0, realLimit),
       hasMore: messages.length === realLimitPlusOne,
     };
-  }
-
-  @UseMiddleware(isAuth)
-  @Mutation(() => Boolean)
-  async changeMessagesStatus(
-    @Arg("chatIds", () => [Int]) chatIds: number[],
-    @Arg("from", () => Status) from: Status,
-    @Arg("to", () => Status) to: Status,
-    @Ctx() { req }: MyContext,
-    @PubSub() pubSub: PubSubEngine
-  ): Promise<Boolean> {
-    const messages = await getRepository(Message)
-      .createQueryBuilder("message")
-      .where(`message."chatId" IN(:...chatIds)`, { chatIds })
-      .andWhere(`message."userId" != :userId`, {
-        userId: Number(req.session.userId),
-      })
-      .andWhere("message.status = :status", { status: from })
-      .getMany();
-
-    messages.forEach(async (message) => {
-      message.status = to;
-      await pubSub.publish(NEW_MESSAGE_STATUS, message);
-    });
-
-    await getRepository(Message)
-      .createQueryBuilder("message")
-      .update(Message)
-      .set({ status: to })
-      .where(`message."chatId" IN(:...chatIds)`, { chatIds })
-      .andWhere(`message."userId" != :userId`, {
-        userId: Number(req.session.userId),
-      })
-      .andWhere("message.status = :status", { status: from })
-      .execute();
-
-    return true;
   }
 }

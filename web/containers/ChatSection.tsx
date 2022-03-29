@@ -5,8 +5,6 @@ import {
   useGetMessagesQuery,
   GetChatsQuery,
   NewMessageDocument,
-  useChangeMessageStatusMutation,
-  Status,
 } from "../generated/graphql";
 import { getUsersFullname } from "../utils/getUsersFullname";
 import { capitalizeFirstLetter } from "../utils/capitalizeFirstLetter";
@@ -34,7 +32,6 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
       variables: { chatId, limit },
       notifyOnNetworkStatusChange: true,
     });
-  const [changeMessageStatus] = useChangeMessageStatusMutation();
 
   const subscribe = (chatId: number) =>
     subscribeToMore({
@@ -47,20 +44,6 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
         const newMessageChatId = Number(newMessage.chatId);
 
         if (chatId === newMessageChatId) {
-          if (
-            (newMessage.status === Status.Sent ||
-              newMessage.status === Status.Delivered) &&
-            Number(newMessage.user.id) !== userId
-          ) {
-            changeMessageStatus({
-              variables: {
-                chatId,
-                messageId: Number(newMessage.id),
-                status: Status.Read,
-              },
-            });
-          }
-
           if (prev.getMessages?.messages) {
             if (
               prev.getMessages.messages.filter(
@@ -97,7 +80,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
     });
 
   useEffect(() => {
-    refetch();
+    // refetch();
     const unsubscribe = subscribe(chatId);
 
     return () => unsubscribe();
