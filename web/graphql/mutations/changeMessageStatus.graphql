@@ -1,9 +1,0 @@
-mutation ChangeMessageStatus(
-  $messageId: Int!
-  $status: Status!
-  $chatId: Int!
-) {
-  changeMessageStatus(messageId: $messageId, status: $status, chatId: $chatId) {
-    ...MessageFragment
-  }
-}

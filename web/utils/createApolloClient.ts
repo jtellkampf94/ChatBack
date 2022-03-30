@@ -49,7 +49,7 @@ export const createApolloClient = (headers?: Record<string, string>) => {
               keyArgs: ["chatId"],
               merge(
                 //@ts-ignore
-                existing: PaginatedMessages = [],
+                existing: PaginatedMessages = {},
                 incoming: PaginatedMessages,
                 //@ts-ignore
                 { args: { cursor } }
@@ -67,7 +67,7 @@ export const createApolloClient = (headers?: Record<string, string>) => {
               keyArgs: ["searchTerm"],
               merge(
                 //@ts-ignore
-                existing: PaginatedUsers = [],
+                existing: PaginatedUsers = {},
                 incoming: PaginatedUsers,
                 //@ts-ignore
                 { args: { page } }

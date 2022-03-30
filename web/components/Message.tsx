@@ -1,9 +1,4 @@
 import styled from "styled-components";
-import DoneIcon from "@material-ui/icons/Done";
-import DoneAllIcon from "@material-ui/icons/DoneAll";
-import { globalTheme } from "../themes/globalTheme";
-
-import { Status } from "../generated/graphql";
 
 const Container = styled("div")<{ isUser: boolean }>`
   background-color: ${(props) =>
@@ -56,7 +51,6 @@ const Img = styled.img`
 `;
 
 interface MessageProps {
-  status?: Status;
   isUser: boolean;
   text: string;
   sender?: string;
@@ -66,7 +60,6 @@ interface MessageProps {
 }
 
 const Message: React.FC<MessageProps> = ({
-  status,
   isUser,
   text,
   sender,
@@ -74,24 +67,6 @@ const Message: React.FC<MessageProps> = ({
   dateSent,
   imageUrl,
 }) => {
-  const renderIcon = () => {
-    const grey = globalTheme.greyCheck;
-    const blue = globalTheme.readBlueCheck;
-    const size = { width: "16px", height: "16px" };
-
-    if (status === Status.Sent) {
-      return <DoneIcon style={{ fill: grey, ...size }} />;
-    }
-
-    if (status === Status.Delivered || status === Status.Read) {
-      return (
-        <DoneAllIcon
-          style={{ fill: status === Status.Delivered ? grey : blue, ...size }}
-        />
-      );
-    }
-  };
-
   return (
     <Container isUser={isUser}>
       {sender && <Header color={color}>{sender}</Header>}
@@ -100,7 +75,6 @@ const Message: React.FC<MessageProps> = ({
 
       <MessageFooter>
         <DateSent>{dateSent}</DateSent>
-        {renderIcon()}
       </MessageFooter>
     </Container>
   );

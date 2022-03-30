@@ -5,8 +5,6 @@ import {
   NewMessageDocument,
   GetCurrentUserQuery,
   GetChatsQuery,
-  useChangeMessagesStatusMutation,
-  Status,
 } from "../generated/graphql";
 import SidebarMenu from "../containers/SidebarMenu";
 import SearchBar from "../components/SearchBar";
@@ -43,7 +41,6 @@ const Sidebar: React.FC<SidebarProps> = ({
   const { data, loading, error, subscribeToMore } = useGetChatsQuery({
     variables: { limit: 1 },
   });
-  const [changeMessagesStatus] = useChangeMessagesStatusMutation();
   const [searchTerm, setSearchTerm] = useState("");
 
   const subscribe = () =>
@@ -77,16 +74,6 @@ const Sidebar: React.FC<SidebarProps> = ({
       );
     }
   }, [chatId]);
-
-  useEffect(() => {
-    if (data && data.getChats?.length > 0) {
-      const chatIds = data.getChats.map((chat) => Number(chat.id));
-
-      changeMessagesStatus({
-        variables: { chatIds, from: Status.Sent, to: Status.Delivered },
-      });
-    }
-  }, [data]);
 
   const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {};
 
@@ -123,16 +110,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <Chat
                   key={`chatId-${chat.id}`}
                   isHighlighted={chatId === selectedChatId}
-                  onClick={() => {
-                    handleClick(selectedChatId);
-                    changeMessagesStatus({
-                      variables: {
-                        chatIds: [Number(chat.id)],
-                        from: Status.Delivered,
-                        to: Status.Read,
-                      },
-                    });
-                  }}
+                  onClick={() => handleClick(selectedChatId)}
                   name={
                     chat.groupName
                       ? chat.groupName

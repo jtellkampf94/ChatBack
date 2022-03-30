@@ -59,7 +59,6 @@ export type Message = {
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   imageUrl?: Maybe<Scalars['String']>;
-  status: Status;
   text: Scalars['String'];
   user: User;
 };
@@ -67,8 +66,6 @@ export type Message = {
 export type Mutation = {
   __typename?: 'Mutation';
   addToContacts: Contact;
-  changeMessageStatus: Message;
-  changeMessagesStatus: Scalars['Boolean'];
   createChat: Chat;
   editProfile: User;
   exitChat: Scalars['Boolean'];
@@ -82,20 +79,6 @@ export type Mutation = {
 
 export type MutationAddToContactsArgs = {
   contactId: Scalars['Int'];
-};
-
-
-export type MutationChangeMessageStatusArgs = {
-  chatId: Scalars['Int'];
-  messageId: Scalars['Int'];
-  status: Status;
-};
-
-
-export type MutationChangeMessagesStatusArgs = {
-  chatIds: Array<Scalars['Int']>;
-  from: Status;
-  to: Status;
 };
 
 
@@ -193,12 +176,6 @@ export type RegisterInput = {
   username: Scalars['String'];
 };
 
-export enum Status {
-  Delivered = 'DELIVERED',
-  Read = 'READ',
-  Sent = 'SENT'
-}
-
 export type Subscription = {
   __typename?: 'Subscription';
   newMessage: Message;
@@ -220,9 +197,9 @@ export type User = {
   username: Scalars['String'];
 };
 
-export type ChatFragmentFragment = { __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, status: Status, user: { __typename?: 'User', id: string } }> | null | undefined };
+export type ChatFragmentFragment = { __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, user: { __typename?: 'User', id: string } }> | null | undefined };
 
-export type MessageFragmentFragment = { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, status: Status, user: { __typename?: 'User', id: string, firstName: string, lastName: string } };
+export type MessageFragmentFragment = { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string } };
 
 export type AddToContactsMutationVariables = Exact<{
   contactId: Scalars['Int'];
@@ -230,24 +207,6 @@ export type AddToContactsMutationVariables = Exact<{
 
 
 export type AddToContactsMutation = { __typename?: 'Mutation', addToContacts: { __typename?: 'Contact', contact: { __typename?: 'User', id: string, firstName: string, lastName: string, about?: string | null | undefined, profilePictureUrl?: string | null | undefined } } };
-
-export type ChangeMessageStatusMutationVariables = Exact<{
-  messageId: Scalars['Int'];
-  status: Status;
-  chatId: Scalars['Int'];
-}>;
-
-
-export type ChangeMessageStatusMutation = { __typename?: 'Mutation', changeMessageStatus: { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, status: Status, user: { __typename?: 'User', id: string, firstName: string, lastName: string } } };
-
-export type ChangeMessagesStatusMutationVariables = Exact<{
-  chatIds: Array<Scalars['Int']> | Scalars['Int'];
-  from: Status;
-  to: Status;
-}>;
-
-
-export type ChangeMessagesStatusMutation = { __typename?: 'Mutation', changeMessagesStatus: boolean };
 
 export type CreateChatMutationVariables = Exact<{
   userIds: Array<Scalars['Int']> | Scalars['Int'];
@@ -258,7 +217,7 @@ export type CreateChatMutationVariables = Exact<{
 }>;
 
 
-export type CreateChatMutation = { __typename?: 'Mutation', createChat: { __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, status: Status, user: { __typename?: 'User', id: string } }> | null | undefined } };
+export type CreateChatMutation = { __typename?: 'Mutation', createChat: { __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, user: { __typename?: 'User', id: string } }> | null | undefined } };
 
 export type EditProfileMutationVariables = Exact<{
   profilePictureUrl?: Maybe<Scalars['String']>;
@@ -304,7 +263,7 @@ export type SendMessageMutationVariables = Exact<{
 }>;
 
 
-export type SendMessageMutation = { __typename?: 'Mutation', sendMessage: { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, status: Status, user: { __typename?: 'User', id: string, firstName: string, lastName: string } } };
+export type SendMessageMutation = { __typename?: 'Mutation', sendMessage: { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string } } };
 
 export type GetChatQueryVariables = Exact<{
   chatId: Scalars['Int'];
@@ -313,7 +272,7 @@ export type GetChatQueryVariables = Exact<{
 }>;
 
 
-export type GetChatQuery = { __typename?: 'Query', getChat: { __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, status: Status, user: { __typename?: 'User', id: string } }> | null | undefined } };
+export type GetChatQuery = { __typename?: 'Query', getChat: { __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, user: { __typename?: 'User', id: string } }> | null | undefined } };
 
 export type GetChatsQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -321,7 +280,7 @@ export type GetChatsQueryVariables = Exact<{
 }>;
 
 
-export type GetChatsQuery = { __typename?: 'Query', getChats: Array<{ __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, status: Status, user: { __typename?: 'User', id: string } }> | null | undefined }> };
+export type GetChatsQuery = { __typename?: 'Query', getChats: Array<{ __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, user: { __typename?: 'User', id: string } }> | null | undefined }> };
 
 export type GetContactsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -340,7 +299,7 @@ export type GetMessagesQueryVariables = Exact<{
 }>;
 
 
-export type GetMessagesQuery = { __typename?: 'Query', getMessages?: { __typename?: 'PaginatedMessages', hasMore: boolean, messages: Array<{ __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, status: Status, user: { __typename?: 'User', id: string, firstName: string, lastName: string } }> } | null | undefined };
+export type GetMessagesQuery = { __typename?: 'Query', getMessages?: { __typename?: 'PaginatedMessages', hasMore: boolean, messages: Array<{ __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string } }> } | null | undefined };
 
 export type GetPresignedUrlQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -364,7 +323,7 @@ export type GetUsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 
 export type NewMessageSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type NewMessageSubscription = { __typename?: 'Subscription', newMessage: { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, status: Status, user: { __typename?: 'User', id: string, firstName: string, lastName: string } } };
+export type NewMessageSubscription = { __typename?: 'Subscription', newMessage: { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string } } };
 
 export const ChatFragmentFragmentDoc = gql`
     fragment ChatFragment on Chat {
@@ -382,7 +341,6 @@ export const ChatFragmentFragmentDoc = gql`
     id
     text
     createdAt
-    status
     user {
       id
     }
@@ -396,7 +354,6 @@ export const MessageFragmentFragmentDoc = gql`
   imageUrl
   chatId
   createdAt
-  status
   user {
     id
     firstName
@@ -443,74 +400,6 @@ export function useAddToContactsMutation(baseOptions?: Apollo.MutationHookOption
 export type AddToContactsMutationHookResult = ReturnType<typeof useAddToContactsMutation>;
 export type AddToContactsMutationResult = Apollo.MutationResult<AddToContactsMutation>;
 export type AddToContactsMutationOptions = Apollo.BaseMutationOptions<AddToContactsMutation, AddToContactsMutationVariables>;
-export const ChangeMessageStatusDocument = gql`
-    mutation ChangeMessageStatus($messageId: Int!, $status: Status!, $chatId: Int!) {
-  changeMessageStatus(messageId: $messageId, status: $status, chatId: $chatId) {
-    ...MessageFragment
-  }
-}
-    ${MessageFragmentFragmentDoc}`;
-export type ChangeMessageStatusMutationFn = Apollo.MutationFunction<ChangeMessageStatusMutation, ChangeMessageStatusMutationVariables>;
-
-/**
- * __useChangeMessageStatusMutation__
- *
- * To run a mutation, you first call `useChangeMessageStatusMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useChangeMessageStatusMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [changeMessageStatusMutation, { data, loading, error }] = useChangeMessageStatusMutation({
- *   variables: {
- *      messageId: // value for 'messageId'
- *      status: // value for 'status'
- *      chatId: // value for 'chatId'
- *   },
- * });
- */
-export function useChangeMessageStatusMutation(baseOptions?: Apollo.MutationHookOptions<ChangeMessageStatusMutation, ChangeMessageStatusMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ChangeMessageStatusMutation, ChangeMessageStatusMutationVariables>(ChangeMessageStatusDocument, options);
-      }
-export type ChangeMessageStatusMutationHookResult = ReturnType<typeof useChangeMessageStatusMutation>;
-export type ChangeMessageStatusMutationResult = Apollo.MutationResult<ChangeMessageStatusMutation>;
-export type ChangeMessageStatusMutationOptions = Apollo.BaseMutationOptions<ChangeMessageStatusMutation, ChangeMessageStatusMutationVariables>;
-export const ChangeMessagesStatusDocument = gql`
-    mutation ChangeMessagesStatus($chatIds: [Int!]!, $from: Status!, $to: Status!) {
-  changeMessagesStatus(chatIds: $chatIds, from: $from, to: $to)
-}
-    `;
-export type ChangeMessagesStatusMutationFn = Apollo.MutationFunction<ChangeMessagesStatusMutation, ChangeMessagesStatusMutationVariables>;
-
-/**
- * __useChangeMessagesStatusMutation__
- *
- * To run a mutation, you first call `useChangeMessagesStatusMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useChangeMessagesStatusMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [changeMessagesStatusMutation, { data, loading, error }] = useChangeMessagesStatusMutation({
- *   variables: {
- *      chatIds: // value for 'chatIds'
- *      from: // value for 'from'
- *      to: // value for 'to'
- *   },
- * });
- */
-export function useChangeMessagesStatusMutation(baseOptions?: Apollo.MutationHookOptions<ChangeMessagesStatusMutation, ChangeMessagesStatusMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ChangeMessagesStatusMutation, ChangeMessagesStatusMutationVariables>(ChangeMessagesStatusDocument, options);
-      }
-export type ChangeMessagesStatusMutationHookResult = ReturnType<typeof useChangeMessagesStatusMutation>;
-export type ChangeMessagesStatusMutationResult = Apollo.MutationResult<ChangeMessagesStatusMutation>;
-export type ChangeMessagesStatusMutationOptions = Apollo.BaseMutationOptions<ChangeMessagesStatusMutation, ChangeMessagesStatusMutationVariables>;
 export const CreateChatDocument = gql`
     mutation CreateChat($userIds: [Int!]!, $groupName: String, $limit: Int!, $cursor: String, $groupAvatarUrl: String) {
   createChat(

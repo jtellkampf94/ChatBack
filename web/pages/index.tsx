@@ -13,6 +13,7 @@ import {
   useLogoutMutation,
   GetChatsDocument,
   useGetChatLazyQuery,
+  GetMessagesDocument,
 } from "../generated/graphql";
 import { isUserLoggedIn } from "../utils/isUserLoggedIn";
 
@@ -91,6 +92,21 @@ const Home: NextPage = () => {
               variables: {
                 chatId: subscriptionData?.data?.newMessage.chatId,
                 limit: 1,
+              },
+            });
+          }
+
+          if (!chatIsNotInCache) {
+            client.cache.modify({
+              fields: {
+                getMessages(
+                  existingMessages = { messages: [], hasMore: false }
+                ) {
+                  return {
+                    messages: [{ ...newMessage }, ...existingMessages.messages],
+                    hasMore: existingMessages.hasMore,
+                  };
+                },
               },
             });
           }
