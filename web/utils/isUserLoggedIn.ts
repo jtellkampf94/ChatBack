@@ -6,6 +6,7 @@ import { GetCurrentUserDocument } from "../generated/graphql";
 export const isUserLoggedIn: GetServerSideProps = async ({
   req,
   res,
+  resolvedUrl,
 }: GetServerSidePropsContext) => {
   const cookies = req.cookies;
 
@@ -23,8 +24,15 @@ export const isUserLoggedIn: GetServerSideProps = async ({
       query: GetCurrentUserDocument,
     });
 
-    if (!result.data.currentUser) {
+    console.log(resolvedUrl);
+
+    if (!result.data.currentUser && resolvedUrl === "/") {
       res.writeHead(301, { Location: "/login" });
+      res.end();
+    }
+
+    if (result.data.currentUser && resolvedUrl === "/login") {
+      res.writeHead(301, { Location: "/" });
       res.end();
     }
 

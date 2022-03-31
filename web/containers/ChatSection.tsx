@@ -33,58 +33,58 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
       notifyOnNetworkStatusChange: true,
     });
 
-  // const subscribe = (chatId: number) =>
-  //   subscribeToMore({
-  //     document: NewMessageDocument,
-  //     variables: { chatId, limit },
-  //     updateQuery: (prev, { subscriptionData }) => {
-  //       if (!subscriptionData.data) return prev;
-  //       //@ts-ignore
-  //       const newMessage = subscriptionData.data.newMessage;
-  //       const newMessageChatId = Number(newMessage.chatId);
+  const subscribe = (chatId: number) =>
+    subscribeToMore({
+      document: NewMessageDocument,
+      variables: { chatId, limit },
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+        //@ts-ignore
+        const newMessage = subscriptionData.data.newMessage;
+        const newMessageChatId = Number(newMessage.chatId);
 
-  //       if (chatId === newMessageChatId) {
-  //         if (prev.getMessages?.messages) {
-  //           if (
-  //             prev.getMessages.messages.filter(
-  //               (message) => Number(message.id) === Number(newMessage.id)
-  //             ).length === 0
-  //           ) {
-  //             return {
-  //               getMessages: {
-  //                 messages: [newMessage, ...prev.getMessages.messages],
-  //                 hasMore: prev.getMessages.hasMore,
-  //               },
-  //             };
-  //           } else {
-  //             return {
-  //               getMessages: {
-  //                 messages: prev.getMessages.messages.map((message) => {
-  //                   if (Number(message.id) === Number(newMessage.id))
-  //                     return newMessage;
-  //                   return message;
-  //                 }),
-  //                 hasMore: prev.getMessages.hasMore,
-  //               },
-  //             };
-  //           }
-  //         }
+        if (chatId === newMessageChatId) {
+          if (prev.getMessages?.messages) {
+            if (
+              prev.getMessages.messages.filter(
+                (message) => Number(message.id) === Number(newMessage.id)
+              ).length === 0
+            ) {
+              return {
+                getMessages: {
+                  messages: [newMessage, ...prev.getMessages.messages],
+                  hasMore: prev.getMessages.hasMore,
+                },
+              };
+            } else {
+              return {
+                getMessages: {
+                  messages: prev.getMessages.messages.map((message) => {
+                    if (Number(message.id) === Number(newMessage.id))
+                      return newMessage;
+                    return message;
+                  }),
+                  hasMore: prev.getMessages.hasMore,
+                },
+              };
+            }
+          }
 
-  //         if (!prev.getMessages?.messages) {
-  //           return { getMessages: { messages: [newMessage], hasMore: false } };
-  //         }
-  //       }
+          if (!prev.getMessages?.messages) {
+            return { getMessages: { messages: [newMessage], hasMore: false } };
+          }
+        }
 
-  //       return prev;
-  //     },
-  //   });
+        return prev;
+      },
+    });
 
-  // useEffect(() => {
-  //   // refetch();
-  //   const unsubscribe = subscribe(chatId);
+  useEffect(() => {
+    refetch();
+    const unsubscribe = subscribe(chatId);
 
-  //   return () => unsubscribe();
-  // }, [chatId]);
+    return () => unsubscribe();
+  }, [chatId]);
 
   const scrollToBottom = () => {
     endOfMessageRef.current?.scrollIntoView({

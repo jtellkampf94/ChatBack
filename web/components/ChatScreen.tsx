@@ -1,11 +1,9 @@
 import { MutableRefObject } from "react";
 import styled from "styled-components";
-import { IconButton, Avatar } from "@material-ui/core";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import SearchIcon from "@material-ui/icons/Search";
+import { Avatar } from "@material-ui/core";
 import GroupIcon from "@material-ui/icons/Group";
 
-import { globalTheme } from "../themes/globalTheme";
+import ChatScreenBackground from "../assets/images/chat-section-background.png";
 
 const Container = styled.div`
   width: 100%;
@@ -43,6 +41,7 @@ const Name = styled.p`
 const EndOfMessage = styled.div``;
 
 const MessagesContainer = styled.div`
+  background-image: url(${ChatScreenBackground.src});
   background-color: ${({ theme }) => theme.globalTheme.chatScreenBackground};
   height: calc(100vh - 144px);
   overflow-y: scroll;
@@ -104,15 +103,6 @@ const ChatScreen: React.FC<ChatScreenProps> = ({
             </UserAvatar>
           )}
           <Name>{name}</Name>
-        </IconsContainer>
-
-        <IconsContainer>
-          <IconButton>
-            <SearchIcon style={{ fill: globalTheme.iconColor }} />
-          </IconButton>
-          <IconButton>
-            <MoreVertIcon style={{ fill: globalTheme.iconColor }} />
-          </IconButton>
         </IconsContainer>
       </Header>
 

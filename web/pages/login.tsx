@@ -6,6 +6,7 @@ import WhatsAppLogo from "../assets/images/whats-app-logo.svg";
 import LoginForm from "../containers/LoginForm";
 import DownloadOnTheAppStoreLogo from "../components/DownloadOnTheAppStoreLogo";
 import GooglePlayDownloadLogo from "../components/GooglePlayDownloadLogo";
+import { isUserLoggedIn } from "../utils/isUserLoggedIn";
 
 const Container = styled.div`
   display: flex;
@@ -99,5 +100,7 @@ const Login: React.FC = () => {
     </Container>
   );
 };
+
+export const getServerSideProps = isUserLoggedIn;
 
 export default Login;
