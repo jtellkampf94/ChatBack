@@ -1,3 +1,4 @@
+import { NextPage } from "next";
 import styled from "styled-components";
 import Head from "next/head";
 import { useMediaQuery } from "react-responsive";
@@ -6,7 +7,7 @@ import WhatsAppLogo from "../assets/images/whats-app-logo.svg";
 import LoginForm from "../containers/LoginForm";
 import DownloadOnTheAppStoreLogo from "../components/DownloadOnTheAppStoreLogo";
 import GooglePlayDownloadLogo from "../components/GooglePlayDownloadLogo";
-import { isUserLoggedIn } from "../utils/isUserLoggedIn";
+import { userLoggedIn } from "../utils/isUserLoggedIn";
 
 const Container = styled.div`
   display: flex;
@@ -66,7 +67,7 @@ const LoginSection = styled.div`
   }
 `;
 
-const Login: React.FC = () => {
+const Login: NextPage = () => {
   const isSmallScreen = useMediaQuery({ query: "(max-width: 880px)" });
   return (
     <Container>
@@ -101,6 +102,6 @@ const Login: React.FC = () => {
   );
 };
 
-export const getServerSideProps = isUserLoggedIn;
+export const getServerSideProps = userLoggedIn;
 
 export default Login;

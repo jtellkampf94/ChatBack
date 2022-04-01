@@ -20,17 +20,9 @@ const RegisterForm: React.FC = () => {
     confirmPassword: "",
     firstName: "",
     lastName: "",
-    about: "",
   });
-  const {
-    username,
-    email,
-    password,
-    confirmPassword,
-    firstName,
-    lastName,
-    about,
-  } = credentials;
+  const { username, email, password, confirmPassword, firstName, lastName } =
+    credentials;
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
@@ -38,7 +30,18 @@ const RegisterForm: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await register({ variables: { options: credentials } });
+    if (password !== confirmPassword) return;
+    await register({
+      variables: {
+        options: {
+          username,
+          email,
+          password,
+          firstName,
+          lastName,
+        },
+      },
+    });
     router.push("/");
   };
 

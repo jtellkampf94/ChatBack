@@ -14,7 +14,7 @@ import {
   GetChatsDocument,
   useGetChatLazyQuery,
 } from "../generated/graphql";
-import { isUserLoggedIn } from "../utils/isUserLoggedIn";
+import { userLoggedOut } from "../utils/isUserLoggedIn";
 
 import ChatSection from "../containers/ChatSection";
 import Sidebar from "../containers/Sidebar";
@@ -218,6 +218,6 @@ const Home: NextPage = () => {
   );
 };
 
-export const getServerSideProps = isUserLoggedIn;
+export const getServerSideProps = userLoggedOut;
 
 export default Home;

@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 import RegisterForm from "../containers/RegisterForm";
+import { userLoggedIn } from "../utils/isUserLoggedIn";
 
 const Container = styled.div`
   width: 100vw;
@@ -20,5 +21,7 @@ const Register: React.FC = () => {
     </Container>
   );
 };
+
+export const getServerSideProps = userLoggedIn;
 
 export default Register;
