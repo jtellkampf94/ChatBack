@@ -19,6 +19,7 @@ import QueryResult from "../components/QueryResult";
 import User from "../components/User";
 import UserButtons from "../components/UserButtons";
 import SearchUsersContainer from "../components/SearchUsersContainer";
+import GetMoreUsersButton from "../components/GetMoreUsersButton";
 
 interface SearchUsersProps {
   backToSidebar: () => void;
@@ -146,7 +147,7 @@ const SearchUsers: React.FC<SearchUsersProps> = ({ backToSidebar }) => {
         </QueryResult>
 
         {data?.searchUsers.hasMore && (
-          <button onClick={handleClick}>More</button>
+          <GetMoreUsersButton onClick={handleClick}>More</GetMoreUsersButton>
         )}
       </SearchUsersContainer>
     </Container>
