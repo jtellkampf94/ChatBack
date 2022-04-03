@@ -25,6 +25,8 @@ import { ChatMember } from "../../entities/ChatMember";
 import { isAuth } from "../../middleware/isAuth";
 import { getAWSS3Key } from "../../utils/getAWSS3Key";
 import { s3 } from "../../config/amazonS3Config";
+import { registerValidation } from "../../validation/registerValidation";
+import { loginValidation } from "../../validation/loginValidation";
 
 @ObjectType()
 export class PaginatedUsers {
@@ -33,6 +35,32 @@ export class PaginatedUsers {
 
   @Field()
   hasMore: boolean;
+}
+
+@ObjectType()
+export class FieldError {
+  @Field()
+  field:
+    | "username"
+    | "firstName"
+    | "email"
+    | "emailOrUsername"
+    | "lastName"
+    | "password";
+  @Field()
+  message: string;
+}
+
+@ObjectType()
+export class UserResponse {
+  @Field()
+  ok: boolean;
+
+  @Field(() => [FieldError], { nullable: true })
+  errors?: FieldError[];
+
+  @Field(() => User, { nullable: true })
+  user?: User;
 }
 
 @Resolver((of) => User)
@@ -107,11 +135,17 @@ export class UserResolver {
     return user;
   }
 
-  @Mutation(() => User)
+  @Mutation(() => UserResponse)
   async register(
     @Arg("options", { validate: true }) options: RegisterInput,
     @Ctx() { req }: MyContext
-  ): Promise<User> {
+  ): Promise<UserResponse> {
+    const errors = await registerValidation(options);
+
+    if (errors.length > 0) {
+      return { ok: false, errors };
+    }
+
     const hashedPassword = await bcrypt.hash(options.password, 10);
 
     const user = await User.create({
@@ -121,30 +155,32 @@ export class UserResolver {
 
     req.session.userId = user.id;
 
-    return user;
+    return { ok: true, user };
   }
 
-  @Mutation(() => User)
+  @Mutation(() => UserResponse)
   async login(
     @Arg("options", { validate: true }) options: LoginInput,
     @Ctx() { req }: MyContext
-  ) {
-    const { emailOrUsername, password } = options;
-    const user = await User.findOne(
-      emailOrUsername.includes("@")
-        ? { email: emailOrUsername }
-        : { username: emailOrUsername }
-    );
+  ): Promise<UserResponse> {
+    const { errors, user } = await loginValidation(options);
 
-    if (!user) throw new Error("user doesn't exist");
+    const { password } = options;
 
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    if (user && errors.length === 0) {
+      const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
-    if (!isPasswordCorrect) throw new Error("password incorrect");
+      if (!isPasswordCorrect)
+        return {
+          ok: false,
+          errors: [{ field: "password", message: "Password is incorrect" }],
+        };
 
-    req.session.userId = user.id;
+      req.session.userId = user.id;
+      return { ok: true, user };
+    }
 
-    return user;
+    return { ok: false, errors };
   }
 
   @Mutation(() => User)
