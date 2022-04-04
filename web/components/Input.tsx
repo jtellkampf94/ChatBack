@@ -35,10 +35,16 @@ const InputElement = styled("input")<{ isActive: boolean }>`
   height: 40px;
   padding: ${(props) => (props.isActive ? "14px 0px 2px 10px" : "5px 10px")};
   text-overflow: ellipsis;
+  margin-bottom: 10px;
 
   &:focus {
     border: 1px solid #c4c3c3;
   }
+`;
+
+const ErrorMessage = styled.p`
+  font-size: 14px;
+  color: ${({ theme }) => theme.globalTheme.errorRed};
 `;
 
 interface InputProps {
@@ -48,6 +54,7 @@ interface InputProps {
   isActive: boolean;
   name: string;
   placeholder: string;
+  error?: string;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -57,6 +64,7 @@ const Input: React.FC<InputProps> = ({
   onChange,
   isActive,
   placeholder,
+  error,
 }) => {
   return (
     <Container>
@@ -70,6 +78,7 @@ const Input: React.FC<InputProps> = ({
         />
         <Placeholder isActive={isActive}>{placeholder}</Placeholder>
       </Label>
+      {error && <ErrorMessage>{error}</ErrorMessage>}
     </Container>
   );
 };

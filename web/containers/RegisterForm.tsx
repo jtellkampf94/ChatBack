@@ -1,4 +1,4 @@
-import { FormEvent, ChangeEvent, useState, Fragment } from "react";
+import { FormEvent, ChangeEvent, useState, Fragment, useEffect } from "react";
 import { useRouter } from "next/router";
 
 import { useRegisterMutation } from "../generated/graphql";
@@ -13,6 +13,7 @@ import FormHeader from "../components/FormHeader";
 const RegisterForm: React.FC = () => {
   const router = useRouter();
   const [register, { data, loading, error }] = useRegisterMutation();
+  const [errors, setErrors] = useState<null | Record<string, string>>(null);
   const [credentials, setCredentials] = useState({
     username: "",
     email: "",
@@ -30,7 +31,20 @@ const RegisterForm: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (password !== confirmPassword) return;
+    setErrors(null);
+    if (confirmPassword.length === 0) {
+      setErrors({ confirmPassword: "Please enter confirm password" });
+    }
+    if (confirmPassword.length === 0 && password.length > 0) {
+      setErrors({ confirmPassword: "Please enter confirm password" });
+      return;
+    }
+    if (confirmPassword.length > 0 && password !== confirmPassword) {
+      setErrors({
+        confirmPassword: "Confirm password does not match password",
+      });
+      return;
+    }
     await register({
       variables: {
         options: {
@@ -42,8 +56,21 @@ const RegisterForm: React.FC = () => {
         },
       },
     });
-    router.push("/");
   };
+
+  useEffect(() => {
+    if (data) {
+      if (data.register.ok) {
+        router.push("/");
+      } else {
+        let registerErrors: Record<string, string> = {};
+        data.register.errors?.forEach((error) => {
+          registerErrors[error.field] = error.message;
+        });
+        setErrors({ ...errors, ...registerErrors });
+      }
+    }
+  }, [data]);
 
   return (
     <Fragment>
@@ -58,6 +85,7 @@ const RegisterForm: React.FC = () => {
             value={email}
             onChange={handleChange}
             placeholder="Email address"
+            error={errors && errors.email ? errors.email : undefined}
           />
           <Input
             isActive={!!username}
@@ -66,6 +94,7 @@ const RegisterForm: React.FC = () => {
             value={username}
             onChange={handleChange}
             placeholder="Username"
+            error={errors && errors.username ? errors.username : undefined}
           />
           <Input
             isActive={!!firstName}
@@ -74,6 +103,7 @@ const RegisterForm: React.FC = () => {
             value={firstName}
             onChange={handleChange}
             placeholder="First name"
+            error={errors && errors.firstName ? errors.firstName : undefined}
           />
           <Input
             isActive={!!lastName}
@@ -82,6 +112,7 @@ const RegisterForm: React.FC = () => {
             value={lastName}
             onChange={handleChange}
             placeholder="Last name"
+            error={errors && errors.lastName ? errors.lastName : undefined}
           />
           <Input
             isActive={!!password}
@@ -90,6 +121,7 @@ const RegisterForm: React.FC = () => {
             value={password}
             onChange={handleChange}
             placeholder="Password"
+            error={errors && errors.password ? errors.password : undefined}
           />
           <Input
             isActive={!!confirmPassword}
@@ -98,6 +130,11 @@ const RegisterForm: React.FC = () => {
             value={confirmPassword}
             onChange={handleChange}
             placeholder="Confirm password"
+            error={
+              errors && errors.confirmPassword
+                ? errors.confirmPassword
+                : undefined
+            }
           />
           <SubmitButton loading={loading}>Register</SubmitButton>
         </Form>

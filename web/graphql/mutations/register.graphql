@@ -1,9 +1,16 @@
 mutation Register($options: RegisterInput!) {
   register(options: $options) {
-    id
-    email
-    username
-    updatedAt
-    createdAt
+    ok
+    user {
+      id
+      email
+      username
+      updatedAt
+      createdAt
+    }
+    errors {
+      field
+      message
+    }
   }
 }

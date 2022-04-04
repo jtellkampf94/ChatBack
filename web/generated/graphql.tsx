@@ -41,6 +41,12 @@ export type Contact = {
   user: User;
 };
 
+export type FieldError = {
+  __typename?: 'FieldError';
+  field: Scalars['String'];
+  message: Scalars['String'];
+};
+
 export type Image = {
   __typename?: 'Image';
   key: Scalars['String'];
@@ -69,9 +75,9 @@ export type Mutation = {
   createChat: Chat;
   editProfile: User;
   exitChat: Scalars['Boolean'];
-  login: User;
+  login: UserResponse;
   logout: Scalars['Boolean'];
-  register: User;
+  register: UserResponse;
   removeFromContacts: Scalars['Boolean'];
   sendMessage: Message;
 };
@@ -197,6 +203,13 @@ export type User = {
   username: Scalars['String'];
 };
 
+export type UserResponse = {
+  __typename?: 'UserResponse';
+  errors?: Maybe<Array<FieldError>>;
+  ok: Scalars['Boolean'];
+  user?: Maybe<User>;
+};
+
 export type ChatFragmentFragment = { __typename?: 'Chat', id: string, groupAvatarUrl?: string | null | undefined, groupName?: string | null | undefined, updatedAt: any, members: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, profilePictureUrl?: string | null | undefined }>, messages?: Array<{ __typename?: 'Message', id: string, text: string, createdAt: any, user: { __typename?: 'User', id: string } }> | null | undefined };
 
 export type MessageFragmentFragment = { __typename?: 'Message', id: string, text: string, imageUrl?: string | null | undefined, chatId: number, createdAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string } };
@@ -235,7 +248,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'User', id: string, email: string, username: string, updatedAt: any, createdAt: any } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', ok: boolean, user?: { __typename?: 'User', id: string, email: string, username: string, updatedAt: any, createdAt: any } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -247,7 +260,7 @@ export type RegisterMutationVariables = Exact<{
 }>;
 
 
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'User', id: string, email: string, username: string, updatedAt: any, createdAt: any } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', ok: boolean, user?: { __typename?: 'User', id: string, email: string, username: string, updatedAt: any, createdAt: any } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
 
 export type RemoveFromContactsMutationVariables = Exact<{
   contactId: Scalars['Int'];
@@ -492,11 +505,18 @@ export type EditProfileMutationOptions = Apollo.BaseMutationOptions<EditProfileM
 export const LoginDocument = gql`
     mutation Login($options: LoginInput!) {
   login(options: $options) {
-    id
-    email
-    username
-    updatedAt
-    createdAt
+    ok
+    user {
+      id
+      email
+      username
+      updatedAt
+      createdAt
+    }
+    errors {
+      field
+      message
+    }
   }
 }
     `;
@@ -559,11 +579,18 @@ export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, L
 export const RegisterDocument = gql`
     mutation Register($options: RegisterInput!) {
   register(options: $options) {
-    id
-    email
-    username
-    updatedAt
-    createdAt
+    ok
+    user {
+      id
+      email
+      username
+      updatedAt
+      createdAt
+    }
+    errors {
+      field
+      message
+    }
   }
 }
     `;

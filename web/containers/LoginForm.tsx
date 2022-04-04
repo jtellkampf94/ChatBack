@@ -1,4 +1,4 @@
-import { useState, FormEvent, ChangeEvent, Fragment } from "react";
+import { useState, FormEvent, ChangeEvent, Fragment, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useMediaQuery } from "react-responsive";
 
@@ -13,11 +13,12 @@ import FormHeader from "../components/FormHeader";
 
 const LoginForm: React.FC = () => {
   const isSmallScreen = useMediaQuery({ query: "(max-width: 880px)" });
-  const [login, { loading, data, error }] = useLoginMutation();
+  const [login, { loading, data }] = useLoginMutation();
   const [credentials, setCredentials] = useState({
     emailOrUsername: "",
     password: "",
   });
+  const [errors, setErrors] = useState<null | Record<string, string>>(null);
   const { emailOrUsername, password } = credentials;
   const router = useRouter();
 
@@ -27,11 +28,25 @@ const LoginForm: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setErrors(null);
     await login({
       variables: { options: credentials },
     });
-    router.push("/");
   };
+
+  useEffect(() => {
+    if (data) {
+      if (data.login.ok === true) {
+        router.push("/");
+      } else {
+        let loginErrors: Record<string, string> = {};
+        data.login.errors?.forEach((error) => {
+          loginErrors[error.field] = error.message;
+        });
+        setErrors(loginErrors);
+      }
+    }
+  }, [data]);
 
   return (
     <Fragment>
@@ -45,6 +60,11 @@ const LoginForm: React.FC = () => {
             value={emailOrUsername}
             onChange={handleChange}
             placeholder="Email address or username"
+            error={
+              errors && errors.emailOrUsername
+                ? errors.emailOrUsername
+                : undefined
+            }
           />
           <Input
             isActive={!!password}
@@ -53,6 +73,7 @@ const LoginForm: React.FC = () => {
             value={password}
             onChange={handleChange}
             placeholder="Password"
+            error={errors && errors.password ? errors.password : undefined}
           />
           <SubmitButton loading={loading}>Log In</SubmitButton>
         </Form>

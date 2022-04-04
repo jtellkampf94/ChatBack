@@ -20,7 +20,7 @@ export const loginValidation = async (
   if (isEmpty(options.emailOrUsername)) {
     errors.push({
       field: "emailOrUsername",
-      message: "Please enter email or username",
+      message: "Please enter email address or username",
     });
   } else {
     const user = await User.findOne(
@@ -31,7 +31,7 @@ export const loginValidation = async (
     if (!user) {
       errors.push({
         field: "emailOrUsername",
-        message: "Email or username does not match any of our users",
+        message: "Email address or username does not match any of our users",
       });
       return { errors };
     }
