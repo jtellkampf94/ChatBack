@@ -103,33 +103,37 @@ const Sidebar: React.FC<SidebarProps> = ({
       <SidebarChatContainer>
         <QueryResult loading={loading} error={error}>
           {currentUser &&
-            data?.getChats.map((chat) => {
-              const selectedChatId = Number(chat.id);
+            data?.getChats
+              .filter((chat) => chat.messages?.[0].text.includes(searchTerm))
+              .map((chat) => {
+                const selectedChatId = Number(chat.id);
 
-              return (
-                <Chat
-                  key={`chatId-${chat.id}`}
-                  isHighlighted={chatId === selectedChatId}
-                  onClick={() => handleClick(selectedChatId)}
-                  name={
-                    chat.groupName
-                      ? chat.groupName
-                      : getUsersFullname(chat.members, Number(currentUser.id))
-                  }
-                  isGroupChat={!!chat.groupName}
-                  groupAvatarUrl={
-                    chat.groupAvatarUrl ? chat.groupAvatarUrl : undefined
-                  }
-                  profilePictureUrl={
-                    chat.members[0].profilePictureUrl
-                      ? chat.members[0].profilePictureUrl
-                      : undefined
-                  }
-                  latestMessage={chat.messages?.[0].text}
-                  timeOfLatestMessage={formatDate(chat.messages?.[0].createdAt)}
-                />
-              );
-            })}
+                return (
+                  <Chat
+                    key={`chatId-${chat.id}`}
+                    isHighlighted={chatId === selectedChatId}
+                    onClick={() => handleClick(selectedChatId)}
+                    name={
+                      chat.groupName
+                        ? chat.groupName
+                        : getUsersFullname(chat.members, Number(currentUser.id))
+                    }
+                    isGroupChat={!!chat.groupName}
+                    groupAvatarUrl={
+                      chat.groupAvatarUrl ? chat.groupAvatarUrl : undefined
+                    }
+                    profilePictureUrl={
+                      chat.members[0].profilePictureUrl
+                        ? chat.members[0].profilePictureUrl
+                        : undefined
+                    }
+                    latestMessage={chat.messages?.[0].text}
+                    timeOfLatestMessage={formatDate(
+                      chat.messages?.[0].createdAt
+                    )}
+                  />
+                );
+              })}
         </QueryResult>
       </SidebarChatContainer>
     </SidebarContainer>

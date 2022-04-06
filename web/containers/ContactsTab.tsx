@@ -84,18 +84,24 @@ const ContactsTab: React.FC<ContactsTabProps> = ({
 
       <ContactsListContainer>
         <QueryResult loading={loading} error={error}>
-          {data?.getContacts.map((contact) => {
-            return (
-              <Contact
-                key={`contactId-${contact.id}`}
-                firstName={capitalizeFirstLetter(contact.firstName)}
-                lastName={capitalizeFirstLetter(contact.lastName)}
-                about={contact.about}
-                profilePictureUrl={contact.profilePictureUrl}
-                onClick={() => handleClick(Number(contact.id))}
-              />
-            );
-          })}
+          {data?.getContacts
+            .filter(
+              (contact) =>
+                contact.firstName.includes(searchTerm) ||
+                contact.lastName.includes(searchTerm)
+            )
+            .map((contact) => {
+              return (
+                <Contact
+                  key={`contactId-${contact.id}`}
+                  firstName={capitalizeFirstLetter(contact.firstName)}
+                  lastName={capitalizeFirstLetter(contact.lastName)}
+                  about={contact.about}
+                  profilePictureUrl={contact.profilePictureUrl}
+                  onClick={() => handleClick(Number(contact.id))}
+                />
+              );
+            })}
         </QueryResult>
       </ContactsListContainer>
     </Container>
