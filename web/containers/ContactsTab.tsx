@@ -12,6 +12,8 @@ import {
   useGetContactsQuery,
   useCreateChatMutation,
   ChatFragmentFragmentDoc,
+  GetChatsDocument,
+  GetChatsQuery,
 } from "../generated/graphql";
 
 interface ContactsTabProps {
@@ -43,10 +45,10 @@ const ContactsTab: React.FC<ContactsTabProps> = ({
 
         cache.modify({
           fields: {
-            getChats(existingChats = []) {
+            getChats(existingChats = [], { readField }) {
               const isAlreadyInChat = existingChats.filter(
                 // @ts-ignore
-                (chat) => Number(chat.id) === Number(newChat.id)
+                (chat) => Number(readField("id", chat)) === Number(newChat.id)
               );
 
               if (isAlreadyInChat.length === 1) return existingChats;

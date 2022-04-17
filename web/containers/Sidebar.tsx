@@ -75,7 +75,9 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
   }, [chatId]);
 
-  const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {};
+  const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
 
   return (
     <SidebarContainer>
