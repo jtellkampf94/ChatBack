@@ -49,6 +49,8 @@ const MessagesContainer = styled.div`
   flex-direction: column-reverse;
   padding: 0 9%;
 
+  scrollbar-width: thin;
+
   &::-webkit-scrollbar {
     width: 6px !important;
     height: 6px !important;

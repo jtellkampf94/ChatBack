@@ -2,7 +2,6 @@ import type { NextPage } from "next";
 import { useState, Fragment, useEffect } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import styled from "styled-components";
 import { useApolloClient } from "@apollo/client";
 
 import {

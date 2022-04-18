@@ -6,6 +6,8 @@ const Container = styled.div`
   overflow-y: scroll;
   flex: 1;
 
+  scrollbar-width: thin;
+
   &::-webkit-scrollbar {
     width: 6px !important;
     height: 6px !important;

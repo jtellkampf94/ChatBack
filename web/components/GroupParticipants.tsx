@@ -19,6 +19,8 @@ const ChipContainer = styled.div`
   overflow-x: auto;
   overflow-y: hidden;
 
+  scrollbar-width: thin;
+
   &::-webkit-scrollbar {
     width: 6px !important;
     height: 6px !important;
