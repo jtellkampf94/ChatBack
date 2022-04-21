@@ -33,9 +33,7 @@ dotenv.config();
 const main = async () => {
   const connection = await createConnection({
     type: "postgres",
-    database: process.env.PG_DATABASE_NAME,
-    username: process.env.PG_USERNAME,
-    password: process.env.PG_PASSWORD,
+    url: process.env.PG_DATABASE_URL,
     logging: true,
     synchronize: true,
     entities: [User, Chat, ChatMember, Message, Contact, Image],
@@ -45,10 +43,11 @@ const main = async () => {
   const httpServer = http.createServer(app);
 
   const RedisStore = connectRedis(session);
-  const redis = new Redis();
+  const redis = new Redis(process.env.REDIS_URL);
   const sessionMiddleware = session({
     store: new RedisStore({
       client: redis,
+      disableTouch: true,
     }),
     name: COOKIE_NAME,
     secret: String(process.env.REDIS_SECRET),
@@ -61,9 +60,10 @@ const main = async () => {
     },
   });
 
+  app.set("proxy", 1);
   app.use(
     cors({
-      origin: "http://localhost:3000",
+      origin: process.env.CORS_ORIGIN,
       credentials: true,
     })
   );
@@ -114,8 +114,8 @@ const main = async () => {
   });
   apolloServer.installSubscriptionHandlers(httpServer);
 
-  httpServer.listen(4000, () => {
-    console.log("Server started on port 4000");
+  httpServer.listen(Number(process.env.PORT), () => {
+    console.log(`Server started on port ${process.env.PORT}`);
   });
 };
 
