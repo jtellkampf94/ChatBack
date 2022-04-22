@@ -9,6 +9,7 @@ import session from "express-session";
 import connectRedis from "connect-redis";
 import Redis from "ioredis";
 import cors from "cors";
+import path from "path";
 
 import { User } from "./entities/User";
 import { Message } from "./entities/Message";
@@ -35,9 +36,12 @@ const main = async () => {
     type: "postgres",
     url: process.env.PG_DATABASE_URL,
     logging: true,
-    synchronize: true,
+    // synchronize: true,
+    migrations: [path.join(__dirname, "./migrations/*")],
     entities: [User, Chat, ChatMember, Message, Contact, Image],
   });
+
+  await connection.runMigrations();
 
   const app = express();
   const httpServer = http.createServer(app);
