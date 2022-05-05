@@ -1,7 +1,10 @@
-FROM node:16
+FROM node:18-alpine3.14
 
 ENV NODE_OPTIONS=--max_old_space_size=2048
-WORKDIR /app
+
+RUN mkdir -p /app/src
+
+WORKDIR /app/src
 
 COPY package*.json ./
 
@@ -11,9 +14,7 @@ COPY . .
 
 RUN npm run build
 
-ENV NODE_ENV production
-
-EXPOSE 8080
+EXPOSE 4000
 
 CMD ["node", "dist/index.js"]
 USER node

@@ -47,14 +47,17 @@ const main = async () => {
   const httpServer = http.createServer(app);
 
   const RedisStore = connectRedis(session);
-  const redis = new Redis(process.env.REDIS_URL);
+  const redis = new Redis({
+    host: process.env.REDIS_HOST as string,
+    port: Number(process.env.REDIS_PORT),
+  });
   const sessionMiddleware = session({
     store: new RedisStore({
       client: redis,
       disableTouch: true,
     }),
     name: COOKIE_NAME,
-    secret: String(process.env.REDIS_SECRET),
+    secret: process.env.REDIS_SECRET as string,
     resave: false,
     saveUninitialized: false,
     cookie: {
