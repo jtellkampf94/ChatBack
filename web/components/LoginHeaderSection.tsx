@@ -50,8 +50,8 @@ const LoginHeaderSection: React.FC = () => {
         Simple. Secure. <br /> Reliable Messaging.
       </Heading>
       <Subheading>
-        With WhatsApp web, you'll get fast, simple and secure messaging on your
-        laptop or desktop.
+        With WhatsApp web, you<span>&#39;</span>ll get fast, simple and secure
+        messaging on your laptop or desktop.
       </Subheading>
       <HeaderSectionFooter>
         <FooterText>Get the app.</FooterText>

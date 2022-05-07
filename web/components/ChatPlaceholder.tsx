@@ -60,7 +60,7 @@ const ChatPlaceholder: React.FC = () => {
   return (
     <Container>
       <ContentContainer>
-        <Image src={image} width={250} height={250} />
+        <Image src={image} width={250} height={250} alt="keep connected" />
         <TextContainer>
           <Header>Keep your phone connected</Header>
           <TextBody>

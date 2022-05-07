@@ -34,7 +34,7 @@ const RerouteSection: React.FC<RerouteSectionProps> = ({ text, href }) => {
     <Container>
       <Text>
         {text}{" "}
-        <Link href={href}>
+        <Link href={href} passHref>
           <RegisterLink>here.</RegisterLink>
         </Link>
       </Text>

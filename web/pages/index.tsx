@@ -93,7 +93,7 @@ const Home: NextPage = () => {
         });
       }
     }
-  }, [newChatData]);
+  }, [newChatData, client]);
 
   const handleClick = (selectedChatId: number) => {
     setChatId(selectedChatId);

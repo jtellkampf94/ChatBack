@@ -11,7 +11,15 @@ const GooglePlayDownloadLogo: React.FC<GooglePlayDownloadLogoProps> = ({
   width,
   height,
 }) => {
-  return <Image src={image} width={width} height={height} objectFit="cover" />;
+  return (
+    <Image
+      src={image}
+      alt="google_play_download_logo"
+      width={width}
+      height={height}
+      objectFit="cover"
+    />
+  );
 };
 
 export default GooglePlayDownloadLogo;
