@@ -1,0 +1,14 @@
+node_modules
+.vercel
+assets
+components
+containers 
+generated
+graphql 
+hooks 
+lib 
+pages 
+public 
+styles 
+themes 
+utils
