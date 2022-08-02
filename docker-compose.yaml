@@ -26,8 +26,6 @@ services:
   web:
     build: ./web 
     restart: on-failure
-    depends_on:
-      - server
     ports: 
       - 3000:3000
 

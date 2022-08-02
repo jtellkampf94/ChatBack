@@ -36,21 +36,18 @@ const main = async () => {
     type: "postgres",
     url: process.env.PG_DATABASE_URL,
     logging: true,
-    // synchronize: true,
-    migrations: [path.join(__dirname, "./migrations/*")],
+    synchronize: true,
+    // migrations: [path.join(__dirname, "./migrations/*")],
     entities: [User, Chat, ChatMember, Message, Contact, Image],
   });
 
-  await connection.runMigrations();
+  // await connection.runMigrations();
 
   const app = express();
   const httpServer = http.createServer(app);
 
   const RedisStore = connectRedis(session);
-  const redis = new Redis({
-    host: process.env.REDIS_HOST as string,
-    port: Number(process.env.REDIS_PORT),
-  });
+  const redis = new Redis(process.env.REDIS_URL);
   const sessionMiddleware = session({
     store: new RedisStore({
       client: redis,
