@@ -45,6 +45,10 @@ export class MessageResolver {
   @Subscription(() => Message, {
     topics: NEW_MESSAGE,
     filter: async ({ payload, context: { connection } }) => {
+      if (!connection.context.req.session.userId) {
+        return false;
+      }
+
       const userId = Number(connection.context.req.session.userId);
 
       const isChatMember = await ChatMember.findOne({
