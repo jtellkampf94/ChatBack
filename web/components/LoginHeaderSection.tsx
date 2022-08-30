@@ -42,15 +42,29 @@ const IconsContainer = styled.div`
   align-items: center;
 `;
 
+const Brand = styled.h1`
+  font-size: 28px;
+  font-weight: 600;
+  margin-left: 5px;
+`;
+
+const BrandContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 const LoginHeaderSection: React.FC = () => {
   return (
     <Container>
-      <WhatsAppLogo />
+      <BrandContainer>
+        <WhatsAppLogo />
+        <Brand>ChatBack</Brand>
+      </BrandContainer>
       <Heading>
         Simple. Secure. <br /> Reliable Messaging.
       </Heading>
       <Subheading>
-        With WhatsApp web, you<span>&#39;</span>ll get fast, simple and secure
+        With ChatBack web, you<span>&#39;</span>ll get fast, simple and secure
         messaging on your laptop or desktop.
       </Subheading>
       <HeaderSectionFooter>
