@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
-import WhatsAppLogo from "../assets/images/whats-app-logo.svg";
 import DownloadOnTheAppStoreLogo from "./DownloadOnTheAppStoreLogo";
 import GooglePlayDownloadLogo from "./GooglePlayDownloadLogo";
+import ChatBackLogo from "./ChatBackLogo";
 
 const Container = styled.div`
   width: 55%;
@@ -42,24 +42,10 @@ const IconsContainer = styled.div`
   align-items: center;
 `;
 
-const Brand = styled.h1`
-  font-size: 28px;
-  font-weight: 600;
-  margin-left: 5px;
-`;
-
-const BrandContainer = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
 const LoginHeaderSection: React.FC = () => {
   return (
     <Container>
-      <BrandContainer>
-        <WhatsAppLogo />
-        <Brand>ChatBack</Brand>
-      </BrandContainer>
+      <ChatBackLogo />
       <Heading>
         Simple. Secure. <br /> Reliable Messaging.
       </Heading>

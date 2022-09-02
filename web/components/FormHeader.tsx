@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import WhatsAppLogo from "../assets/images/whats-app-logo.svg";
+import ChatBackLogo from "./ChatBackLogo";
 
 const Header = styled.div`
   background-color: ${({ theme }) => theme.globalTheme.darkGreen};
@@ -19,7 +19,7 @@ const Header = styled.div`
 const FormHeader: React.FC = () => {
   return (
     <Header>
-      <WhatsAppLogo />
+      <ChatBackLogo />
     </Header>
   );
 };
