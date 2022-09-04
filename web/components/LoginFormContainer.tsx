@@ -10,6 +10,7 @@ const Container = styled.div`
   @media screen and (max-width: 880px) {
     width: 100%;
     background-color: ${({ theme }) => theme.globalTheme.smokeGrey};
+    justify-content: flex-start;
   }
 `;
 

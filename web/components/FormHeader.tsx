@@ -14,6 +14,10 @@ const Header = styled.div`
   height: 80px;
   margin-top: 20px;
   flex-shrink: 0;
+
+  @media screen and (max-width: 880px) {
+    margin-top: 5px;
+  }
 `;
 
 const FormHeader: React.FC = () => {
