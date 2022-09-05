@@ -3,7 +3,7 @@ import Image from "next/image";
 import ComputerOutlined from "@material-ui/icons/ComputerOutlined";
 import React from "react";
 
-import image from "../assets/images/intro-connection-light.jpg";
+import image from "../assets/images/chatback.png";
 
 const Container = styled.div`
   display: flex;
@@ -64,13 +64,13 @@ const ChatPlaceholder: React.FC = () => {
         <TextContainer>
           <Header>Keep your phone connected</Header>
           <TextBody>
-            WhatsApp connects to your phone to sync messages. To reduce data
+            ChatBack connects to your phone to sync messages. To reduce data
             usage, connect your phone to Wi-Fi.
           </TextBody>
           <Footer>
             <ComputerOutlined style={{ fontSize: "20px" }} />
             <FooterText>
-              Make calls from desktop with WhatsApp for Windows.
+              Send messages from your desktop with ChatBack web app.
             </FooterText>
           </Footer>
         </TextContainer>
