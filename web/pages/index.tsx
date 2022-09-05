@@ -192,6 +192,10 @@ const Home: NextPage = () => {
                       chatId={chatId}
                       chat={selectedChat}
                       userId={Number(data.currentUser.id)}
+                      backToMessages={() => {
+                        handleTabChange(1);
+                        setChatId(null);
+                      }}
                     />
                   </TabContainer>
                 )}
@@ -203,6 +207,7 @@ const Home: NextPage = () => {
                       chatId={chatId}
                       chat={selectedChat}
                       userId={Number(data.currentUser.id)}
+                      backToMessages={() => handleTabChange(1)}
                     />
                   ) : (
                     <ChatPlaceholder />

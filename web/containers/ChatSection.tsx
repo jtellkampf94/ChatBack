@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect, Fragment } from "react";
 import { Waypoint } from "react-waypoint";
+import { useMediaQuery } from "react-responsive";
 
 import {
   useGetMessagesQuery,
@@ -20,9 +21,16 @@ interface ChatSectionProps {
   chatId: number;
   chat: GetChatsQuery["getChats"][0];
   userId: number;
+  backToMessages: () => void;
 }
 
-const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
+const ChatSection: React.FC<ChatSectionProps> = ({
+  chatId,
+  chat,
+  userId,
+  backToMessages,
+}) => {
+  const isSmallScreen = useMediaQuery({ query: "(max-width: 880px)" });
   const endOfMessageRef = useRef<null | HTMLDivElement>(null);
   const [messageText, setMessageText] = useState("");
   const [limit, setLimit] = useState(10);
@@ -126,6 +134,8 @@ const ChatSection: React.FC<ChatSectionProps> = ({ chatId, chat, userId }) => {
         }
         groupAvatarUrl={chat.groupAvatarUrl ? chat.groupAvatarUrl : undefined}
         endOfMessageRef={endOfMessageRef}
+        isSmallScreen={isSmallScreen}
+        onClick={backToMessages}
       >
         {data?.getMessages?.messages.map((message) => {
           const isUser = userId === Number(message.user.id);
